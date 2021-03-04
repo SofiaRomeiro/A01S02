@@ -30,6 +30,6 @@ Ver conteudo do ficheiro no cmd:
 
 Compilar varios ficheiros:
 >
-    gcc -ansi -pedantic -Werror -Wall -Wextra <file-1-name> <file-1-name>
+    gcc -ansi -pedantic -Werror -Wall -Wextra <file-1-name> <file-2-name>
 
-> - Must always include main.c !!
+> - Must always include main.c in 'file-name' !!
