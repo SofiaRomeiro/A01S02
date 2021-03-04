@@ -30,7 +30,7 @@ Ver conteudo do ficheiro no cmd:
 
 Compilar varios ficheiros:
 >
-    gcc -ansi -pedantic -Werror -Wall -Wextra <file-1-name> <file-2-name>
+    gcc -ansi -pedantic -Werror -Wall -Wextra <new-name-optional> <file-1-name> <file-2-name>
 
 > - Must always include main.c in 'file-name' !!
 
@@ -41,3 +41,7 @@ Pre-Processamento (executa diretivas iniciadas por #):
 Assembly:
 >
     gcc -S <file-name>
+
+Tempo de execucao:
+>
+    time <file-name>
