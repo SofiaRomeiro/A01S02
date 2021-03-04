@@ -3,15 +3,15 @@
 ## C
 
 Deteta erros no codigo:
-    - ansi
+    ansi
 
 Rejeita todas as extensoes pribidas:
-    - pedantic 
+    pedantic 
 
 Warning avisa mas compila, Error nao compila:
 
 Transformar warnings em erros:  
-    -Werror
+    Werror
 
 Emite todos os warnings acerca de possiveis erros:
-    - Wall Wextra 
+    Wall Wextra 
