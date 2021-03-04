@@ -23,3 +23,13 @@ Emite todos os warnings acerca de possiveis erros:
 Comandos completos para compilar:
 >
     gcc -ansi -pedantic -Werror -Wall -Wextra -o <file-name>
+
+Ver conteudo do ficheiro no cmd:
+>
+    cat <file-name>
+
+Compilar varios ficheiros:
+>
+    gcc -ansi -pedantic -Werror -Wall -Wextra <file-1-name> <file-1-name>
+
+> - Must always include main.c !!
