@@ -10,7 +10,7 @@ Rejeita todas as extensoes pribidas:
 >
     -pedantic 
 
-Warning avisa mas compila, Error nao compila:
+'Warning' avisa mas compila, 'Error' nao compila !
 
 Transformar warnings em erros:  
 >
