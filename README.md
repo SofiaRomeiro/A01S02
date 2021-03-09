@@ -45,3 +45,42 @@ Assembly:
 Tempo de execucao:
 >
     time <file-name>
+
+Ler um inteiro:
+>
+    scanf("%d", &x)
+>
+    scanf("%d%d", &x, &y)   ---> dois inteiros 
+
+> - Must include '&' before the variable name
+
+WARN:
+>
+    ** nao existe para potencia, apenas multiplica ponteiros
+
+Numeros:
+>
+    %d --> inteiro; %f --> float; 
+
+Incrementar + 1/ - 1:
+> 
+    ++<var> (antes); <var>-- (depois)
+
+> - operador antes da var executa a operação antes do programa correr, e vice versa 
+
+Ler proximo caracter da text stream:
+>
+    getchar()
+
+Escrever o caracter ASCII correspondente ao numero passado:
+>
+    putchar(c) 
+
+>
+    Costante E0F --> End of File
+
+> - NOTA: nao meter ';' na linha do for, meter na linha seguinte
+
+
+
+
