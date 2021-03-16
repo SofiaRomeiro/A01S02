@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+#define DIM 10
+
+int main() {
+	int c, i;
+	char s[DIM];
+	
+
+	for (i = 0; i < DIM - 1 && (c = getchar()) != EOF; i++) {
+		if (c != '\n') {
+			s[i]=c;
+		}
+
+	}	
+	
+	printf("%s", s);
+	return 0;
+}
+
