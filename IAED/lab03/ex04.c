@@ -1,41 +1,30 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-/*
-#define DIM 10
-#define FINAL 10
 
 int main() {
-	int c, i;
-	int getchar();
-	char s[DIM] = "";
-	
-	for (i = 0; i < DIM - 1 && (c = getchar()) != EOF && c != '\n' && c != '\0' ; i++) {
-		s[i]=c;
-	}
 
-	for (i = 0; i < DIM - 1; i++) {
-	
-		if (s[i] == 0) {
-		
-			printf("ola\n");
-		}
-	}
-	
-	printf("%s \n", s);
-	return 0;
-} */
-
-int main() {
 	char c;
+	int state = 0;
 
-	printf("write some shit, EOF when done");
-	while (c != '\0') {
-		c = getchar();
-		printf("it is: ");
+	while ((c = getchar()) != EOF) {
+
+		if (c == ' ' || c == '\n') {
+
+			if (state == 0) {
+				putchar('0');
+				state = 0;
+			}
+		}
+		else if (state == 0) {
+
+			if (c == '0') {
+
+				continue;
+				state = 1;
+			}
+		}
 		putchar(c);
-		printf("\n");	
 	}
 
+	return 0;
 }
 
