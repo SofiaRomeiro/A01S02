@@ -5,7 +5,7 @@
 >
 	displaymenu()
 >
-> Recebe x e devolve y
+> Display Menu: Recebe x e devolve y
 >
 	newtask()
 >
