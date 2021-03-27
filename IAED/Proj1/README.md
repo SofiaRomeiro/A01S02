@@ -5,6 +5,8 @@
 >
 	displaymenu()
 >
+> Recebe x e devolve y
+>
 	newtask()
 >
 	taskslist()
