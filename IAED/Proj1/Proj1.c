@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void DisplayMenu();
+void displaymenu();
 
 int main() {
 
@@ -8,36 +8,43 @@ int main() {
 	char command;
 
 	while ( !quit ) {
-		DisplayMenu();
+		displaymenu();
 		command = getchar();
 
 		switch (command) {
 			case 't':
-				/* code */
+				/* New Task */
+				newtask();
 				break;
 
 			case 'l':
-				/* code */
+				/* tasks list */
+				taskslist();
 				break;
 
 			case 'n':
-				/* code */
+				/* time adder */
+				timeadder();
 				break;
 
 			case 'u':
-				/* code */
+				/* add new user or new list of users */
+				newuser();
 				break;
 
 			case 'm':
-				/* code */
+				/* move task from one activitie to another*/
+				movetask();
 				break;
 
 			case 'd':
-				/* code */
+				/* lists all tasks in one activitie */
+				alltaskslist();
 				break;
 
 			case 'a':
-				/* code */
+				/* add new activitie or list all activities */
+				addactivitie();
 				break;
 			
 			case 'q':
