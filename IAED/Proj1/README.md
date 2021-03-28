@@ -7,7 +7,7 @@
 
 #### Task :
 > Each task as :
->> An identifier : int, between [0, 10 000]
+>> **An identifier** : int, between [0, 10 000]
 >
 >> A description : not empty string, 50 chars max
 >
