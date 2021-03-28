@@ -8,11 +8,17 @@
  Task :
 > Each task as :
 >> An identifier : int, between [0, 10 000]
+>>
 >> A description : not empty string, 50 chars max
+>>
 >> An user : who does the task
+>>
 >> Activitie : where the task belongs
+>>
 >> Duration of the task : int > 0
+>>
 >> When the task started : int > 0
+>>
 
 
 ### Functions
