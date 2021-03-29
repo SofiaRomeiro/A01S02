@@ -53,10 +53,25 @@
 	newtask()
 >
 > - IN : t {duracao} {descricao}
+> - OUT : task {id}
+> - Erros:
+>> - "too many tasks" : exceder o máximo de tarefas permitidas (10)
+>> - "duplicate description" : existir tarefa com o mesmo nome
 >
 	taskslist()
 >
+> - IN : l [{id} , {id}, ...]
+> - OUT : {id} {atividade} #{duracao} {descricao}
+>> - comando s/ argumentos --> tarefas listadas por ordem alfabetica
+>> - comando c/ lista de id's --> tarefas listadas por id's
+> - Erros:
+>> - "{id}: no such task": no caso de nao existir a tarefa
+>
 	timeadder()
+>
+> - IN : n {duracao}
+> - OUT : {instante} --> tempo atual
+> 
 >
 	newuser()
 >
@@ -65,4 +80,14 @@
 	alltaskslist()
 >
 	addactivitie()
+>
+	readnum()
+>
+> - IN : ----
+> - OUT : int num
+>
+	readsentence()
+>
+> - IN : array of chars
+> - OUT : void
 >
