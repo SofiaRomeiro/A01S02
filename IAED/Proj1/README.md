@@ -52,6 +52,8 @@
 >
 	newtask()
 >
+> - IN : t <<duracao>> <<descricao>>
+>
 	taskslist()
 >
 	timeadder()
