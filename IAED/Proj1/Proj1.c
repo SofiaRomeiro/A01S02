@@ -11,19 +11,22 @@
 #define DESCFORACTIV 20
 
 
-void displaymenu();
-int readnum();
-void readsentence(char sentence[], int maxsize);
-void newtask();
+void displayMenu();
+int readNum();
+void readSentence(char sentence[], int maxsize);
+void readList(int list[], int maxsize);
+void newTask();
+void tasksList(int ids[]);
 
 int main() {
 
 	int quit = 0, duration = 0;
 	char command;
 	char description[DESCFORTASK + 1];
+	int ids[IDENTIFIER+2];
 	
 	while ( !quit ) {
-		displaymenu();
+		displayMenu();
 		command = getchar();
 
 		switch (command) {
@@ -31,17 +34,17 @@ int main() {
 				/* New Task */
 				/* IN : t <duration> <description> */
 				getchar();
-
-				duration = readnum();
-				readsentence(description, DESCFORTASK);
-
-				newtask(duration, description);
-
+				duration = readNum();
+				readSentence(description, DESCFORTASK);
+				newTask(duration, description);
 				break;
 
 			case 'l':
 				/* tasks list
 				taskslist(); */
+				getchar();
+				readList(ids, IDENTIFIER);
+				tasksList(ids);
 				break;
 
 			case 'n':
@@ -82,7 +85,7 @@ int main() {
 	return 0;
 }
 
-void displaymenu() {
+void displayMenu() {
 	printf("\nComando \t Acao\n");
 	printf("\n");	
 	printf(" t \t Adiciona uma nova tarefa ao sistema\n");
@@ -96,13 +99,19 @@ void displaymenu() {
 	printf("\n");
 }
 
-int readnum() {
-	int num = 0;
+int readNum() {
+	int num = 0, reading = 0;
 	char c;
-	while ((c = getchar()) != EOF && c != '\n' && c != ' ') {
+	while ((c = getchar()) != EOF && c != '\n' && (c != ' ' || reading == 0)) {
 		if (c >= '0' && c <= '9') {
 			num = num * 10 + (c - '0');
+			reading = 1;
 		}
+
+		else if (c == ' ' && !reading){
+			continue;
+		}
+
 		else {
 			printf("Please insert a positive number\n");
 			exit(EXIT_FAILURE);
@@ -111,18 +120,56 @@ int readnum() {
 	return num;
 }
 
-void readsentence(char sentence[], int maxsize) {
-	int i;
+void readSentence(char sentence[], int maxsize) {
+	int i, j,n=0;
+	char temporary[DESCFORTASK];
 	char c;	
+	
 	for(i=0; i < (maxsize) && (c=getchar()) != EOF && c != '\n'; i++) {
-		sentence[i] = c;
+		temporary[i] = c;		
 	}
-	sentence[i] = '\0';
+
+	for (j=0; j < i; j++){
+		if (temporary[j] == ' ') {
+			continue;
+		}
+		else {
+			sentence[n++] = temporary[j]; 
+		}
+	}
+	sentence[n] = '\0';
 }
 
-void newtask(int duration, char sentence[]) {
+void readList(int list[], int maxsize) {
+	char c;
+	int id=0, i, idpos=0;
+	for (i=0; i < maxsize && (c=getchar()) != EOF && c != '\n'; i++) {
+		/* se c for ' ' -> passa a frente, adiciona o id ao array e da clean no id*/
+		if (c == ' ') {
+			list[idpos++] = id;
+			id = 0;			
+		}
+		else {			
+			if (c >= '0' && c <= '9') {
+				id = id * 10 + (c - '0');
+			}
+		} 			
+	}
+	list[idpos] = id;
+	list[idpos+1] = '\0';		
+}
+
+void newTask(int duration, char sentence[]) {
 
 	printf("duration : %d\n", duration);
 	printf("sentence: %s\n", sentence);
 
+}
+
+void tasksList(int ids[]) {
+
+	int i;
+	for (i=0; ids[i] != '\0'; i++) {
+		printf("id : %d\n", ids[i]);
+	}
 }

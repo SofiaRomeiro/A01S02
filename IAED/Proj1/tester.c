@@ -4,10 +4,10 @@
 #define GLOBALMAX 51
 
 int readnum(int duration) {
-	char n;
-	while ((n = getchar()) != EOF && n != '\n' && n != ' ') {
-		if (n >= '0' && n <= '9') {
-			duration = duration * 10 + (n - '0');
+	char c;
+	while ((c = getchar()) != EOF && c != '\n' && c != ' ') {
+		if (c >= '0' && c <= '9') {
+			duration = duration * 10 + (c - '0');
 		}
 		else {
 			printf("Please insert a positive number\n");
@@ -23,27 +23,31 @@ int readnum(int duration) {
 void readlist(int list[], int maxsize) {
 
 	char c;
-	int num=0;
+	int id=0, i, idpos=0;
 
-	while ((c=getchar()) != EOF && c != '\n') {
-		/* se c for ' ' -> passa a frente*/
+	for (i=0; i < maxsize && (c=getchar()) != EOF && c != '\n'; i++) {
+		/* se c for ' ' -> passa a frente, adiciona o id ao array e da clean no id*/
 		if (c == ' ') {
-			
+			list[idpos++] = id;
+			id = 0;			
 		}
-		else {
-
-		} 
-			
+		else {			
+			if (c >= '0' && c <= '9') {
+				id = id * 10 + (c - '0');
+			}
+		} 			
 	}
-	
+	list[idpos] = id;		
 } 
 
 int main() {
 
 	int duration = 0;
+	int list[20];
 
 	printf("?\n");
-	printf("%d", readnum(duration));
+	printf("%d : duration\n", readnum(duration));
+	readlist(list, 10000);
 
 	return 0;
 }
