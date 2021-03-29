@@ -52,7 +52,7 @@
 >
 	newtask()
 >
-> - IN : t <<duracao>> <<descricao>>
+> - IN : t |duracao| |descricao|
 >
 	taskslist()
 >
