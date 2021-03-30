@@ -17,6 +17,9 @@ void readSentence(char sentence[], int maxsize);
 void readList(int list[], int maxsize);
 void newTask();
 void tasksList(int ids[]);
+void timeAdder(int duration);
+void readUser(char user[], int maxsize);
+void newUser(char user[]);
 
 int main() {
 
@@ -24,6 +27,7 @@ int main() {
 	char command;
 	char description[DESCFORTASK + 1];
 	int ids[IDENTIFIER+2];
+	char user[USERNAME+1];
 	
 	while ( !quit ) {
 		displayMenu();
@@ -49,12 +53,18 @@ int main() {
 
 			case 'n':
 				/* time adder 
-				timeadder(); */
+				timeAdder(); */
+				getchar();
+				duration = readNum();
+				timeAdder(duration);
 				break;
 
 			case 'u':
 				/* add new user or new list of users 
 				newuser(); */
+				getchar();
+				readUser(user, USERNAME);
+				newUser(user);
 				break;
 
 			case 'm':
@@ -121,7 +131,8 @@ int readNum() {
 }
 
 void readSentence(char sentence[], int maxsize) {
-	int i, j,n=0;
+	int i, j,n = 0;
+	int reading=0;
 	char temporary[DESCFORTASK];
 	char c;	
 	
@@ -130,15 +141,40 @@ void readSentence(char sentence[], int maxsize) {
 	}
 
 	for (j=0; j < i; j++){
-		if (temporary[j] == ' ') {
+		if (temporary[j] == ' ' && !reading) {
 			continue;
 		}
 		else {
-			sentence[n++] = temporary[j]; 
+			sentence[n++] = temporary[j];
+			reading = 1;
 		}
 	}
 	sentence[n] = '\0';
 }
+
+void readUser(char user[], int maxsize) {
+	int i, j = 0;
+	int char_found = 0;
+	char c;	
+	
+	for(i=0; i < (maxsize) && (c=getchar()) != EOF && c != '\n'; i++) {
+		if 	(c == ' ' && !char_found) {
+			continue;
+		}	
+		else if (c != ' ') {
+			user[j++] = c;
+			char_found = 1;
+		}
+		else if (c == ' ' && char_found) {
+			user[j] = '\0';				
+			break;
+		}
+		else {
+			break;
+		}
+	}	
+}
+
 
 void readList(int list[], int maxsize) {
 	char c;
@@ -163,7 +199,6 @@ void newTask(int duration, char sentence[]) {
 
 	printf("duration : %d\n", duration);
 	printf("sentence: %s\n", sentence);
-
 }
 
 void tasksList(int ids[]) {
@@ -172,4 +207,13 @@ void tasksList(int ids[]) {
 	for (i=0; ids[i] != '\0'; i++) {
 		printf("id : %d\n", ids[i]);
 	}
+}
+
+void timeAdder(int duration) {
+	printf("duration : %d\n", duration);
+}
+
+void newUser(char user[]) {
+	printf("username : %s\n", user);
+	getchar();
 }
