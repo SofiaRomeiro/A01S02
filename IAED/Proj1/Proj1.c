@@ -20,14 +20,18 @@ void tasksList(int ids[]);
 void timeAdder(int duration);
 void readUser(char user[], int maxsize);
 void newUser(char user[]);
+void moveTask(int id, char user[], char activitie[]);
+void allTasksList(char activities[]);
+void addActivitie(char activities[]);
 
 int main() {
-
-	int quit = 0, duration = 0;
+	/* '+1' means the maximum size plus '\0' */
+	int quit = 0, duration = 0, id=0;
 	char command;
 	char description[DESCFORTASK + 1];
 	int ids[IDENTIFIER+2];
 	char user[USERNAME+1];
+	char activitie[DESCFORACTIV+1];
 	
 	while ( !quit ) {
 		displayMenu();
@@ -70,16 +74,27 @@ int main() {
 			case 'm':
 				/* move task from one activitie to another
 				movetask(); */
+				getchar();
+				id = readNum();
+				readUser(user, USERNAME);
+				readSentence(activitie, DESCFORACTIV);
+				moveTask(id, user, activitie);
 				break;
 
 			case 'd':
 				/* lists all tasks in one activitie 
 				alltaskslist(); */
+				getchar();
+				readSentence(activitie, DESCFORACTIV);
+				allTasksList(activitie);
 				break;
 
 			case 'a':
 				/* add new activitie or list all activities 
-				addactivitie(); */
+				addActivitie(); */
+				getchar();
+				readSentence(activitie, DESCFORACTIV);
+				addActivitie(activitie);
 				break;
 			
 			case 'q':
@@ -108,6 +123,26 @@ void displayMenu() {
 	printf(" q \t Termina o programa\n");
 	printf("\n");
 }
+
+
+struct task {
+	int id;
+	char description[DESCFORTASK+1];
+	char user[USERNAME];
+	char activitie[DESCFORACTIV];
+	int duration;
+	int start_time;
+}; 
+
+struct activitie {
+	char description[DESCFORACTIV];
+	char tasks[];
+};
+
+struct user {
+	char user[USERNAME];
+	int users;
+};
 
 int readNum() {
 	int num = 0, reading = 0;
@@ -166,15 +201,17 @@ void readUser(char user[], int maxsize) {
 			char_found = 1;
 		}
 		else if (c == ' ' && char_found) {
-			user[j] = '\0';				
+			user[j] = '\0';	
+			char_found = 0;			
 			break;
 		}
 		else {
+			user[j]='\0';
 			break;
 		}
-	}	
+	}
+	user[j] = '\0';		
 }
-
 
 void readList(int list[], int maxsize) {
 	char c;
@@ -215,5 +252,16 @@ void timeAdder(int duration) {
 
 void newUser(char user[]) {
 	printf("username : %s\n", user);
-	getchar();
+}
+
+void moveTask(int id, char user[], char activitie[]) {
+	printf("id :%d\nuser: %s\nactivitie: %s\n", id, user, activitie);
+}
+
+void allTasksList(char activitie[]) {
+	printf("activitie : %s", activitie);
+}
+
+void addActivitie(char activitie[]) {
+	printf("activitie : %s", activitie);
 }
