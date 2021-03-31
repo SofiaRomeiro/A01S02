@@ -180,8 +180,7 @@ void readSentence(char sentence[], int maxsize) {
 			continue;
 		}
 		else {
-			sentence[n] = temporary[j];
-			n++;
+			sentence[n++] = temporary[j];
 			reading = 1;
 		}
 	}
@@ -198,8 +197,7 @@ void readUser(char user[], int maxsize) {
 			continue;
 		}	
 		else if (c != ' ') {
-			user[j] = c;
-			j++;
+			user[j++] = c;
 			char_found = 1;
 		}
 		else if (c == ' ' && char_found) {
