@@ -13,8 +13,9 @@
 
 void displayMenu();
 int readNum();
+int readT(char description[]);
 void readSentence(char sentence[], int maxsize);
-void readList(int list[], int maxsize);
+void readListId(int list[], int maxsize);
 void newTask();
 void tasksList(int ids[]);
 void timeAdder(int duration);
@@ -39,11 +40,7 @@ int main() {
 
 		switch (command) {
 			case 't':
-				/* New Task */
-				/* IN : t <duration> <description> */
-				getchar();
-				duration = readNum();
-				readSentence(description, DESCFORTASK);
+				duration = readT(description);
 				newTask(duration, description);
 				break;
 
@@ -51,7 +48,7 @@ int main() {
 				/* tasks list
 				taskslist(); */
 				getchar();
-				readList(ids, IDENTIFIER);
+				readListId(ids, IDENTIFIER);
 				tasksList(ids);
 				break;
 
@@ -66,7 +63,6 @@ int main() {
 			case 'u':
 				/* add new user or new list of users 
 				newuser(); */
-				getchar();
 				readUser(user, USERNAME);
 				newUser(user);
 				break;
@@ -74,7 +70,6 @@ int main() {
 			case 'm':
 				/* move task from one activitie to another
 				movetask(); */
-				getchar();
 				id = readNum();
 				readUser(user, USERNAME);
 				readSentence(activitie, DESCFORACTIV);
@@ -124,25 +119,45 @@ void displayMenu() {
 	printf("\n");
 }
 
+/* Command Functions */
 
-struct task {
-	int id;
-	char description[DESCFORTASK+1];
-	char user[USERNAME];
-	char activitie[DESCFORACTIV];
-	int duration;
-	int start_time;
-}; 
+int readT(char description[]) {
+	/* t <duration> <description> */
 
-struct activitie {
-	char description[DESCFORACTIV];
-	char tasks[];
-};
+	int i, num=0, index=0;
+	int start_description=0;
+	int start_num=0, end_num=0;
+	char c;
+	
+	for (i=0; (c=getchar()) != EOF && c != '\n'; i++) {		
+		/* espaco antes do numero */
+		if (c == ' ' && !start_num && !start_description) {
+			continue;
+		}
+		/* numero */
+		else if (c>='0' && c <= '9' && !end_num) {
+			start_num = 1;
+			num = num * 10 + (c - '0');
+		}
+		/* espaco */
+		else if (c == ' ' && start_num && !start_description) {
+			end_num = 1;	
+		}
+		/* descricao */		
+		else if (end_num && index < DESCFORTASK) {
+			description[index++] = c;
+			start_description = 1;
+		}		
+	}
+	description[index] = '\0';
 
-struct user {
-	char user[USERNAME];
-	int users;
-};
+	return num;
+}
+
+
+
+
+
 
 int readNum() {
 	int num = 0, reading = 0;
@@ -185,51 +200,54 @@ void readSentence(char sentence[], int maxsize) {
 		}
 	}
 	sentence[n] = '\0';
+
 }
+
 
 void readUser(char user[], int maxsize) {
-	int i, j = 0;
-	int char_found = 0;
+	int i, u= 0;
+	int start_reading=0, end_reading=0;
 	char c;	
 	
-	for(i=0; i < (maxsize) && (c=getchar()) != EOF && c != '\n'; i++) {
-		if 	(c == ' ' && !char_found) {
+	for (i=0; i < maxsize && ((c=getchar()) != EOF) && c != '\n'; i++) {
+		if (c==' ' && !start_reading) {
 			continue;
-		}	
-		else if (c != ' ') {
-			user[j++] = c;
-			char_found = 1;
 		}
-		else if (c == ' ' && char_found) {
-			user[j] = '\0';	
-			char_found = 0;			
-			break;
+		else if (c != ' ' && !end_reading) {
+			user[u++] = c;
+			start_reading = 1;
 		}
-		else {
-			user[j]='\0';
-			break;
+		else if (c == ' ' && start_reading) {
+			end_reading = 1;
+			continue;
 		}
-	}
-	user[j] = '\0';		
+	}	
+	user[u] = '\0';
 }
 
-void readList(int list[], int maxsize) {
+void readListId(int list[], int maxsize) {
 	char c;
-	int id=0, i, idpos=0;
+	int id=0, i, idpos=0, reading=0;
+	
 	for (i=0; i < maxsize && (c=getchar()) != EOF && c != '\n'; i++) {
 		/* se c for ' ' -> passa a frente, adiciona o id ao array e da clean no id*/
-		if (c == ' ') {
-			list[idpos++] = id;
-			id = 0;			
+		if (c>= '0' && c<= '9') {
+			id = id * 10 + (c - '0');
+			reading = 1;
 		}
-		else {			
-			if (c >= '0' && c <= '9') {
-				id = id * 10 + (c - '0');
-			}
-		} 			
+
+		else if ((reading==1) && c == ' ') {
+			list[idpos++] = id;
+			id = 0;	
+			reading = 0;
+		}
+		else if ((reading==0) && c == ' '){
+			reading = 0;			
+			continue;
+		}			
 	}
 	list[idpos] = id;
-	list[idpos+1] = '\0';		
+	list[idpos+1] = '\0';	
 }
 
 void newTask(int duration, char sentence[]) {
