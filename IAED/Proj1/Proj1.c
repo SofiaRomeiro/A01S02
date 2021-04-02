@@ -57,12 +57,13 @@ void addActivitie(char activitie[], int activ_exist);
 	int id;
 	char description[DESCFORTASK];
 	username user[MAXUSERS];
-	activities activitie[MAXACTIVS];
+	activitie activities[MAXACTIVS];
 	int duration;
 	int start_time;
  } task;
 
-
+activitie maxactivities[MAXACTIVS];
+task maxtasks[IDENTIFIER];
 
 int main() {
 	/* '+1' means the maximum size plus '\0' */
@@ -72,11 +73,9 @@ int main() {
 	int ids[IDENTIFIER+2];
 	char newuser[USERNAME+1];
 	char newactivitie[DESCFORACTIV+1];
-	task newtask[IDENTIFIER];
-	activitie activities[MAXACTIVS];
-
-
 	
+
+
 	while ( !quit ) {
 		displayMenu();
 		command = getchar();
@@ -105,13 +104,13 @@ int main() {
 				/*  u [<utilizador>] */
 				/* devolve 1 se existir user, 0 se nao existir */
 				user_exist = readU(newuser);
-				newUser(user, user_exist);
+				newUser(newuser, user_exist);
 				break;
 
 			case 'm':
 				/* m <id> <utilizador> <atividade> */
-				id = readM(user, newactivitie);
-				moveTask(id, user, newactivitie);
+				id = readM(newuser, newactivitie);
+				moveTask(id, newuser, newactivitie);
 				break;
 
 			case 'd':
@@ -377,6 +376,14 @@ void newTask(int duration,char newdescription[], int id_num) {
 	printf("duration : %d\n", duration);
 	printf("sentence: %s\n", newdescription);
 	printf("id of the task: %d\n", id_num);
+
+
+	/* Erros :
+		- too many tasks (a tarefa passar o id 10000)
+		- duplicate description (duas descricoes iguais) */
+
+	/* saida : task <id> */
+
 }
 
 void tasksList(int ids[], int id_counter) {
