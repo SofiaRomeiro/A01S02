@@ -377,6 +377,7 @@ void newTask(int duration,char newdescription[], int id_num) {
 	printf("sentence: %s\n", newdescription);
 	printf("id of the task: %d\n", id_num);
 
+	
 
 	/* Erros :
 		- too many tasks (a tarefa passar o id 10000)
