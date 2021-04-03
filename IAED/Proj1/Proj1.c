@@ -157,7 +157,7 @@ void displayMenu() {
 int readT(char newdescription[]) {
 	/* t <duration> <description> */
 
-	int i, num=0, index=0;
+	int i, duration=0, index=0;
 	int start_description=0;
 	int start_num=0, end_num=0;
 	char c;
@@ -170,7 +170,7 @@ int readT(char newdescription[]) {
 		/* numero */
 		else if (c>='0' && c <= '9' && !end_num) {
 			start_num = 1;
-			num = num * 10 + (c - '0');
+			duration = duration * 10 + (c - '0');
 		}
 		/* espaco */
 		else if (c == ' ' && start_num && !start_description) {
@@ -184,7 +184,7 @@ int readT(char newdescription[]) {
 	}
 	newdescription[index] = '\0';
 
-	return num;
+	return duration;
 }
 
 int readL(int ids[]) {
@@ -364,9 +364,6 @@ int readA(char newactivitie[]) {
 	newactivitie[a] = '\0';
 
 	return exist_activitie ? 1 : 0;
-
-
-
 }
 
 /* execute-type functions */
