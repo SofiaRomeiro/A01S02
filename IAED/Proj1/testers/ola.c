@@ -1,30 +1,47 @@
 #include <string.h>
 #include <stdio.h>
 
+
+int adder(int num, char op) {
+    if (op=='y') {
+        num++;
+        return num;
+    }
+    else if (op=='n') {
+        return num;
+    }
+    return 0;
+}
+
+
+
 int main() {
-    int i, res;
-    char str1[4+1];
-    char str2[4+1];
+    int i=0, res, quit = 0;
+    char c;
 
-    for (i=0; i < 4; i++) {
-        str1[i] = 'a';       
-    }
-   
-    str1[i]='\0';
+    while (!quit) {
 
-    for (i=0; i < 4; i++) {
-        str2[i] = 'a';       
-    }
-   
-    str2[i]='\0';
+        c = getchar();
 
-    printf("%s\n%s\n", str1, str2);    
-
-    res = strcmp(str1, str2);
-
-    printf("%d\n", res);
+        switch(c) {
+            case 'a':
+                res = adder(i, 'y');
+                printf("res a : %d", res);
+                break;
+            case 'b':
+                res = adder(i,'n');
+                printf("res b : %d", res);
+                break;  
+            case 'q':
+                quit = 1;
+                break;          
+        }
+    }    
 
     return 0;
 }
+
+
+
 
 
