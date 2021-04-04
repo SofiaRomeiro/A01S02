@@ -22,6 +22,7 @@ typedef struct user {
 
 typedef struct activity {
 	char name[DESCFORACTIV+1]; 
+	int len;
 } activity_t;
 
 typedef struct task {
@@ -52,14 +53,12 @@ void timeAdder(int duration);
 int newUser(char user[], int user_exist, user_t users_list[], int users_num);
 void moveTask(int id, char user[], char activity[]);
 void allTasksList(char activities[]);
-void addActivitie(char activity[], int activ_exist);
+int addActivity(char activity[], int activ_exist, int activs_num, activity_t activities_list[]);
 
-/* utilities */
-int count_task(int task);
 
 int main() {
 	/* '+1' means the maximum size plus '\0' */
-	int quit = 0, duration = 0, id=0, id_counter=0, user_exist=0, activ_exist=0, id_num=0, users_num=0;
+	int quit = 0, duration = 0, id=0, id_counter=0, user_exist=0, activ_exist=0, id_num=0, users_num=0, activs_num=3;
 	char command;
 	char newdescription[DESCFORTASK + 1];
 	int ids[MAXTASKS+2];
@@ -68,7 +67,11 @@ int main() {
 	
 	task_t tasks_list[MAXTASKS]; 
 	user_t users_list[MAXUSERS];
-/*	activity activities_list[MAXACTIVS]; */
+	activity_t activities_list[MAXACTIVS];
+
+	strcpy(activities_list[0].name, "TO DO");
+	strcpy(activities_list[1].name, "IN PROGRESS");
+	strcpy(activities_list[2].name, "DONE");
 
 	while ( !quit ) {
 		displayMenu();
@@ -117,7 +120,8 @@ int main() {
 			case 'a':
 				/* a [<atividade>]*/
 				activ_exist = readA(newactivity);
-				addActivitie(newactivity, activ_exist);
+				activs_num++ ? activ_exist : activs_num;
+				addActivity(newactivity, activ_exist, activs_num, activities_list);
 				break;
 			
 			case 'q':
@@ -279,31 +283,31 @@ int readM(char newuser[], char newactivity[]) {
 	int num=0, u=0, a=0, reading=0, a_found=0;	
 	int num_read=0;
 	int user_read=0;
-	int activitie_read=0;
+	int activity_read=0;
 	char c;
 	
 	while ((c=getchar()) != EOF && c != '\n') {		
 		/* espaco antes do numero */
-		if (c == ' ' && !num_read && !user_read && !activitie_read && !reading) {
+		if (c == ' ' && !num_read && !user_read && !activity_read && !reading) {
 			continue;
 		}
 		/* encontrei numero */
-		else if (c>='0' && c <= '9' && !num_read && !user_read && !activitie_read) {
+		else if (c>='0' && c <= '9' && !num_read && !user_read && !activity_read) {
 			reading = 1;
 			num = num * 10 + (c - '0');
 		}
 		/* a ler numero e encontro espaco */
-		else if (c == ' ' && reading && !num_read && !user_read && !activitie_read) {
+		else if (c == ' ' && reading && !num_read && !user_read && !activity_read) {
 			reading = 0;
 			num_read = 1;	
 		}
 		/* encontro user */
-		else if (c != ' ' && num_read && !user_read && u < USERNAME && !activitie_read) {
+		else if (c != ' ' && num_read && !user_read && u < USERNAME && !activity_read) {
 			reading = 1;
 			newuser[u++] = c;
 		}
 		/* a ler user e encontro espaco */
-		else if (c == ' ' && num_read && !activitie_read && !a_found) {
+		else if (c == ' ' && num_read && !activity_read && !a_found) {
 			reading = 0;
 			user_read = 1;
 		}
@@ -342,7 +346,7 @@ void readD(char newactivity[]) {
 
 int readA(char newactivity[]) {
 
-	int a=0,a_found=0, exist_activitie=0;
+	int a=0,a_found=0, exist_activity=0, i;
 	char c;
 	
 	while ((c=getchar()) != EOF && c != '\n') {	
@@ -353,19 +357,15 @@ int readA(char newactivity[]) {
 		}
 		/* encontro atividade */		
 		else if (a < DESCFORACTIV) {
-			if (c>= 'a' && c <= 'z') {
-				newactivity[a++] = (c - ('a' - 'A'));
-			}
-			else if ((c>= 'A' && c <= 'Z') || c == ' ' || c == '\t') {
-				newactivity[a++] = c;
-			}
-			exist_activitie=1;
+			newactivity[a++] = c;
+			exist_activity=1;
 			a_found = 1;
 		}		
 	}
 	newactivity[a] = '\0';
 
-	return exist_activitie ? 1 : 0;
+
+	return exist_activity ? 1 : 0;
 }
 
 /* execute-type functions */
@@ -401,20 +401,14 @@ int newTask(int duration, char description[], int id_num, task_t tasks_list[]) {
 	/* saida : task <id> */	
 	printf("task %d\n", tasks_list[id_num-1].id);
 
-/*	printf("duration : %d\n", tasks_list[id_num-1].duration);
-	printf("sentence: %s\n", tasks_list[id_num-1].description); */
-
 	return 0;
 }
 
 int tasksList(int ids[], int id_counter, task_t tasks_list[], int tasks_counter) {
-	int i, j, num;
+	int i, j=1, num;
 
 	if (id_counter==0) {
 		/* imprimir por ordem alfabetica */
-		for (i=0; i < tasks_counter; i++) {
-			if (strcmp())
-		}
 	}
 	else {
 		for (i=0; i < tasks_counter; i++) {
@@ -475,19 +469,48 @@ int newUser(char newuser[], int user_exist, user_t users_list[], int users_num) 
 }
 
 void moveTask(int id, char newuser[], char newactivity[]) {
-	printf("id :%d\nuser: %s\nactivitie: %s\n", id, newuser, newactivity);
+	printf("id :%d\nuser: %s\nactivity: %s\n", id, newuser, newactivity);
 }
 
 void allTasksList(char newactivity[]) {
 	printf("activity : %s", newactivity);
 }
 
-void addActivitie(char newactivity[], int activ_exist) {
+int addActivity(char newactivity[], int activ_exist, int activs_num, activity_t activities_list[]) {
+
+	int i;
+
+/*	for (i=0; i < activs_num-1; i++) {
+		if (strcmp(activities_list[i].name, newactivity) == 0) {
+			printf("duplicate activity\n");
+			return 0;
+		}
+	}
+
+	for (i=0; i < a; i++) {
+		if (newactivity[i] >= 'a' && newactivity[i] <= 'z') {
+			printf("invalid description\n");
+			return 0;
+		}
+	} */
+
+
+	if (activs_num >= 10) {
+		printf("too many activities\n");
+		return 0;
+	}
+
+/*	printf("activs num = %d\n", activs_num);
 	printf("activity : %s\n", newactivity);
-	printf("%s\n", activ_exist ? "activity exist" : "activity does not exist");
+	printf("%s\n", activ_exist ? "activity exist" : "activity does not exist"); */
+
+	if (activ_exist) {
+		for (i=0; newactivity[i] != '\0'; i++) {
+			activities_list[activs_num-1].name[i] = newactivity[i];
+		}
+		activities_list[activs_num-1].name[i] = '\0';
+	}
+	printf("activitie : %s\n", activities_list[activs_num-1].name);
+	return 0;
 }
 
-int count_task(int task) {
-	task++;
-	return task;
-}
