@@ -46,7 +46,7 @@ void readD(char activity[]);
 int readA(char activity[]);
 
 /* Execute functions */
-void newTask(int duration, char description[], int id_num, task_t tasks_list[]);
+int newTask(int duration, char description[], int id_num, task_t tasks_list[]);
 void tasksList(int ids[], int id_counter);
 void timeAdder(int duration);
 void newUser(char user[], int user_exist);
@@ -357,39 +357,41 @@ int readA(char newactivity[]) {
 	return exist_activitie ? 1 : 0;
 }
 
-/* Add Functions */
-
-
-
 /* execute-type functions */
 
-void newTask(int duration, char newdescription[], int id_num, task_t tasks_list[]) {
+int newTask(int duration, char description[], int id_num, task_t tasks_list[]) {
 
 	int i;
 
+	if (id_num == MAXTASKS + 1) {
+		printf("too many tasks\n");
+		return 0;
+	} 
+
+	for (i=0; i < id_num-1; i++) {
+		if (strcmp(tasks_list[i].description, description) == 0) {
+			printf("duplicate description\n");
+			return 0;
+		}
+	}
+
 	tasks_list[id_num-1].id = id_num;
 
-	for (i=0; newdescription[i] != '\0'; i++) {
-		tasks_list[id_num-1].description[i] = newdescription[i];
+	for (i=0; description[i] != '\0'; i++) {
+		tasks_list[id_num-1].description[i] = description[i];
 	}
 	tasks_list[id_num-1].description[i] = '\0';
 
 	tasks_list[id_num-1].duration = duration;
 	tasks_list[id_num-1].start_time = 0;
-
-	printf("duration : %d\n", tasks_list[id_num-1].duration);
-	printf("sentence: %s\n", tasks_list[id_num-1].description);
-	printf("id of the task: %d\n", tasks_list[id_num-1].id);
-
-
 	
+	/* saida : task <id> */	
+	printf("task %d\n", tasks_list[id_num-1].id);
 
-	/* Erros :
-		- too many tasks (a tarefa passar o id 10000)
-		- duplicate description (duas descricoes iguais) */
+/*	printf("duration : %d\n", tasks_list[id_num-1].duration);
+	printf("sentence: %s\n", tasks_list[id_num-1].description); */
 
-	/* saida : task <id> */
-
+	return 0;
 }
 
 void tasksList(int ids[], int id_counter) {
