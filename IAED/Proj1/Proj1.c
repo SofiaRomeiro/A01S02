@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-/* max value for an identifier = 10000 */
-#define IDENTIFIER 10000
-/* max username len =  */
+/* max number of tasks (id's max number [1, 10000]) = 10000 */
+#define MAXTASKS 10000
+/* max user len =  */
 #define USERNAME 20
 /* max users supported */
 #define MAXUSERS 50 
@@ -14,6 +15,24 @@
 /* max activities' description len = 20 */
 #define DESCFORACTIV 20
 
+/* Data Structures */
+typedef struct user {
+	char name[USERNAME+1];
+} user_t;
+
+typedef struct activity {
+	char name[DESCFORACTIV+1]; 
+} activity_t;
+
+typedef struct task {
+	int id;
+	char description[DESCFORTASK+1];
+	char username[USERNAME+1];
+	char activity_name[DESCFORACTIV+1]; 
+	int duration;
+	int start_time;
+} task_t;
+
 /* general functions */
 void displayMenu();
 
@@ -22,59 +41,31 @@ int readT(char description[]);
 int readL(int ids[]);
 int readN();
 int readU(char user[]);
-int readM(char user[], char activitie[]);
-void readD(char activitie[]);
-int readA(char activitie[]);
-
-/* type reader functions */
-void readSentence(char sentence[], int maxsize);
-void readListId(int list[], int maxsize);
-int readNum();
-
+int readM(char user[], char activity[]);
+void readD(char activity[]);
+int readA(char activity[]);
 
 /* Execute functions */
-void newTask(duration, description, id_num);
+void newTask(int duration, char description[], int id_num, task_t tasks_list[]);
 void tasksList(int ids[], int id_counter);
 void timeAdder(int duration);
 void newUser(char user[], int user_exist);
-void moveTask(int id, char user[], char activitie[]);
+void moveTask(int id, char user[], char activity[]);
 void allTasksList(char activities[]);
-void addActivitie(char activitie[], int activ_exist);
-
-
- /* Data Structures */
- typedef struct {
-	int counter;
-	char activitie_name[DESCFORACTIV]; 
- } activitie;
-
- typedef struct {
-	int counter;
-	char user[USERNAME];
- } username;
-
- typedef struct {
-	int id;
-	char description[DESCFORTASK];
-	username user[MAXUSERS];
-	activitie activities[MAXACTIVS];
-	int duration;
-	int start_time;
- } task;
-
-activitie maxactivities[MAXACTIVS];
-task maxtasks[IDENTIFIER];
+void addActivitie(char activity[], int activ_exist);
 
 int main() {
 	/* '+1' means the maximum size plus '\0' */
 	int quit = 0, duration = 0, id=0, id_counter=0, user_exist=0, activ_exist=0, id_num=0;
 	char command;
 	char newdescription[DESCFORTASK + 1];
-	int ids[IDENTIFIER+2];
+	int ids[MAXTASKS+2];
 	char newuser[USERNAME+1];
-	char newactivitie[DESCFORACTIV+1];
+	char newactivity[DESCFORACTIV+1];
 	
-
+	task_t tasks_list[MAXTASKS]; 
+/*	user users_list[MAXUSERS];
+	activity activities_list[MAXACTIVS]; */
 
 	while ( !quit ) {
 		displayMenu();
@@ -85,7 +76,7 @@ int main() {
 				/* t <duration> <description> */
 				duration = readT(newdescription);
 				id_num++;
-				newTask(duration, newdescription, id_num);
+				newTask(duration, newdescription, id_num, tasks_list); 
 				break;
 
 			case 'l':
@@ -109,20 +100,20 @@ int main() {
 
 			case 'm':
 				/* m <id> <utilizador> <atividade> */
-				id = readM(newuser, newactivitie);
-				moveTask(id, newuser, newactivitie);
+				id = readM(newuser, newactivity);
+				moveTask(id, newuser, newactivity);
 				break;
 
 			case 'd':
 				/* d <atividade> */
-				readD(newactivitie);
-				allTasksList(newactivitie);
+				readD(newactivity);
+				allTasksList(newactivity);
 				break;
 
 			case 'a':
 				/* a [<atividade>]*/
-				activ_exist = readA(newactivitie);
-				addActivitie(newactivitie, activ_exist);
+				activ_exist = readA(newactivity);
+				addActivitie(newactivity, activ_exist);
 				break;
 			
 			case 'q':
@@ -271,8 +262,8 @@ int readU(char newuser[]) {
 	return exist_user ? 1 : 0;
 }
 
-int readM(char newuser[], char newactivitie[]) {
-	/* m <id> <user> <activitie> */
+int readM(char newuser[], char newactivity[]) {
+	/* m <id> <user> <activity> */
 
 	int num=0, u=0, a=0, reading=0, a_found=0;	
 	int num_read=0;
@@ -307,18 +298,18 @@ int readM(char newuser[], char newactivitie[]) {
 		}
 		/* encontro atividade */		
 		else if (num_read && user_read && a < DESCFORACTIV) {
-			newactivitie[a++] = c;
+			newactivity[a++] = c;
 			reading = 1;
 			a_found = 1;
 		}		
 	}
 	newuser[u] = '\0';
-	newactivitie[a] = '\0';
+	newactivity[a] = '\0';
 
 	return num;
 }
 
-void readD(char newactivitie[]) {
+void readD(char newactivity[]) {
 
 	int a=0,a_found=0;
 	char c;
@@ -331,14 +322,14 @@ void readD(char newactivitie[]) {
 		}
 		/* encontro atividade */		
 		else if (a < DESCFORACTIV) {
-			newactivitie[a++] = c;
+			newactivity[a++] = c;
 			a_found = 1;
 		}		
 	}
-	newactivitie[a] = '\0';
+	newactivity[a] = '\0';
 }
 
-int readA(char newactivitie[]) {
+int readA(char newactivity[]) {
 
 	int a=0,a_found=0, exist_activitie=0;
 	char c;
@@ -352,27 +343,44 @@ int readA(char newactivitie[]) {
 		/* encontro atividade */		
 		else if (a < DESCFORACTIV) {
 			if (c>= 'a' && c <= 'z') {
-				newactivitie[a++] = (c - ('a' - 'A'));
+				newactivity[a++] = (c - ('a' - 'A'));
 			}
 			else if ((c>= 'A' && c <= 'Z') || c == ' ' || c == '\t') {
-				newactivitie[a++] = c;
+				newactivity[a++] = c;
 			}
 			exist_activitie=1;
 			a_found = 1;
 		}		
 	}
-	newactivitie[a] = '\0';
+	newactivity[a] = '\0';
 
 	return exist_activitie ? 1 : 0;
 }
 
+/* Add Functions */
+
+
+
 /* execute-type functions */
 
-void newTask(int duration,char newdescription[], int id_num) {
+void newTask(int duration, char newdescription[], int id_num, task_t tasks_list[]) {
 
-	printf("duration : %d\n", duration);
-	printf("sentence: %s\n", newdescription);
-	printf("id of the task: %d\n", id_num);
+	int i;
+
+	tasks_list[id_num-1].id = id_num;
+
+	for (i=0; newdescription[i] != '\0'; i++) {
+		tasks_list[id_num-1].description[i] = newdescription[i];
+	}
+	tasks_list[id_num-1].description[i] = '\0';
+
+	tasks_list[id_num-1].duration = duration;
+	tasks_list[id_num-1].start_time = 0;
+
+	printf("duration : %d\n", tasks_list[id_num-1].duration);
+	printf("sentence: %s\n", tasks_list[id_num-1].description);
+	printf("id of the task: %d\n", tasks_list[id_num-1].id);
+
 
 	
 
@@ -398,19 +406,19 @@ void timeAdder(int duration) {
 }
 
 void newUser(char newuser[], int user_exist) {
-	printf("username : %s\n", newuser);
+	printf("user : %s\n", newuser);
 	printf("%s\n", user_exist ? "user exist" : "user does not exist");
 }
 
-void moveTask(int id, char newuser[], char newactivitie[]) {
-	printf("id :%d\nuser: %s\nactivitie: %s\n", id, newuser, newactivitie);
+void moveTask(int id, char newuser[], char newactivity[]) {
+	printf("id :%d\nuser: %s\nactivitie: %s\n", id, newuser, newactivity);
 }
 
-void allTasksList(char newactivitie[]) {
-	printf("activitie : %s", newactivitie);
+void allTasksList(char newactivity[]) {
+	printf("activity : %s", newactivity);
 }
 
-void addActivitie(char newactivitie[], int activ_exist) {
-	printf("activitie : %s\n", newactivitie);
-	printf("%s\n", activ_exist ? "activitie exist" : "activitie does not exist");
+void addActivitie(char newactivity[], int activ_exist) {
+	printf("activity : %s\n", newactivity);
+	printf("%s\n", activ_exist ? "activity exist" : "activity does not exist");
 }

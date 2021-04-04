@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "exception": "c",
+        "new": "c",
+        "*.tcc": "c"
+    }
+}
