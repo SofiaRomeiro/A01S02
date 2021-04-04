@@ -393,6 +393,8 @@ int newTask(int duration, char description[], int id_num, task_t tasks_list[]) {
 	}
 	tasks_list[id_num-1].description[i] = '\0';
 
+	strcpy(tasks_list[id_num-1].activity_name, "TO DO");
+
 	tasks_list[id_num-1].duration = duration;
 	tasks_list[id_num-1].start_time = 0;
 	
@@ -410,6 +412,9 @@ int tasksList(int ids[], int id_counter, task_t tasks_list[], int tasks_counter)
 
 	if (id_counter==0) {
 		/* imprimir por ordem alfabetica */
+		for (i=0; i < tasks_counter; i++) {
+			if (strcmp())
+		}
 	}
 	else {
 		for (i=0; i < tasks_counter; i++) {
