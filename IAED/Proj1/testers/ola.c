@@ -26,11 +26,11 @@ int main() {
         switch(c) {
             case 'a':
                 res = adder(i, 'y');
-                printf("res a : %d", res);
+                printf("res a : %d\n", res);
                 break;
             case 'b':
                 res = adder(i,'n');
-                printf("res b : %d", res);
+                printf("res b : %d\n", res);
                 break;  
             case 'q':
                 quit = 1;

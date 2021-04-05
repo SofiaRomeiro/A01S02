@@ -249,7 +249,6 @@ int readN() {
 			reading = 0;
 			end = 1;
 		}
-		
 	}
 	return !failed ? num : -1;
 }
