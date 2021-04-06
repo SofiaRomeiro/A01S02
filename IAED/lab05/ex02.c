@@ -59,7 +59,7 @@ int main() {
 
     sum = sumComplex(a,b,sum);
 
-    printf("%d+%di", sum.real, sum.imag);
+    printf("%.2f+%.2fi", sum.real, sum.imag);
 
     return 0;
 }

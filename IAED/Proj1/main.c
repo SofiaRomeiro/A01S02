@@ -49,7 +49,7 @@ int readA(char activity[]);
 /* Execute functions */
 int newTask(int duration, char description[], int id_num, task_t tasks_list[]);
 int tasksList(int ids[], int id_counter, task_t tasks_list[], int tasks_counter);
-void timeAdder(int duration);
+int timeAdder(int duration, int time_now);
 int newUser(char user[], int user_exist, user_t users_list[], int users_num);
 void moveTask(int id, char user[], char activity[]);
 void allTasksList(char activities[]);
@@ -58,7 +58,7 @@ int addActivity(char activity[], int activ_exist, int activs_num, activity_t act
 
 int main() {
 	/* '+1' means the maximum size plus '\0' */
-	int quit = 0, duration = 0, id=0, id_counter=0, user_exist=0, activ_exist=0, id_num=0, users_num=0, activs_num=3;
+	int quit = 0, duration = 0, id=0, id_counter=0, user_exist=0, activ_exist=0, id_num=0, users_num=0, activs_num=3, time_now=0;
 	char command;
 	char newdescription[DESCFORTASK + 1];
 	int ids[MAXTASKS+2];
@@ -94,7 +94,9 @@ int main() {
 			case 'n':
 				/*  n <duração> */
 				duration = readN();
-				timeAdder(duration);
+				if (duration >= 0) { 
+					time_now = timeAdder(duration, time_now);
+				}
 				break;
 
 			case 'u':
@@ -226,28 +228,28 @@ int readN() {
 	int num = 0, reading = 0, end = 0, failed = 0;
 	char c;
 	while ((c = getchar()) != EOF && c != '\n') {
-		
-		/* caracteres inseridos nao validos */
-		if ((c > '0' && c < '9') && c != ' ' && c == '-') {
-			printf("Please insert a positive number\n");
-			failed = 1;
-		}
 
 		/* comeca a ler o numero */
-		else if (c >= '0' && c <= '9' && !end) {
+		 if (c >= '0' && c <= '9' && !end && !failed) {
 			num = num * 10 + (c - '0');
 			reading = 1;
 		}
 
 		/* ainda nao encontrou nenhum numero e nao esta a ler */
-		else if (c == ' ' && !reading && !end){
+		else if (c == ' ' && !reading && !end && !failed){
 			continue;
 		}
 
 		/* ja encontrou o numero e ja leu 1 numero */
-		else if (c == ' ') {
+		else if (c == ' ' && !failed) {
 			reading = 0;
 			end = 1;
+		}
+
+		/* caracteres inseridos nao validos */
+		else {
+			printf("invalid time\n");
+			failed = 1;
 		}
 	}
 	return !failed ? num : -1;
@@ -430,8 +432,20 @@ int tasksList(int ids[], int id_counter, task_t tasks_list[], int tasks_counter)
 	return 0;
 }
 
-void timeAdder(int duration) {
+int timeAdder(int duration, int time_now) {
 	printf("duration : %d\n", duration);
+
+	if (duration == 0) {
+		printf("%d\n", time_now);
+	}
+	else {
+		time_now += duration;
+		printf("%d\n", time_now);
+	}
+
+
+	return time_now;
+
 }
 
 int newUser(char newuser[], int user_exist, user_t users_list[], int users_num) {
