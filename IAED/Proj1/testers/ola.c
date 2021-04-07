@@ -2,46 +2,37 @@
 #include <stdio.h>
 
 
-int adder(int num, char op) {
-    if (op=='y') {
-        num++;
-        return num;
+void escreve(char a[], int command) {
+    int i;
+
+    if (command) {
+
+        for (i=0; i <10; i++) {
+            a[i] = 'a';
+        }
+        a[i] = '\0';
     }
-    else if (op=='n') {
-        return num;
+    else {
+        for (i=0; i <10; i++) {
+            a[i] = 'b';
+        }
+        a[i] = '\0';
     }
-    return 0;
 }
-
-
 
 int main() {
-    int i=0, res, quit = 0;
-    char c;
 
-    while (!quit) {
+    char a[10];
+    char b[10];
+    char c[10];
 
-        c = getchar();
+    escreve(a,1);
+    strcpy(b, a);
+    printf("%s\n", b);
 
-        switch(c) {
-            case 'a':
-                res = adder(i, 'y');
-                printf("res a : %d\n", res);
-                break;
-            case 'b':
-                res = adder(i,'n');
-                printf("res b : %d\n", res);
-                break;  
-            case 'q':
-                quit = 1;
-                break;          
-        }
-    }    
+    escreve(c, 0);
+    strcpy(b, c);
+    printf("%s\n", b);
 
     return 0;
 }
-
-
-
-
-
