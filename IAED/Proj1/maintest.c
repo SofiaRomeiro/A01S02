@@ -80,7 +80,7 @@ int main() {
 	strcpy(activities_list[2].name, "DONE");
 
 	while ( !quit ) {
-		displayMenu();
+	/*	displayMenu(); */
 		command = getchar();
 
 		switch (command) {
@@ -148,6 +148,7 @@ int main() {
 	return 0;
 }
 
+/*
 void displayMenu() {
 	printf("\nComando \t Acao\n");
 	printf("\n");	
@@ -160,7 +161,7 @@ void displayMenu() {
 	printf(" a \t Adiciona uma atividade ou lista todas as atividades\n");
 	printf(" q \t Termina o programa\n");
 	printf("\n");
-}
+} */
 
 /* Command Read Functions */
 

@@ -23,12 +23,12 @@ void pais(Pais p[], int max) {
 
     int maxpop, i, j, country;
 
-    maxpop = p[0].cidades[0].pop;
+    maxpop = p[0].cidadesl[0].populacao;
 
     for (i=0; i < max; i++) {
         for (j=0; j < p[i].cidades; j++) {
-            if (p[i].cidadesl[j].pop > maxpop) {
-                maxpop = p[i].cidadesl[j].pop;
+            if (p[i].cidadesl[j].populacao > maxpop) {
+                maxpop = p[i].cidadesl[j].populacao;
                 country = i;
             }
         }

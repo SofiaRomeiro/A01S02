@@ -1,38 +1,43 @@
 #include <string.h>
 #include <stdio.h>
 
+typedef struct frase {
+    char frase[20];
+} frase_t;
 
-void escreve(char a[], int command) {
-    int i;
-
-    if (command) {
-
-        for (i=0; i <10; i++) {
-            a[i] = 'a';
-        }
-        a[i] = '\0';
-    }
-    else {
-        for (i=0; i <10; i++) {
-            a[i] = 'b';
-        }
-        a[i] = '\0';
-    }
-}
 
 int main() {
 
-    char a[10];
-    char b[10];
-    char c[10];
+    frase_t frases[5];
+    char chr = 'a';
+    int i = 'a', j, k=0, len=0;
+    int ordem[5];
 
-    escreve(a,1);
-    strcpy(b, a);
-    printf("%s\n", b);
+    strcpy(frases[0].frase, "sou um bolo");
+    strcpy(frases[1].frase, "gosto de banana");
+    strcpy(frases[2].frase, "o vasco e lindo");
+    strcpy(frases[3].frase, "sou linda");
+    strcpy(frases[4].frase, "hoje choveu");  
 
-    escreve(c, 0);
-    strcpy(b, c);
-    printf("%s\n", b);
+    for (i=0; i<5; i++) {
+        if (strlen(frases[0].frase) > len) {
+            len = strlen(frases[0].frase);
+            printf("%d\n", len);
+        }
+    }
+
+    while (chr <= 'z') {
+        for (i=0; i < 5; i++) {
+            if ((frases[i].frase[0] == chr) || (frases[i].frase[0] == chr - ('a'-'A'))) {
+                ordem[k++] = i;
+                printf("%d\n", i);
+            }
+        }
+        chr = chr + 1;
+    }
+    
+
+    printf("%s\n%s\n%s\n%s\n%s\n", frases[ordem[0]].frase, frases[ordem[1]].frase, frases[ordem[2]].frase, frases[ordem[3]].frase, frases[ordem[4]].frase);
 
     return 0;
 }

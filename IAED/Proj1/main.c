@@ -144,6 +144,7 @@ int main() {
 	return 0;
 }
 
+/*
 void displayMenu() {
 	printf("\nComando \t Acao\n");
 	printf("\n");	
@@ -156,7 +157,7 @@ void displayMenu() {
 	printf(" a \t Adiciona uma atividade ou lista todas as atividades\n");
 	printf(" q \t Termina o programa\n");
 	printf("\n");
-}
+} */
 
 /* Command Read Functions */
 
@@ -223,9 +224,9 @@ int readL(int ids[]) {
 	}
 		
 
-	for (i=0; i < idpos; i++){
+/*	for (i=0; i < idpos; i++){
 		printf("id : %d\n", ids[i]);
-	}
+	} */
 
 	return  exist_id ? idpos : 0;
 }
@@ -439,7 +440,7 @@ int tasksList(int ids[], int id_counter, task_t tasks_list[], int tasks_counter)
 }
 
 int timeAdder(int duration, int time_now) {
-	printf("duration : %d\n", duration);
+	/*printf("duration : %d\n", duration);*/
 
 	if (duration == 0) {
 		printf("%d\n", time_now);
@@ -473,7 +474,7 @@ int newUser(char newuser[], int user_exist, user_t users_list[], int users_num) 
 
 	if (!user_exist) {
 		for (i=0; i < users_num-1; i++) {
-			printf("user %d : %s\n", (i+1), users_list[i].username);
+			printf("%s\n", users_list[i].username);
 		}
 	}
 	else {
@@ -481,14 +482,14 @@ int newUser(char newuser[], int user_exist, user_t users_list[], int users_num) 
 			users_list[users_num-1].username[i] = newuser[i];	
 		}
 		users_list[users_num-1].username[i] = '\0';
-		printf("created user number %d with username '%s'", users_num, users_list[users_num-1].username);
+	/*	printf("created user number %d with username '%s'", users_num, users_list[users_num-1].username); */
 	}
 
 	return 0;
 }
 
 int moveTask(int id, char newuser[], char newactivity[], task_t tasks_list[]) {
-	printf("id :%d\nuser: %s\nactivity: %s\n", id, newuser, newactivity);
+	/*printf("id :%d\nuser: %s\nactivity: %s\n", id, newuser, newactivity); */
 
 	strcpy(tasks_list[id-1].username, newuser);
 	if (strcmp(newactivity, "TO DO") && !(strcmp(tasks_list[id-1].activity_name, "TO DO"))) {
