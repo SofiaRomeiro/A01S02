@@ -516,7 +516,7 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 	strcpy(tasks_list[id-1].activity_name, newactivity);
 
     if (!(strcmp(newactivity, "DONE"))) {
-        printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), (timeAdder(0) - tasks_list[id-1].start_time) - tasks_list[id-1].duration);
+        printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), (time_now - tasks_list[id-1].start_time) - tasks_list[id-1].duration);
     }
 
 	return 0;
