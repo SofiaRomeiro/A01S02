@@ -258,7 +258,7 @@ int readN() {
 		}
 
 		/* caracteres inseridos nao validos */
-		else {
+		else if (!failed){
 			printf("invalid time\n");
 			failed = 1;
 		}
@@ -518,12 +518,11 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 	}
 
 	if (!(strcmp(tasks_list[id-1].activity_name, "TO DO")) && (strcmp(newactivity, "TO DO"))) {
-		tasks_list[id-1].start_time = time_now;
-		
+		tasks_list[id-1].start_time = time_now;		
 	}	
 
-	strcpy(tasks_list[id].username, newuser);
-	strcpy(tasks_list[id].activity_name, newactivity);
+	strcpy(tasks_list[id-1].username, newuser);
+	strcpy(tasks_list[id-1].activity_name, newactivity);
 
     if (!(strcmp(newactivity, "DONE"))) {
         printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), (time_now - tasks_list[id-1].start_time - tasks_list[id-1].duration));
@@ -550,10 +549,7 @@ int allTasksList(char newactivity[]) {
 		return 0;
 	}
 
-
-	/* ordenar por ordem de inicio de atividade */
-
-/*	for (i=0; i < count_tasks; i++) {
+	for (i=0; i < count_tasks; i++) {
 		if (!strcmp(newactivity, tasks_list[i].activity_name)) {
 			activitie_tasks[n++] = i;
 		}
@@ -561,13 +557,12 @@ int allTasksList(char newactivity[]) {
 	tasks_asked = n;
 
 	numberOrder(correct_order, activitie_tasks, tasks_asked);
-	 se tiver 2 inicios iguais, ordenar pelo alfabeto -> descricao 
+	/* se tiver 2 inicios iguais, ordenar pelo alfabeto -> descricao */
 
-	for (i=0; i < tasks_asked; i++) {
-		
+	for (i=0; i < tasks_asked; i++) {		
 		printf("%d %d %s\n", tasks_list[correct_order[i]].id, tasks_list[correct_order[i]].start_time, tasks_list[correct_order[i]].description);
 	} 
-	return 0; */
+	return 0;
 }
 
 int addActivity(char newactivity[], int activ_exist) {
