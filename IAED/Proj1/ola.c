@@ -665,18 +665,18 @@ int lessN(task_t sort[], int v, int a_j, int x, int y) {
 
 int partitionN(task_t sort[], int l, int r) {
 
-	int i = l-1; 
+	int i = l+1; 
 	int j = r; 
 	int v = sort[r].start_time; /* pivo */
-	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */		
-		while (lessN(sort, sort[++i].start_time, v, i, r)); /* procura elemento maior que o pivot -> */		
-		while (lessN(sort, v, sort[--j].start_time, r, j)) /* procura elemento menor que o pivot <- */
+	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */	
+		while (lessN(sort, sort[i].start_time, v, i, r)) ++i; /* procura elemento maior que o pivot -> */		
+		while (lessN(sort, v, sort[j].start_time, r, j)) /* procura elemento menor que o pivot <- */
 			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
 				break;
+		--j;
 		if (i < j)
 			exchN(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
 	}
-	
 	exchN(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
 
 	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
@@ -727,14 +727,15 @@ int lessL(task_t sort[], int v, int a_j, int x, int y) {
 }
 
 int partitionL(task_t sort[], int l, int r) {
-	int i = l-1; 
+	int i = l+1; 
 	int j = r; 
 	int v = sort[r].description[0]; /* pivo -> primeira letra da ultima frase */
-	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */		
-		while (lessL(sort, sort[++i].description[0], v, i, r)); /* procura elemento maior que o pivot -> */		
-		while (lessL(sort, v, sort[--j].description[0], r, j)) /* procura elemento menor que o pivot <- */
+	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */				
+		while (lessL(sort, sort[i].description[0], v, i, r)) ++i; /* procura elemento maior que o pivot -> */				
+		while (lessL(sort, v, sort[j].description[0], r, j)) /* procura elemento menor que o pivot <- */
 			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
 				break;
+		--j;
 		if (i < j)
 			exchL(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
 	}	
