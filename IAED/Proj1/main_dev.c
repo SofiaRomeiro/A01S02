@@ -68,15 +68,15 @@ int allTasksList(char newactivity[]);
 int addActivity(char activity[], int activ_exist);
 
 /* Auxiliar functions */
-void alfabeticOrder(int correct_order[]);
-void desempata(int temporary_i[], int contador_iguais, int correct_order[]);
-int less(int v, int j_time, int i, int j);
-int lessChr(char v, char j_time, int i, int j);
-void insertion(task_t activitie_tasks[], int l, int r);
-void insertionChr(task_t activitie_tasks[], int l, int r);
+void exchL(task_t sort[], int i, int j);
+int lessL(task_t sort[], int v, int a_j, int x, int y);
+int partitionL(task_t sort[], int l, int r);
+void quicksortL(task_t sort[], int l, int r);
 
-/*void NumberSort(int a[], int l, int r); */
-/* void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked); */
+void exchN(task_t sort[], int i, int j);
+int lessN(task_t sort[], int v, int a_j, int x, int y);
+int partitionN(task_t sort[], int l, int r);
+void quicksortN(task_t sort[], int l, int r);
 
 
 int main() {
@@ -95,6 +95,7 @@ int main() {
 	strcpy(activities_list[1].name, "IN PROGRESS");
 	strcpy(activities_list[2].name, "DONE");
 
+	
 	while ( !quit ) {
 	/*	displayMenu(); */
 		command = getchar();
@@ -433,24 +434,27 @@ int newTask(int duration, char description[]) {
 }
 
 int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
-	int i, j, index=0;
+	int i, j;
+	task_t sort[MAXTASKS];
 
 	if (ids_lfunc_counter==0) {
-
-		task_t correct_order[MAXTASKS];
-
-		for (i=0; i < count_tasks; i++) {
-			correct_order[i] = tasks_list[i];
-			index++;
-		} 
-
-		insertionChr(correct_order, 0, index);
+	
+	/* interessa me um array com id's das tarefas ordenados */
 
 		for (i=0; i < count_tasks; i++) {
-			printf("%d %s #%d %s\n",correct_order[i].id, correct_order[i].activity_name, correct_order[i].duration, correct_order[i].description);
+			sort[i] = tasks_list[i];
+		}			
+
+		quicksortL(sort, 0, count_tasks-1);
+
+		for (i=0; i < count_tasks; i++) {
+			printf("%d %s #%d %s\n",sort[i].id, sort[i].activity_name, sort[i].duration, sort[i].description);
 		}
-	} 
+	
+	}
 
+	/* ------------------------------------------------------ */
+	/* se houver ids inseridos */
 
 	/*ids_lfunc_counter, ids_lfunc*/	
 
@@ -461,9 +465,7 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 				return 0;
 			}	
 		}
-	}
-
-	/* se houver ids inseridos */
+	}	
 
 	for (i=0; i < ids_lfunc_counter; i++) {
 		for (j=0; j < count_tasks; j++) {
@@ -472,8 +474,7 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 			}
 			
 		}
-	}
-	
+	}	
 	return 0;
 }
 
@@ -548,8 +549,10 @@ int moveTask(int id, char newuser[], char newactivity[]) {
     	return 0;
 	}
 
-	if (!(strcmp(tasks_list[id-1].activity_name, "TO DO")) && (strcmp(newactivity, "TO DO"))) {
-		tasks_list[id-1].start_time = time_now;	
+	if ((strcmp(newactivity, "TO DO"))) {
+		if (!(strcmp(tasks_list[id-1].activity_name, "TO DO"))) {
+			tasks_list[id-1].start_time = time_now;	
+		}
 		strcpy(tasks_list[id-1].activity_name, newactivity);
 		strcpy(tasks_list[id-1].username, newuser);
 	}	
@@ -563,7 +566,7 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 
 int allTasksList(char newactivity[]) {
 	int i, valid_acivity=0;
-	task_t activitie_tasks[MAXTASKS];
+	task_t sort_activitie_tasks[MAXTASKS];
 	int tasks_asked=0;
 	int n=0;
 
@@ -578,18 +581,20 @@ int allTasksList(char newactivity[]) {
 		return 0;
 	}
 
+
 	for (i=0; i < count_tasks; i++) {
 		if (!strcmp(newactivity, tasks_list[i].activity_name)) {
-			activitie_tasks[n++] = tasks_list[i];
+			sort_activitie_tasks[n++] = tasks_list[i];			
 			tasks_asked++;
 		}
-	}
+	}	
 
-	insertion(activitie_tasks, 0, tasks_asked);
+	quicksortN(sort_activitie_tasks, 0, tasks_asked-1);	
 
 	for (i=0; i < tasks_asked; i++) {
-		printf("%d %d %s\n", activitie_tasks[i].id, activitie_tasks[i].start_time, activitie_tasks[i].description);
+		printf("%d %d %s\n", sort_activitie_tasks[i].id, sort_activitie_tasks[i].start_time, sort_activitie_tasks[i].description);
 	} 
+	
 	return 0;
 }
 
@@ -620,186 +625,131 @@ int addActivity(char newactivity[], int activ_exist) {
 		strcpy(activities_list[count_activities-1].name, newactivity);
 	}
 
-    for (i=0; i < count_activities; i++) {
-	    printf("%s\n", activities_list[i].name);
-    }
+	else {
+		for (i=0; i < count_activities; i++) {
+			printf("%s\n", activities_list[i].name);
+		}
+	}
 
 	return 0;
 }
 
-void alfabeticOrder(int correct_order[]) {
-	char chr = 'a';
-    int i=0, n=0;
-    int temporary_i[MAXTASKS];
-    int order[MAXTASKS]; 
 
-    while (chr <= 'z') {		
-
-        int contador_iguais=0;       
-
-        for (i=0; i < count_tasks; i++) {			
-            if (tasks_list[i].description[0] == chr) {
-                temporary_i[contador_iguais++] = i;       
-            }
-        }  
-
-        if (contador_iguais==1) {
-            correct_order[n++] = temporary_i[0];        
-        }
-        
-        else if (contador_iguais>1) {            
-            desempata( temporary_i, contador_iguais, order);  
-            for (i=0; i < contador_iguais; i++) {
-                correct_order[n++] = order[i];
-
-            }  
-        }
-
-    chr = chr + 1; 
-	}
+/* ************************************************************ 
+						sort D
+   ************************************************************ */
+void exchN(task_t sort[], int i, int j) {
+	task_t temp;
+	temp = sort[i];
+	sort[i] = sort[j];
+	sort[j] = temp;
 }
 
-void desempata(int temporary_i[], int contador_iguais, int correct_order[]) {
 
-	/* algoritmo nao pronto !!!!!!!!!!!!! */
+int lessN(task_t sort[], int v, int a_j, int x, int y) {
+
 	int res;
 
-	if (contador_iguais <1) {
-	}
-
-    res = strcmp(tasks_list[temporary_i[1]].description, tasks_list[temporary_i[1]].description);   
-    
-    if (res<0) {
-        correct_order[0] = temporary_i[1];
-        correct_order[1] = temporary_i[0];
-    }
-    else {
-        correct_order[0] = temporary_i[0];
-        correct_order[1] = temporary_i[1];
-    }
-}
-
-void insertion(task_t activitie_tasks[], int l, int r) {
-	int i,j;
-
-	for (i = l+1; i <= r; i++) {
-		int v = activitie_tasks[i].start_time;
-		j = i-1;
-			while ( j>=l && less(v, activitie_tasks[j].start_time, i, j)) {
-				activitie_tasks[j+1] = activitie_tasks[j];
-				j--;
-			}
-		activitie_tasks[j+1] = activitie_tasks[i];
-	}
-}
-
-
-int less(int v, int j_time, int i, int j) {
-	int res;
-
-	if (v < j_time) {
+	if (v < a_j) {
 		return 1;
-	}
-
-	else if (v == j_time) {
-		res = strcmp(tasks_list[i].description, tasks_list[j].description);
+	}	
+	else if( v == a_j) {
+		res = strcmp(sort[x].description, sort[y].description);
 		if (res < 0) {
 			return 1;
 		}
-		else {
-			return 0;
-		}
 	}
-
 	return 0;
 }
 
 
-void insertionChr(task_t correct_order[], int l, int r) {
-	int i,j;
+int partitionN(task_t sort[], int l, int r) {
 
-	for (i = l+1; i <= r; i++) {
-		char v = correct_order[i].description[0];
-		j = i-1;
-			while ( j>=l && lessChr(v, correct_order[j].description[0], i, j)) {
-				correct_order[j+1] = correct_order[j];
-				j--;
-			}
-		correct_order[j+1] = correct_order[i];
+	int i = l-1; 
+	int j = r; 
+	int v = sort[r].start_time; /* pivo */
+	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */		
+		while (lessN(sort, sort[++i].start_time, v, i, r)); /* procura elemento maior que o pivot -> */		
+		while (lessN(sort, v, sort[--j].start_time, r, j)) /* procura elemento menor que o pivot <- */
+			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
+				break;
+		if (i < j)
+			exchN(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
 	}
+	
+	exchN(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
+
+	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
+}
+
+void quicksortN(task_t sort[], int l, int r) {
+	int i;
+
+	if (r <= l)
+		return;
+
+	i = partitionN(sort, l, r);
+
+	quicksortN(sort, l, i-1);
+	quicksortN(sort, i+1, r);
+	
 }
 
 
-int lessChr(char v, char j_time, int i, int j) {
+
+
+/* ************************************************************ 
+						sort L
+   ************************************************************ */
+
+void exchL(task_t sort[], int i, int j) {
+	task_t temp;
+
+	temp = sort[i];
+	sort[i] = sort[j];
+	sort[j] = temp;
+
+}
+
+int lessL(task_t sort[], int v, int a_j, int x, int y) {
 	int res;
 
-	if (v < j_time) {
+	if (v < a_j) {
 		return 1;
 	}
-
-	else if (v == j_time) {
-		res = strcmp(tasks_list[i].description, tasks_list[j].description);
+	else if (v == a_j) {
+		res = strcmp(sort[x].description, sort[y].description);
 		if (res < 0) {
 			return 1;
 		}
-		else {
-			return 0;
-		}
-	}
-
+	}	 
 	return 0;
 }
 
+int partitionL(task_t sort[], int l, int r) {
+	int i = l-1; 
+	int j = r; 
+	int v = sort[r].description[0]; /* pivo -> primeira letra da ultima frase */
+	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */		
+		while (lessL(sort, sort[++i].description[0], v, i, r)); /* procura elemento maior que o pivot -> */		
+		while (lessL(sort, v, sort[--j].description[0], r, j)) /* procura elemento menor que o pivot <- */
+			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
+				break;
+		if (i < j)
+			exchL(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+	}	
+	exchL(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
+	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
+}
 
+void quicksortL(task_t sort[], int l, int r) {
 
+	int i;
+	if (r <= l)
+		return;
+	i = partitionL(sort, l, r);
 
-
-
-/*
-void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked) {
-    int i=0, j=0, n=0;
-    int temporary_i[tasks_asked];
-    int order[tasks_asked];
-    int iguais[tasks_asked]; 
-	int max_time = time_now; 
-	int min_time = tasks_list[activitie_tasks[0]].start_time;
-	int index;
-
-
-
-	for (i=0; i < tasks_asked; i++) {
-		index = activitie_tasks[i];
-		if (tasks_list[index].start_time < min_time) {
-			min_time = tasks_list[index].start_time;
-		}
-	}
-
-	
-	
-    while (j < tasks_asked) {		
-
-        int contador_iguais=0; 			      
-
-        for (i=0; i < tasks_asked; i++) {			
-            if (tasks_list[activitie_tasks[i]].start_time < max_time) {
-				max_time = tasks_list[activitie_tasks[i]].start_time;
-                temporary_i[contador_iguais++] = i;       
-            }
-        }  
-
-        if (contador_iguais==1) {
-            correct_order[n++] = temporary_i[0];        
-        }
-        
-        else if (contador_iguais>1) {            
-            alfabeticOrder(order);  
-            for (i=0; i < contador_iguais; i++) {
-                correct_order[n++] = order[i];
-            }  
-        }
-
-    j++; 
-	}
-} */
-
+	quicksortL(sort, l, i-1);
+	quicksortL(sort, i+1, r);
+}
 
