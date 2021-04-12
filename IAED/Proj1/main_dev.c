@@ -70,7 +70,13 @@ int addActivity(char activity[], int activ_exist);
 /* Auxiliar functions */
 void alfabeticOrder(int correct_order[]);
 void desempata(int temporary_i[], int contador_iguais, int correct_order[]);
-void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked);
+int less(int v, int j_time, int i, int j);
+int lessChr(char v, char j_time, int i, int j);
+void insertion(task_t activitie_tasks[], int l, int r);
+void insertionChr(task_t activitie_tasks[], int l, int r);
+
+/*void NumberSort(int a[], int l, int r); */
+/* void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked); */
 
 
 int main() {
@@ -244,13 +250,14 @@ int readL(int ids_lfunc[]) {
 }
 
 int readN() {
-	int num = 0, reading = 0, end = 0, failed = 0;
+	int time = 0, reading = 0, end = 0, failed = 0;
 	char c;
+
 	while ((c = getchar()) != EOF && c != '\n') {
 
 		/* comeca a ler o numero */
-		 if (c >= '0' && c <= '9' && !end && !failed) {
-			num = num * 10 + (c - '0');
+		if (c >= '0' && c <= '9' && !end && !failed) {
+			time = time * 10 + (c - '0');
 			reading = 1;
 		}
 
@@ -271,7 +278,8 @@ int readN() {
 			failed = 1;
 		}
 	}
-	return !failed ? num : -1;
+	/* if doesn't read any time, returns -1, else returns the time to add*/
+	return !failed ? time : -1;
 }
 
 int readU(char newuser[]) {
@@ -300,39 +308,39 @@ int readU(char newuser[]) {
 int readM(char newuser[], char newactivity[]) {
 	/* m <id> <user> <activity> */
 
-	int num=0, u=0, a=0, reading=0, a_found=0;	
-	int num_read=0;
+	int id=0, u=0, a=0, reading=0, a_found=0;	
+	int id_read=0;
 	int user_read=0;
 	int activity_read=0;
 	char c;
 	
 	while ((c=getchar()) != EOF && c != '\n') {		
 		/* espaco antes do numero */
-		if (c == ' ' && !num_read && !user_read && !activity_read && !reading) {
+		if (c == ' ' && !id_read && !user_read && !activity_read && !reading) {
 			continue;
 		}
 		/* encontrei numero */
-		else if (c>='0' && c <= '9' && !num_read && !user_read && !activity_read) {
+		else if (c>='0' && c <= '9' && !id_read && !user_read && !activity_read) {
 			reading = 1;
-			num = num * 10 + (c - '0');
+			id = id * 10 + (c - '0');
 		}
 		/* a ler numero e encontro espaco */
-		else if (c == ' ' && reading && !num_read && !user_read && !activity_read) {
+		else if (c == ' ' && reading && !id_read && !user_read && !activity_read) {
 			reading = 0;
-			num_read = 1;	
+			id_read = 1;	
 		}
 		/* encontro user */
-		else if (c != ' ' && num_read && !user_read && u < USERNAME && !activity_read) {
+		else if (c != ' ' && id_read && !user_read && u < USERNAME && !activity_read) {
 			reading = 1;
 			newuser[u++] = c;
 		}
 		/* a ler user e encontro espaco */
-		else if (c == ' ' && num_read && !activity_read && !a_found) {
+		else if (c == ' ' && id_read && !activity_read && !a_found) {
 			reading = 0;
 			user_read = 1;
 		}
 		/* encontro atividade */		
-		else if (num_read && user_read && a < DESCFORACTIV) {
+		else if (id_read && user_read && a < DESCFORACTIV) {
 			newactivity[a++] = c;
 			reading = 1;
 			a_found = 1;
@@ -341,7 +349,7 @@ int readM(char newuser[], char newactivity[]) {
 	newuser[u] = '\0';
 	newactivity[a] = '\0';
 
-	return num;
+	return id;
 }
 
 void readD(char newactivity[]) {
@@ -425,36 +433,47 @@ int newTask(int duration, char description[]) {
 }
 
 int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
-	int i, j, index;
-
-	/*ids_lfunc_counter, ids_lfunc*/
+	int i, j, index=0;
 
 	if (ids_lfunc_counter==0) {
 
-		int correct_order[MAXTASKS];
-
-		alfabeticOrder(correct_order);		
+		task_t correct_order[MAXTASKS];
 
 		for (i=0; i < count_tasks; i++) {
-			index = correct_order[i];
-			printf("%d %s #%d %s\n",tasks_list[index].id, tasks_list[index].activity_name, tasks_list[index].duration, tasks_list[index].description);
+			correct_order[i] = tasks_list[i];
+			index++;
+		} 
+
+		insertionChr(correct_order, 0, index);
+
+		for (i=0; i < count_tasks; i++) {
+			printf("%d %s #%d %s\n",correct_order[i].id, correct_order[i].activity_name, correct_order[i].duration, correct_order[i].description);
+		}
+	} 
+
+
+	/*ids_lfunc_counter, ids_lfunc*/	
+
+	for (i=0; i < ids_lfunc_counter; i++) {
+		for (j=0; j < count_tasks; j++) {
+			if (ids_lfunc[i] > count_tasks){
+				printf("%d: no such task\n", ids_lfunc[i]);
+				return 0;
+			}	
 		}
 	}
 
-	else {
+	/* se houver ids inseridos */
 
-		for (i=0; i < ids_lfunc_counter; i++) {
-			for (j=0; j < count_tasks; j++) {
-				if (ids_lfunc[i] == tasks_list[j].id) {
-					printf("%d %s #%d %s\n",tasks_list[i].id, tasks_list[j].activity_name, tasks_list[j].duration, tasks_list[j].description);
-				}
-				else if (ids_lfunc[i] > count_tasks){
-					printf("%d: no such task", ids_lfunc[i]);
-					return 0;
-				}
+	for (i=0; i < ids_lfunc_counter; i++) {
+		for (j=0; j < count_tasks; j++) {
+			if (ids_lfunc[i] == tasks_list[j].id) {
+				printf("%d %s #%d %s\n",tasks_list[i].id, tasks_list[j].activity_name, tasks_list[j].duration, tasks_list[j].description);
 			}
+			
 		}
 	}
+	
 	return 0;
 }
 
@@ -464,7 +483,7 @@ void timeAdder(int duration) {
 		printf("%d\n", time_now);
 	}
 	else {
-		time_now = time_now + duration;
+		time_now += duration;
 		printf("%d\n", time_now);
 	}
 }
@@ -475,7 +494,7 @@ int newUser(char newuser[], int user_exist) {
 
 	/* Errors */
 	for (i=0; i < (count_users-1); i++) {
-		if ((strcmp(newuser, users_list[i].username))==0) {
+		if (!(strcmp(newuser, users_list[i].username))) {
 			printf("user already exists\n");
 			return 0;
 		}
@@ -500,14 +519,14 @@ int newUser(char newuser[], int user_exist) {
 
 int moveTask(int id, char newuser[], char newactivity[]) {	
 
-    int i, valid_activitie=count_activities;	
+    int i, valid_activitie=0;	
 
     if (id > count_tasks) {
         printf("no such task\n");
         return 0;
     }
 	
-	if (!(strcmp(newactivity, "TO DO")) && (strcmp(tasks_list[id-1].activity_name, "TO DO"))) {
+	if (!(strcmp(newactivity, "TO DO"))) {
 		printf("task already started\n");
 		return 0;
 	}
@@ -520,8 +539,8 @@ int moveTask(int id, char newuser[], char newactivity[]) {
     }
 
     for (i=0; i < count_activities; i++) {
-        if (strcmp(newactivity, activities_list[i].name)) {
-			valid_activitie--;        
+        if (!(strcmp(newactivity, activities_list[i].name))) {
+			valid_activitie = 1;        
         }
     }
 	if (!valid_activitie) {
@@ -530,29 +549,27 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 	}
 
 	if (!(strcmp(tasks_list[id-1].activity_name, "TO DO")) && (strcmp(newactivity, "TO DO"))) {
-		tasks_list[id-1].start_time = time_now;		
+		tasks_list[id-1].start_time = time_now;	
+		strcpy(tasks_list[id-1].activity_name, newactivity);
+		strcpy(tasks_list[id-1].username, newuser);
 	}	
 
-	strcpy(tasks_list[id-1].username, newuser);
-	strcpy(tasks_list[id-1].activity_name, newactivity);
-
     if (!(strcmp(newactivity, "DONE"))) {
-        printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), (time_now - tasks_list[id-1].start_time - tasks_list[id-1].duration));
+        printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), ((time_now - tasks_list[id-1].start_time) - tasks_list[id-1].duration));
     }
 
 	return 0;
 }
 
 int allTasksList(char newactivity[]) {
-	int i, valid_acivity=count_activities;
-	int correct_order[MAXTASKS];
-	int activitie_tasks[MAXTASKS];
+	int i, valid_acivity=0;
+	task_t activitie_tasks[MAXTASKS];
 	int tasks_asked=0;
 	int n=0;
 
 	for (i=0; i < count_activities; i++) {
-		if (strcmp(newactivity, activities_list[i].name)) {
-			valid_acivity--;
+		if (!(strcmp(newactivity, activities_list[i].name))) {
+			valid_acivity = 1;
 		}
 	}
 
@@ -563,16 +580,15 @@ int allTasksList(char newactivity[]) {
 
 	for (i=0; i < count_tasks; i++) {
 		if (!strcmp(newactivity, tasks_list[i].activity_name)) {
-			activitie_tasks[n++] = i;
+			activitie_tasks[n++] = tasks_list[i];
+			tasks_asked++;
 		}
 	}
-	tasks_asked = n;
 
-	numberOrder(correct_order, activitie_tasks, tasks_asked);
-	/* se tiver 2 inicios iguais, ordenar pelo alfabeto -> descricao */
+	insertion(activitie_tasks, 0, tasks_asked);
 
-	for (i=0; i < tasks_asked; i++) {		
-		printf("%d %d %s\n", tasks_list[correct_order[i]].id, tasks_list[correct_order[i]].start_time, tasks_list[correct_order[i]].description);
+	for (i=0; i < tasks_asked; i++) {
+		printf("%d %d %s\n", activitie_tasks[i].id, activitie_tasks[i].start_time, activitie_tasks[i].description);
 	} 
 	return 0;
 }
@@ -646,11 +662,11 @@ void alfabeticOrder(int correct_order[]) {
 void desempata(int temporary_i[], int contador_iguais, int correct_order[]) {
 
 	/* algoritmo nao pronto !!!!!!!!!!!!! */
+	int res;
 
 	if (contador_iguais <1) {
 	}
 
-    int res;
     res = strcmp(tasks_list[temporary_i[1]].description, tasks_list[temporary_i[1]].description);   
     
     if (res<0) {
@@ -663,20 +679,110 @@ void desempata(int temporary_i[], int contador_iguais, int correct_order[]) {
     }
 }
 
+void insertion(task_t activitie_tasks[], int l, int r) {
+	int i,j;
+
+	for (i = l+1; i <= r; i++) {
+		int v = activitie_tasks[i].start_time;
+		j = i-1;
+			while ( j>=l && less(v, activitie_tasks[j].start_time, i, j)) {
+				activitie_tasks[j+1] = activitie_tasks[j];
+				j--;
+			}
+		activitie_tasks[j+1] = activitie_tasks[i];
+	}
+}
+
+
+int less(int v, int j_time, int i, int j) {
+	int res;
+
+	if (v < j_time) {
+		return 1;
+	}
+
+	else if (v == j_time) {
+		res = strcmp(tasks_list[i].description, tasks_list[j].description);
+		if (res < 0) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+
+void insertionChr(task_t correct_order[], int l, int r) {
+	int i,j;
+
+	for (i = l+1; i <= r; i++) {
+		char v = correct_order[i].description[0];
+		j = i-1;
+			while ( j>=l && lessChr(v, correct_order[j].description[0], i, j)) {
+				correct_order[j+1] = correct_order[j];
+				j--;
+			}
+		correct_order[j+1] = correct_order[i];
+	}
+}
+
+
+int lessChr(char v, char j_time, int i, int j) {
+	int res;
+
+	if (v < j_time) {
+		return 1;
+	}
+
+	else if (v == j_time) {
+		res = strcmp(tasks_list[i].description, tasks_list[j].description);
+		if (res < 0) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+/*
 void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked) {
     int i=0, j=0, n=0;
     int temporary_i[tasks_asked];
     int order[tasks_asked];
-    int iguais[tasks_asked];  
+    int iguais[tasks_asked]; 
+	int max_time = time_now; 
+	int min_time = tasks_list[activitie_tasks[0]].start_time;
+	int index;
+
+
+
+	for (i=0; i < tasks_asked; i++) {
+		index = activitie_tasks[i];
+		if (tasks_list[index].start_time < min_time) {
+			min_time = tasks_list[index].start_time;
+		}
+	}
+
+	
 	
     while (j < tasks_asked) {		
 
-        int contador_iguais=0; 
-		int start_time = time_now;		      
+        int contador_iguais=0; 			      
 
-        for (i=0; i < tasks_asked-1; i++) {			
-            if (tasks_list[activitie_tasks[i]].start_time < start_time) {
-				start_time = tasks_list[activitie_tasks[i]].start_time;
+        for (i=0; i < tasks_asked; i++) {			
+            if (tasks_list[activitie_tasks[i]].start_time < max_time) {
+				max_time = tasks_list[activitie_tasks[i]].start_time;
                 temporary_i[contador_iguais++] = i;       
             }
         }  
@@ -694,5 +800,6 @@ void numberOrder(int correct_order[], int activitie_tasks[], int tasks_asked) {
 
     j++; 
 	}
-}
+} */
+
 
