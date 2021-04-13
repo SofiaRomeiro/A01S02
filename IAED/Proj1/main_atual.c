@@ -727,8 +727,8 @@ int lessL(task_t sort[], int v, int a_j, int x, int y) {
 }
 
 int partitionL(task_t sort[], int l, int r) {
-	int i = l-1; 
-	int j = r; 
+	int i = l; 
+	int j = r-1; 
 	int v = sort[r].description[0]; /* pivo -> primeira letra da ultima frase */
 	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */		
 		while (lessL(sort, sort[++i].description[0], v, i, r)); /* procura elemento maior que o pivot -> */		

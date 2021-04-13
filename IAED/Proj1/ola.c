@@ -69,7 +69,7 @@ int addActivity(char activity[], int activ_exist);
 
 /* Auxiliar functions */
 void exchL(task_t sort[], int i, int j);
-int lessL(task_t sort[], int v, int a_j, int x, int y);
+int lessL(char v[], char a_j[]);
 int partitionL(task_t sort[], int l, int r);
 void quicksortL(task_t sort[], int l, int r);
 
@@ -105,7 +105,7 @@ int main() {
 				/* t <duration> <description> */
 				duration = readT(newdescription);
 				/* for each task created, adds 1 more to count_tasks */
-				count_tasks++;
+			/*	count_tasks++; */
 				newTask(duration, newdescription); 
 				break;
 
@@ -128,9 +128,9 @@ int main() {
 				/*  u [<utilizador>] */
 				/* devolve 1 se existir user, 0 se nao existir */
 				user_exist = readU(newuser);
-				if (user_exist) {
+			/*	if (user_exist) {
                     count_users++;
-                }
+                } */
 				newUser(newuser, user_exist);
 				break;
 
@@ -408,7 +408,7 @@ int newTask(int duration, char description[]) {
 		return 0;
 	} 
 
-	for (i=0; i < count_tasks-1; i++) {
+	for (i=0; i < count_tasks-1; i++) {s
 		if (strcmp(tasks_list[i].description, description) == 0) {
 			printf("duplicate description\n");
 			return 0;
@@ -494,26 +494,43 @@ int newUser(char newuser[], int user_exist) {
 	int i=0;
 
 	/* Errors */
-	for (i=0; i < (count_users-1); i++) {
+	
+	for (i=0; i < (count_users) && user_exist; i++) {
 		if (!(strcmp(newuser, users_list[i].username))) {
 			printf("user already exists\n");
 			return 0;
 		}
 	}
 
-	if (count_users == MAXUSERS) {
+	if (count_users == MAXUSERS && user_exist) {
 		printf("too many users\n");
 		return 0;
 	}
+	
 
 	if (!user_exist) {
 		for (i=0; i < count_users; i++) {
 			printf("%s\n", users_list[i].username);
 		}
 	}
-	else {
-		strcpy(users_list[count_users-1].username, newuser);
-	}
+
+	count_users++;
+	
+	strcpy(users_list[count_users-1].username, newuser);
+	return 0;
+	
+
+
+/*	printf("number of users : %d\n", count_users);
+
+	printf("user 0 : %s\n", users_list[0].username);
+
+	for (i=0; i < count_users; i++) {
+		printf("user : %s\n", users_list[i].username);
+	} */
+
+
+
 
 	return 0;
 }
@@ -521,6 +538,8 @@ int newUser(char newuser[], int user_exist) {
 int moveTask(int id, char newuser[], char newactivity[]) {	
 
     int i, valid_activitie=0;	
+
+	printf("id : %d, count: %d\n", id, count_tasks);
 
     if (id > count_tasks) {
         printf("no such task\n");
@@ -604,14 +623,15 @@ int addActivity(char newactivity[], int activ_exist) {
 
     for(i=0; i < count_activities; i++) {
         if (!(strcmp(activities_list[i].name, newactivity))) {
-            printf("duplicate activity");
+            printf("duplicate activity\n");
             return 0;
         }
     }
 
-    for (i=0; i < len; i++) {
-        if (!(newactivity[i] >= 'A' && newactivity[i] <= 'Z')) {
-            printf("invalid description");
+	
+    for (i=0; i < len; i++) {		
+        if ((newactivity[i] >= 'a' && newactivity[i] <= 'z')) {
+            printf("invalid description\n");
             return 0;
         }
     }
@@ -711,34 +731,28 @@ void exchL(task_t sort[], int i, int j) {
 
 }
 
-int lessL(task_t sort[], int v, int a_j, int x, int y) {
-	int res;
+int lessL(char v[], char a_j[]) {
 
-	if (v < a_j) {
+	if (strcmp(v,a_j)<0) {
 		return 1;
 	}
-	else if (v == a_j) {
-		res = strcmp(sort[x].description, sort[y].description);
-		if (res < 0) {
-			return 1;
-		}
-	}	 
+
 	return 0;
 }
 
 int partitionL(task_t sort[], int l, int r) {
-	int i = l+1; 
+	int i = l-1; 
 	int j = r; 
-	int v = sort[r].description[0]; /* pivo -> primeira letra da ultima frase */
+	char v[DESCFORTASK];
+	strcpy(v,sort[r].description); /* pivo -> primeira letra da ultima frase */
 	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */				
-		while (lessL(sort, sort[i].description[0], v, i, r)) ++i; /* procura elemento maior que o pivot -> */				
-		while (lessL(sort, v, sort[j].description[0], r, j)) /* procura elemento menor que o pivot <- */
+		while (lessL(sort[++i].description, v)); /* procura elemento maior que o pivot -> */				
+		while (lessL(v, sort[--j].description)) /* procura elemento menor que o pivot <- */ 
 			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
 				break;
-		--j;
 		if (i < j)
 			exchL(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
-	}	
+	}
 	exchL(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
 	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
 }
@@ -748,8 +762,8 @@ void quicksortL(task_t sort[], int l, int r) {
 	int i;
 	if (r <= l)
 		return;
-	i = partitionL(sort, l, r);
 
+	i = partitionL(sort, l, r);
 	quicksortL(sort, l, i-1);
 	quicksortL(sort, i+1, r);
 }
