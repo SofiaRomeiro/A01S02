@@ -10,11 +10,33 @@ typedef struct frase {
 frase_t frases[10];
 
 
+frase_t structCopy(frase_t structfrom, frase_t structto) {
+
+	strcpy(structto.frase,structfrom.frase);
+	structto.id = structfrom.id;
+
+	return structfrom;
+}
+
 void exch(frase_t sort[], int i, int j) {
 	frase_t temp;
-	temp = sort[i];
-	sort[i] = sort[j];
-	sort[j] = temp;
+
+/*	strcpy(temp.frase,sort[i].frase);
+	temp.id = sort[i].id;
+	strcpy(sort[i].frase,sort[j].frase);
+	sort[i].id = sort[j].id;
+	strcpy(sort[j].frase,temp.frase);
+	sort[j].id = temp.id;	
+
+	temp = sort[i]; 	
+	sort[i] = sort[j]; 	
+	sort[j] = temp;  */
+
+	temp = structCopy(sort[i], temp); 
+	sort[i] = structCopy(sort[j], sort[i]); 
+	sort[j] = structCopy(temp, sort[j]); 
+
+
 }
 
 
@@ -73,6 +95,14 @@ int main() {
 	frase_t sort[10];
 	frase_t frases[10];
 
+	i = 0;
+
+	printf("i antes : %d\n", i);
+
+	i++;
+
+	printf("i depois : %d\n", i);
+
 
 /*	for (i=0; i <= max; i++) {
 		nums[i] = (int) 100 *(1.0* rand() / RAND_MAX);
@@ -82,7 +112,7 @@ int main() {
 		else {
 			printf("%d\n", nums[i]);
 		}
-	} */	
+	} 	
 
 	strcpy(frases[0].frase, "gosto de pao");
 	frases[0].id = 5;	
@@ -122,7 +152,7 @@ int main() {
 			printf("%d %s\n", sort[i].id, sort[i].frase);
 			
 		}
-	} 
+	} */
 	return 0;
 }
 

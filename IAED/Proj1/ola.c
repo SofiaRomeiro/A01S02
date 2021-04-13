@@ -21,8 +21,7 @@ typedef struct user {
 } user_t;
 
 typedef struct activity {
-	char name[DESCFORACTIV+1]; 
-	int len;
+	char name[DESCFORACTIV+1];
 } activity_t;
 
 typedef struct task {
@@ -36,9 +35,8 @@ typedef struct task {
 
 /* Global vars */
 int count_tasks = 0;
-int count_users = 0;
-/* 3 pre created activities -> start counting = 3 */
-int count_activities = 3;
+int count_users = 0;	
+int count_activities = 3; /* 3 pre created activities -> start counting = 3 */
 int time_now=0;
 
 task_t tasks_list[MAXTASKS]; 
@@ -47,7 +45,7 @@ activity_t activities_list[MAXACTIVS];
 
 
 /* general functions */
-void displayMenu();
+/*void displayMenu(); */
 
 /* command reader functions */
 int readT(char description[]);
@@ -61,19 +59,19 @@ int readA(char activity[]);
 /* Execute functions */
 int newTask(int duration, char description[]);
 int tasksList(int ids_lfunc_counter, int ids_lfunc[]);
-void timeAdder(int duration);
+int timeAdder(int duration);
 int newUser(char user[], int user_exist);
 int moveTask(int id, char newuser[], char newactivity[]);
 int allTasksList(char newactivity[]);
 int addActivity(char activity[], int activ_exist);
 
 /* Auxiliar functions */
-void exchL(task_t sort[], int i, int j);
+void exch(task_t sort[], int i, int j); /* igual para as duas funcoes de quicksort */
+
 int lessL(char v[], char a_j[]);
 int partitionL(task_t sort[], int l, int r);
 void quicksortL(task_t sort[], int l, int r);
 
-void exchN(task_t sort[], int i, int j);
 int lessN(task_t sort[], int v, int a_j, int x, int y);
 int partitionN(task_t sort[], int l, int r);
 void quicksortN(task_t sort[], int l, int r);
@@ -82,8 +80,8 @@ void quicksortN(task_t sort[], int l, int r);
 int main() {
 	/* '+1' means the maximum size plus '\0' */
 	int quit = 0;
-	int duration = 0, id=0, ids_lfunc_counter=0;
-	int user_exist=0, activ_exist=0;
+	int duration, id, ids_lfunc_counter;
+	int user_exist, activ_exist;
 	char command;	
 	int ids_lfunc[MAXTASKS];
 
@@ -103,9 +101,7 @@ int main() {
 		switch (command) {
 			case 't':
 				/* t <duration> <description> */
-				duration = readT(newdescription);
-				/* for each task created, adds 1 more to count_tasks */
-			/*	count_tasks++; */
+				duration = readT(newdescription);			
 				newTask(duration, newdescription); 
 				break;
 
@@ -118,10 +114,9 @@ int main() {
 
 			case 'n':
 				/*  n <duração> */
+				/* returns -1 if failed => negative, decimal or not number */
 				duration = readN();
-				if (duration >= 0) { 
-					timeAdder(duration);
-				}
+				timeAdder(duration);
 				break;
 
 			case 'u':
@@ -149,9 +144,6 @@ int main() {
 			case 'a':
 				/* a [<atividade>]*/
 				activ_exist = readA(newactivity);
-				if (activ_exist) {
-                    count_activities++;
-                }
 				addActivity(newactivity, activ_exist);
 				break;
 			
@@ -167,27 +159,13 @@ int main() {
 	return 0;
 }
 
-/*
-void displayMenu() {
-	printf("\nComando \t Acao\n");
-	printf("\n");	
-	printf(" t \t Adiciona uma nova tarefa ao sistema\n");
-	printf(" l \t Lista as tarefas\n");
-	printf(" n \t Avanca o tempo do sistema\n");
-	printf(" u \t Adiciona um utilizador ou lista todos os utilizadores\n");
-	printf(" m \t Move uma tarefa de uma atividade para outra\n");
-	printf(" d \t Lista todas as tarefas que estejam numa dada atividade\n");
-	printf(" a \t Adiciona uma atividade ou lista todas as atividades\n");
-	printf(" q \t Termina o programa\n");
-	printf("\n");
-} */
 
 /* Command Read Functions */
 
 int readT(char newdescription[]) {
 	/* t <duration> <description> */
 
-	int i, duration=0, index=0;
+	int i, duration=0, index=0, negative = 1;
 	int start_description=0;
 	int start_num=0, end_num=0;
 	char c;
@@ -196,6 +174,10 @@ int readT(char newdescription[]) {
 		/* espaco antes do numero */
 		if (c == ' ' && !start_num && !start_description) {
 			continue;
+		}
+		/* numero negativo */
+		else if (c == '-' && !start_num && !start_description) {
+			negative = -1;
 		}
 		/* numero */
 		else if (c>='0' && c <= '9' && !end_num) {
@@ -214,7 +196,7 @@ int readT(char newdescription[]) {
 	}
 	newdescription[index] = '\0';
 
-	return duration;
+	return duration*negative;
 }
 
 int readL(int ids_lfunc[]) {
@@ -275,11 +257,10 @@ int readN() {
 
 		/* caracteres inseridos nao validos */
 		else if (!failed){
-			printf("invalid time\n");
 			failed = 1;
 		}
 	}
-	/* if doesn't read any time, returns -1, else returns the time to add*/
+	/* if doesn't read any time, reads a decimal or a negative number returns -1, else returns the time to add*/
 	return !failed ? time : -1;
 }
 
@@ -399,36 +380,42 @@ int readA(char newactivity[]) {
 
 /* execute-type functions */
 
-int newTask(int duration, char description[]) {
+int newTask(int duration, char newdescription[]) {
 
-	int i;
+	int i, index;
 
-	if (count_tasks == MAXTASKS + 1) {
+	/* se a task for criada, adiciona 1 ao conta tasks, se com essa adição ficar maior que MAXTASKS, nao cria */
+	if (count_tasks + 1 > MAXTASKS ) {
 		printf("too many tasks\n");
 		return 0;
 	} 
 
-	for (i=0; i < count_tasks-1; i++) {s
-		if (strcmp(tasks_list[i].description, description) == 0) {
+	/* neste momento existem count_tasks criadas, logo percorre ate i < numero de tasks */
+	for (i=0; i < count_tasks; i++) {
+		if (strcmp(tasks_list[i].description, newdescription) == 0) {
 			printf("duplicate description\n");
 			return 0;
 		}
 	}
 
-	tasks_list[count_tasks-1].id = count_tasks;
-
-	for (i=0; description[i] != '\0'; i++) {
-		tasks_list[count_tasks-1].description[i] = description[i];
+	if (duration < 0) {
+		printf("invalid duration\n");
+		return 0;
 	}
-	tasks_list[count_tasks-1].description[i] = '\0';
 
-	strcpy(tasks_list[count_tasks-1].activity_name, "TO DO");
+	count_tasks++;
 
-	tasks_list[count_tasks-1].duration = duration;
-	tasks_list[count_tasks-1].start_time = 0;
+	/* qualquer index é sempre count_tasks-1 */
+	index = count_tasks-1;
+	
+	tasks_list[index].id = count_tasks;
+	strcpy(tasks_list[index].description, newdescription);
+	strcpy(tasks_list[index].activity_name, "TO DO");
+	tasks_list[index].duration = duration;
+	tasks_list[index].start_time = 0;
 	
 	/* saida : task <id> */	
-	printf("task %d\n", tasks_list[count_tasks-1].id);
+	printf("task %d\n", tasks_list[index].id);
 
 	return 0;
 }
@@ -442,29 +429,33 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 	/* interessa me um array com id's das tarefas ordenados */
 
 		for (i=0; i < count_tasks; i++) {
-			sort[i] = tasks_list[i];
+		/*	sort[i] = tasks_list[i]; */
+
+			strcpy(sort[i].activity_name, tasks_list[i].activity_name);
+			strcpy(sort[i].description, tasks_list[i].description);
+			sort[i].duration = tasks_list[i].duration;
+			sort[i].id = tasks_list[i].id;
+			sort[i].start_time = tasks_list[i].start_time;
+			strcpy(sort[i].username, tasks_list[i].username);
 		}			
 
-		quicksortL(sort, 0, count_tasks-1);
+		quicksortL(sort, 0, count_tasks-1); /* existem n=count_tasks pelo que o vetor vai de 0 até n-1 tasks */
 
 		for (i=0; i < count_tasks; i++) {
 			printf("%d %s #%d %s\n",sort[i].id, sort[i].activity_name, sort[i].duration, sort[i].description);
 		}
-	
+
+		return 0;
 	}
 
 	/* ------------------------------------------------------ */
-	/* se houver ids inseridos */
+	/* se houver ids inseridos */	
 
-	/*ids_lfunc_counter, ids_lfunc*/	
-
-	for (i=0; i < ids_lfunc_counter; i++) {
-		for (j=0; j < count_tasks; j++) {
-			if (ids_lfunc[i] > count_tasks){
-				printf("%d: no such task\n", ids_lfunc[i]);
-				return 0;
-			}	
-		}
+	for (i=0; i < ids_lfunc_counter; i++) {		
+		if (ids_lfunc[i] > count_tasks){
+			printf("%d: no such task\n", ids_lfunc[i]);
+			return 0;
+		}	
 	}	
 
 	for (i=0; i < ids_lfunc_counter; i++) {
@@ -478,7 +469,12 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 	return 0;
 }
 
-void timeAdder(int duration) {
+int timeAdder(int duration) {
+
+	if (duration < 0) {
+		printf("invalid time\n");
+		return 0;
+	}
 
 	if (duration == 0) {
 		printf("%d\n", time_now);
@@ -487,22 +483,24 @@ void timeAdder(int duration) {
 		time_now += duration;
 		printf("%d\n", time_now);
 	}
+	return 0;
 }
 
 int newUser(char newuser[], int user_exist) {
 
-	int i=0;
+	int i=0, index;
 
 	/* Errors */
 	
-	for (i=0; i < (count_users) && user_exist; i++) {
+	for (i=0; (i < count_users) && user_exist; i++) {
 		if (!(strcmp(newuser, users_list[i].username))) {
 			printf("user already exists\n");
 			return 0;
 		}
 	}
 
-	if (count_users == MAXUSERS && user_exist) {
+	/* se o user for criado,acrescenta 1 e se users+1 > MAXUSERS, nao pode ser criado */
+	if ((count_users + 1 > MAXUSERS) && user_exist) {
 		printf("too many users\n");
 		return 0;
 	}
@@ -512,14 +510,15 @@ int newUser(char newuser[], int user_exist) {
 		for (i=0; i < count_users; i++) {
 			printf("%s\n", users_list[i].username);
 		}
+		return 0;
 	}
 
+	/* itera o contador de users assim que sera possivel criar um user */
 	count_users++;
-	
-	strcpy(users_list[count_users-1].username, newuser);
-	return 0;
-	
 
+	index = count_users-1;
+	
+	strcpy(users_list[index].username, newuser);
 
 /*	printf("number of users : %d\n", count_users);
 
@@ -529,17 +528,12 @@ int newUser(char newuser[], int user_exist) {
 		printf("user : %s\n", users_list[i].username);
 	} */
 
-
-
-
 	return 0;
 }
 
 int moveTask(int id, char newuser[], char newactivity[]) {	
 
-    int i, valid_activitie=0;	
-
-	printf("id : %d, count: %d\n", id, count_tasks);
+    int i, valid_activitie=0,valid_user=0, index;
 
     if (id > count_tasks) {
         printf("no such task\n");
@@ -551,12 +545,18 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 		return 0;
 	}
 
+
     for (i=0; i < count_users; i++) {
-        if (strcmp(newuser, users_list[i].username)) {
-            printf("no such user\n");
-            return 0;
+        if (!strcmp(newuser, users_list[i].username)) {
+			valid_user = 1;		
         }
     }
+
+	if (!valid_user) {
+		printf("no such user\n");
+		return 0;
+	}
+
 
     for (i=0; i < count_activities; i++) {
         if (!(strcmp(newactivity, activities_list[i].name))) {
@@ -568,16 +568,19 @@ int moveTask(int id, char newuser[], char newactivity[]) {
     	return 0;
 	}
 
-	if ((strcmp(newactivity, "TO DO"))) {
-		if (!(strcmp(tasks_list[id-1].activity_name, "TO DO"))) {
-			tasks_list[id-1].start_time = time_now;	
-		}
-		strcpy(tasks_list[id-1].activity_name, newactivity);
-		strcpy(tasks_list[id-1].username, newuser);
-	}	
+	index = id-1; /* a posicao da task no array vai ser o id pedido menos 1, ou seja, id-1 */
+
+
+	/* se a atividade estava no TO DO e vai sair, comeca a contar o tempo de inicio*/
+	if (!(strcmp(tasks_list[index].activity_name, "TO DO"))) {
+		tasks_list[index].start_time = time_now;	
+	}
+	strcpy(tasks_list[index].activity_name, newactivity);
+	strcpy(tasks_list[index].username, newuser);
+
 
     if (!(strcmp(newactivity, "DONE"))) {
-        printf("duration=%d slack=%d\n", (time_now - tasks_list[id-1].start_time), ((time_now - tasks_list[id-1].start_time) - tasks_list[id-1].duration));
+        printf("duration=%d slack=%d\n", (time_now - tasks_list[index].start_time), ((time_now - tasks_list[index].start_time) - tasks_list[index].duration));
     }
 
 	return 0;
@@ -586,7 +589,6 @@ int moveTask(int id, char newuser[], char newactivity[]) {
 int allTasksList(char newactivity[]) {
 	int i, valid_acivity=0;
 	task_t sort_activitie_tasks[MAXTASKS];
-	int tasks_asked=0;
 	int n=0;
 
 	for (i=0; i < count_activities; i++) {
@@ -601,16 +603,24 @@ int allTasksList(char newactivity[]) {
 	}
 
 
-	for (i=0; i < count_tasks; i++) {
+	for (i=0; i < count_tasks && n < count_tasks; i++) {
 		if (!strcmp(newactivity, tasks_list[i].activity_name)) {
-			sort_activitie_tasks[n++] = tasks_list[i];			
-			tasks_asked++;
+		/*	sort_activitie_tasks[n++] = tasks_list[i];	*/
+			strcpy(sort_activitie_tasks[n].activity_name, tasks_list[i].activity_name);
+			strcpy(sort_activitie_tasks[n].description, tasks_list[i].description);
+			sort_activitie_tasks[n].duration = tasks_list[i].duration;
+			sort_activitie_tasks[n].id = tasks_list[i].id;
+			sort_activitie_tasks[n].start_time = tasks_list[i].start_time;
+			strcpy(sort_activitie_tasks[n].username, tasks_list[i].username);
+
+			n++;
 		}
 	}	
 
-	quicksortN(sort_activitie_tasks, 0, tasks_asked-1);	
+	/* como n e iterado uma ultima vez e nao ha adicao ao vetor, na pratica existem n-1 posicoes no vetor */
+	quicksortN(sort_activitie_tasks, 0, n-1);	
 
-	for (i=0; i < tasks_asked; i++) {
+	for (i=0; i < n; i++) {
 		printf("%d %d %s\n", sort_activitie_tasks[i].id, sort_activitie_tasks[i].start_time, sort_activitie_tasks[i].description);
 	} 
 	
@@ -620,6 +630,7 @@ int allTasksList(char newactivity[]) {
 int addActivity(char newactivity[], int activ_exist) {
 
 	int i, len = strlen(newactivity);
+	int index;
 
     for(i=0; i < count_activities; i++) {
         if (!(strcmp(activities_list[i].name, newactivity))) {
@@ -636,13 +647,20 @@ int addActivity(char newactivity[], int activ_exist) {
         }
     }
 
-	if (count_activities >= 10) {
+	/* a atividade so e iterada aquando da possivel criacao, logo se a tarefa for criada e passar as 10, nao pode ser criada */
+	if (count_activities + 1 > 10) {
 		printf("too many activities\n");
 		return 0;
 	}
 
 	if (activ_exist) {
-		strcpy(activities_list[count_activities-1].name, newactivity);
+
+		count_activities++;
+
+		/* a posicao do array de atividades é sempre a quantidade de atividades menos 1, ou seja, atividades-1 */
+		index = count_activities - 1;
+	
+		strcpy(activities_list[index].name, newactivity);
 	}
 
 	else {
@@ -658,14 +676,6 @@ int addActivity(char newactivity[], int activ_exist) {
 /* ************************************************************ 
 						sort D
    ************************************************************ */
-void exchN(task_t sort[], int i, int j) {
-	task_t temp;
-	temp = sort[i];
-	sort[i] = sort[j];
-	sort[j] = temp;
-}
-
-
 int lessN(task_t sort[], int v, int a_j, int x, int y) {
 
 	int res;
@@ -695,9 +705,9 @@ int partitionN(task_t sort[], int l, int r) {
 				break;
 		--j;
 		if (i < j)
-			exchN(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+			exch(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
 	}
-	exchN(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
+	exch(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
 
 	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
 }
@@ -717,17 +727,37 @@ void quicksortN(task_t sort[], int l, int r) {
 
 
 
-
 /* ************************************************************ 
 						sort L
    ************************************************************ */
 
-void exchL(task_t sort[], int i, int j) {
+void exch(task_t sort[], int i, int j) {
 	task_t temp;
 
-	temp = sort[i];
+/*	temp = sort[i];
 	sort[i] = sort[j];
-	sort[j] = temp;
+	sort[j] = temp; */
+
+	strcpy(temp.activity_name, sort[i].activity_name);
+	strcpy(temp.description, sort[i].description);
+	temp.duration = sort[i].duration;
+	temp.id = sort[i].id;
+	temp.start_time = sort[i].start_time;
+	strcpy(temp.username,sort[i].username);
+
+	strcpy(sort[i].activity_name, sort[j].activity_name);
+	strcpy(sort[i].description, sort[j].description);
+	sort[i].duration = sort[j].duration;
+	sort[i].id = sort[j].id;
+	sort[i].start_time = sort[j].start_time;
+	strcpy(sort[i].username,sort[j].username);
+
+	strcpy(sort[j].activity_name, temp.activity_name);
+	strcpy(sort[j].description, temp.description);
+	sort[j].duration = temp.duration;
+	sort[j].id = temp.id;
+	sort[j].start_time = temp.start_time;
+	strcpy(sort[j].username, temp.username);
 
 }
 
@@ -736,7 +766,6 @@ int lessL(char v[], char a_j[]) {
 	if (strcmp(v,a_j)<0) {
 		return 1;
 	}
-
 	return 0;
 }
 
@@ -751,9 +780,9 @@ int partitionL(task_t sort[], int l, int r) {
 			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
 				break;
 		if (i < j)
-			exchL(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+			exch(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
 	}
-	exchL(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
+	exch(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
 	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
 }
 
@@ -767,4 +796,21 @@ void quicksortL(task_t sort[], int l, int r) {
 	quicksortL(sort, l, i-1);
 	quicksortL(sort, i+1, r);
 }
+
+
+
+/*
+void displayMenu() {
+	printf("\nComando \t Acao\n");
+	printf("\n");	
+	printf(" t \t Adiciona uma nova tarefa ao sistema\n");
+	printf(" l \t Lista as tarefas\n");
+	printf(" n \t Avanca o tempo do sistema\n");
+	printf(" u \t Adiciona um utilizador ou lista todos os utilizadores\n");
+	printf(" m \t Move uma tarefa de uma atividade para outra\n");
+	printf(" d \t Lista todas as tarefas que estejam numa dada atividade\n");
+	printf(" a \t Adiciona uma atividade ou lista todas as atividades\n");
+	printf(" q \t Termina o programa\n");
+	printf("\n");
+} */
 
