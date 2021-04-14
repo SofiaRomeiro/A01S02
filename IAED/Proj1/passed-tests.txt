@@ -1,4 +1,4 @@
 t01, t02, t03, t04, t05, t06, t07, t08, t09, t10
 
-diogo : ct011, ct012, ct013, ct014
+diogo : ct01, ct06, ct08, ct09, ct10, ct011, ct012, ct013, ct014
 
