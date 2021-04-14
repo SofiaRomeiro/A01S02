@@ -10,82 +10,72 @@ typedef struct frase {
 frase_t frases[10];
 
 
-frase_t structCopy(frase_t structfrom, frase_t structto) {
-
-	strcpy(structto.frase,structfrom.frase);
-	structto.id = structfrom.id;
-
-	return structfrom;
-}
-
 void exch(frase_t sort[], int i, int j) {
 	frase_t temp;
-
-/*	strcpy(temp.frase,sort[i].frase);
-	temp.id = sort[i].id;
-	strcpy(sort[i].frase,sort[j].frase);
-	sort[i].id = sort[j].id;
-	strcpy(sort[j].frase,temp.frase);
-	sort[j].id = temp.id;	
-
 	temp = sort[i]; 	
 	sort[i] = sort[j]; 	
-	sort[j] = temp;  */
+	sort[j] = temp;  
+}
 
-	temp = structCopy(sort[i], temp); 
-	sort[i] = structCopy(sort[j], sort[i]); 
-	sort[j] = structCopy(temp, sort[j]); 
+int lessN(int v, int a_j) {
 
+	if (v< a_j) {
+		return 1;
+	}	
+	return 0;
+}
 
+void insertion(frase_t a[], int l, int r) {
+	int i,j;
+	frase_t v;
+	for (i = l+1; i <= r; i++) {
+		v = a[i];
+		j = i-1;
+		while ( j>=l && lessN(v.id, a[j].id)) {
+			a[j+1] = a[j];
+			j--;
+		}
+	a[j+1] = v;
+	}
 }
 
 
-int less(frase_t sort[], int v, int a_j, int x, int y) {
+int lessL(char v[], char a_j[]) {
 
-	int res;
-
-	if (v < a_j) {
+	if (strcmp(v,a_j)<0) {
 		return 1;
-	}	
-	else if( v == a_j) {
-		res = strcmp(sort[x].frase, sort[y].frase);
-		if (res < 0) {
-			return 1;
-		}
 	}
 	return 0;
 }
 
-
-int partition(frase_t sort[], int l, int r) {
-
+int partitionL(frase_t sort[], int l, int r) {
 	int i = l-1; 
 	int j = r; 
-	int v = sort[r].id; /* pivo */
-	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */
-		while (less(sort, sort[++i].id, v, i, r)); /* procura elemento maior que o pivot -> */
-		while (less(sort, v, sort[--j].id, r, i)) /* procura elemento menor que o pivot <- */
-			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
+	char v[50];
+	strcpy(v,sort[r].frase); 
+	while (i < j) { 				
+		while (lessL(sort[++i].frase, v));				
+		while (lessL(v, sort[--j].frase)) 
+			if (j == l) 
 				break;
 		if (i < j)
-			exch(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+			exch(sort, i, j); 
 	}
-	
-	exch(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
-
-	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
+	exch(sort, r, i);
+	return i; 
 }
 
-void quicksort(frase_t sort[], int l, int r) {
-	int i;
+void quicksortL(frase_t sort[], int l, int r) {
 
+	int i;
 	if (r <= l)
 		return;
 
-	i = partition(sort, l, r);
-	quicksort(sort, l, i-1);
-	quicksort(sort, i+1, r);
+	i = partitionL(sort, l, r);
+	quicksortL(sort, l, i-1);
+	quicksortL(sort, i+1, r);
 }
+
 
 
 
@@ -94,14 +84,6 @@ int main() {
 	int i, max=9;
 	frase_t sort[10];
 	frase_t frases[10];
-
-	i = 0;
-
-	printf("i antes : %d\n", i);
-
-	i++;
-
-	printf("i depois : %d\n", i);
 
 
 /*	for (i=0; i <= max; i++) {
@@ -112,26 +94,26 @@ int main() {
 		else {
 			printf("%d\n", nums[i]);
 		}
-	} 	
+	} 	*/
 
 	strcpy(frases[0].frase, "gosto de pao");
 	frases[0].id = 5;	
 	strcpy(frases[1].frase, "o ceu e azul");
-	frases[1].id = 2;
+	frases[1].id = 5;
 	strcpy(frases[2].frase, "canecas rosa");
 	frases[2].id = 1;
 	strcpy(frases[3].frase, "minions amarelos");
-	frases[3].id = 9;
+	frases[3].id = 6;
 	strcpy(frases[4].frase, "vasco");
 	frases[4].id = 6;
 	strcpy(frases[5].frase, "relva verde");
 	frases[5].id = 3;
 	strcpy(frases[6].frase, "chao preto");
-	frases[6].id = 7;
+	frases[6].id = 3;
 	strcpy(frases[7].frase, "armario castanho");
-	frases[7].id = 9;
+	frases[7].id = 3;
 	strcpy(frases[8].frase, "discos de ouro");
-	frases[8].id = 8;
+	frases[8].id = 6;
 	strcpy(frases[9].frase, "dedos de goma");
 	frases[9].id = 4;
 
@@ -140,7 +122,8 @@ int main() {
 	}
 
 
-	quicksort(sort, 0, max);
+	quicksortL(sort, 0, max);
+	insertion(sort, 0, max);
 
 	printf("\nquicksort: \n");
 
@@ -152,7 +135,7 @@ int main() {
 			printf("%d %s\n", sort[i].id, sort[i].frase);
 			
 		}
-	} */
+	}
 	return 0;
 }
 

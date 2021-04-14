@@ -149,7 +149,7 @@ int main() {
 				break;
 			
 			default:
-				printf("%c, Error : Command Not Found\n", command); 
+			/*	printf("%c, Error : Command Not Found\n", command); */
 				break;
 		}
 	}
@@ -162,7 +162,7 @@ int main() {
 int readT(char newdescription[]) {
 	/* t <duration> <description> */
 
-	int i, duration=0, index=0, negative = 1;
+	int i, duration=0, index=0, negative = 1; 
 	int start_description=0;
 	int start_num=0, end_num=0;
 	char c;
@@ -181,12 +181,15 @@ int readT(char newdescription[]) {
 			start_num = 1;
 			duration = duration * 10 + (c - '0');
 		}
+		else if ((c=='.' || c==',') && start_num && !start_description) {
+			negative = -1;
+		}
 		/* espaco ou tabulador */
 		else if ((c == ' ' || c == '\t') && start_num && !start_description) {
 			end_num = 1;	
 		}
 		/* descricao */		
-		else if (end_num && index < DESCFORTASK) {
+		else if (end_num && index <= DESCFORTASK) {
 			newdescription[index++] = c;
 			start_description = 1;
 		}		
@@ -235,7 +238,7 @@ int readL(int ids_lfunc[]) {
 }
 
 int readN() {
-	int time = 0, reading = 0, end = 0, failed = 0;
+	int time = 0, reading = 0, end = 0, failed = 0, num_found=0;
 	char c;
 
 	while ((c = getchar()) != EOF && c != '\n') {
@@ -244,6 +247,7 @@ int readN() {
 		if (c >= '0' && c <= '9' && !end && !failed) {
 			time = time * 10 + (c - '0');
 			reading = 1;
+			num_found = 1;
 		}
 
 		/* ainda nao encontrou nenhum numero e nao esta a ler */
@@ -263,7 +267,7 @@ int readN() {
 		}
 	}
 	/* if doesn't read any time, reads a decimal or a negative number returns -1, else returns the time to add*/
-	return !failed ? time : -1;
+	return (!failed && num_found) ? time : -1;
 }
 
 int readU(char newuser[]) {
@@ -275,7 +279,7 @@ int readU(char newuser[]) {
 		if ((c == ' ' || c == '\t') && !start_reading) {
 			continue;
 		}
-		else if (c != ' ' && !end_reading && u<USERNAME) {
+		else if (c != ' ' && !end_reading && u<=USERNAME) {
 			newuser[u++] = c;
 			start_reading = 1;
 			exist_user=1;
@@ -284,7 +288,7 @@ int readU(char newuser[]) {
 			end_reading = 1;
 			continue;
 		}
-	}	
+	}
 	newuser[u] = '\0';
 	return exist_user ? 1 : 0;
 }
@@ -319,7 +323,7 @@ int readM(char newuser[], char newactivity[]) {
 			id_read = 1;	
 		}
 		/* encontro user */
-		else if (c != ' ' && id_read && !user_read && u < USERNAME && !activity_read) {
+		else if (c != ' ' && id_read && !user_read && u <= USERNAME && !activity_read) {
 			reading = 1;
 			newuser[u++] = c;
 		}
@@ -329,7 +333,7 @@ int readM(char newuser[], char newactivity[]) {
 			user_read = 1;
 		}
 		/* encontro atividade */		
-		else if (id_read && user_read && a < DESCFORACTIV) {
+		else if (id_read && user_read && a <= DESCFORACTIV) {
 			newactivity[a++] = c;
 			reading = 1;
 			a_found = 1;
@@ -353,7 +357,7 @@ void readD(char newactivity[]) {
 			continue;
 		}
 		/* encontro atividade */		
-		else if (a < DESCFORACTIV) {
+		else if (a <= DESCFORACTIV) {
 			newactivity[a++] = c;
 			a_found = 1;
 		}		
@@ -373,7 +377,7 @@ int readA(char newactivity[]) {
 			continue;
 		}
 		/* encontro atividade */		
-		else if (a < DESCFORACTIV) {
+		else if (a <= DESCFORACTIV) {
 			newactivity[a++] = c;
 			exist_activity=1;
 			a_found = 1;
@@ -431,6 +435,7 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 	int i, j, index;
 	task_t sort[MAXTASKS];
 
+	
 	if (ids_lfunc_counter==0) {
 	
 	/* interessa me um array com id's das tarefas ordenados */
@@ -449,19 +454,19 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 	}
 
 	/* ------------------------------------------------------ */
-				/* se houver ids inseridos */		
+				/* se houver ids inseridos */
 
 	for (i=0; i < ids_lfunc_counter; i++) {
-		for (j=0; j < count_tasks; j++) {
-			if (ids_lfunc[i] == tasks_list[j].id) {
-				index=ids_lfunc[i]-1;
-				printf("%d %s #%d %s\n",tasks_list[index].id, tasks_list[index].activity_name, tasks_list[index].duration, tasks_list[index].description);
-			}
-			if (!(ids_lfunc[i] <= count_tasks && ids_lfunc[i] > 0)) {
-				printf("%d: no such task\n", ids_lfunc[i]);
-				break;
-			}
-			
+		if (!(ids_lfunc[i] <= count_tasks && ids_lfunc[i] > 0)) {
+			printf("%d: no such task\n", ids_lfunc[i]);
+		}
+		else {
+			for (j=0; j < count_tasks; j++) {			
+				if (ids_lfunc[i] == tasks_list[j].id) {
+					index=ids_lfunc[i]-1;
+					printf("%d %s #%d %s\n",tasks_list[index].id, tasks_list[index].activity_name, tasks_list[index].duration, tasks_list[index].description);
+				}
+			}			
 		}
 	}	
 	return 0;
@@ -517,8 +522,6 @@ int newUser(char newuser[], int user_exist) {
 	index = count_users-1;
 	
 	strcpy(users_list[index].username, newuser);
-
-/*	printf("user : %s\n",users_list[index].username); */
 
 	return 0;
 }
@@ -607,7 +610,7 @@ int allTasksList(char newactivity[]) {
 	}	
 
 	/* como n e iterado uma ultima vez e nao ha adicao ao vetor, na pratica existem n-1 posicoes no vetor */
-	quicksortN(sort_activitie_tasks, 0, n-1);	
+	quicksortN(sort_activitie_tasks, 0, n-1); 
 
 	for (i=0; i < n; i++) {
 		printf("%d %d %s\n", sort_activitie_tasks[i].id, sort_activitie_tasks[i].start_time, sort_activitie_tasks[i].description);
@@ -629,7 +632,7 @@ int addActivity(char newactivity[], int activ_exist) {
     }
 
 	
-    for (i=0; i < len; i++) {		
+    for (i=0; i <= len; i++) {		
         if ((newactivity[i] >= 'a' && newactivity[i] <= 'z')) {
             printf("invalid description\n");
             return 0;
@@ -637,7 +640,7 @@ int addActivity(char newactivity[], int activ_exist) {
     }
 
 	/* a atividade so e iterada aquando da possivel criacao, logo se a tarefa for criada e passar as 10, nao pode ser criada */
-	if (count_activities + 1 > 10) {
+	if (count_activities + 1 > MAXACTIVS) {
 		printf("too many activities\n");
 		return 0;
 	}
@@ -650,13 +653,14 @@ int addActivity(char newactivity[], int activ_exist) {
 		index = count_activities - 1;
 	
 		strcpy(activities_list[index].name, newactivity);
+		return 0;
 	}
 
-	else {
-		for (i=0; i < count_activities; i++) {
-			printf("%s\n", activities_list[i].name);
-		}
+	
+	for (i=0; i < count_activities; i++) {
+		printf("%s\n", activities_list[i].name);
 	}
+	
 
 	return 0;
 }
@@ -666,9 +670,7 @@ int addActivity(char newactivity[], int activ_exist) {
 						sort D
    ************************************************************ */
 int lessN(task_t sort[], int v, int a_j, int x, int y) {
-
 	int res;
-
 	if (v < a_j) {
 		return 1;
 	}	
@@ -681,36 +683,29 @@ int lessN(task_t sort[], int v, int a_j, int x, int y) {
 	return 0;
 }
 
-
 int partitionN(task_t sort[], int l, int r) {
-
-	int i = l+1; 
+	int i = l; 
 	int j = r; 
-	int v = sort[r].start_time; /* pivo */
-	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */	
-		while (lessN(sort, sort[i].start_time, v, i, r)) ++i; /* procura elemento maior que o pivot -> */		
-		while (lessN(sort, v, sort[j].start_time, r, j)) /* procura elemento menor que o pivot <- */
-			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
-				break;
-		--j; 
+	int v = sort[r].start_time;
+	while (i < j) {
+		while (lessN(sort, sort[i].start_time, v, i, r)) ++i; 		
+		while (lessN(sort, v, sort[j].start_time, r, j)) --j;
+			if (j == l)
+				break;		 
 		if (i < j)
-			exch(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+			exch(sort, i, j);
 	}
-	exch(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
-
-	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
+	exch(sort, r, i);
+	return i;
 }
 
 void quicksortN(task_t sort[], int l, int r) {
 	int i;
-
 	if (r <= l)
 		return;
-
 	i = partitionN(sort, l, r);
 	quicksortN(sort, l, i-1);
-	quicksortN(sort, i+1, r);
-	
+	quicksortN(sort, i+1, r); 	
 }
 
 
@@ -738,18 +733,18 @@ int lessL(char v[], char a_j[]) {
 int partitionL(task_t sort[], int l, int r) {
 	int i = l-1; 
 	int j = r; 
-	char v[DESCFORTASK];
-	strcpy(v,sort[r].description); /* pivo -> primeira letra da ultima frase */
-	while (i < j) { /* enquanto o iterador da esquerda for menor do que o da direita */				
-		while (lessL(sort[++i].description, v)); /* procura elemento maior que o pivot -> */				
-		while (lessL(v, sort[--j].description)) /* procura elemento menor que o pivot <- */ 
-			if (j == l) /* para quando o elemento da particao esta na primeira posicao */
+	char v[DESCFORTASK+1];
+	strcpy(v,sort[r].description); 
+	while (i < j) { 				
+		while (lessL(sort[++i].description, v));				
+		while (lessL(v, sort[--j].description)) 
+			if (j == l) 
 				break;
 		if (i < j)
-			exch(sort, i, j); /* troca se o maior para a posicao do menor e vice versa */
+			exch(sort, i, j); 
 	}
-	exch(sort, r, i); /* no fim de tudo, troca o pivo (a[r]) com o numero do meio (a[j])  */
-	return i; /* retorna o ponto onde partiu o vetor, ou seja, o meio */
+	exch(sort, r, i);
+	return i; 
 }
 
 void quicksortL(task_t sort[], int l, int r) {
