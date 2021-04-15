@@ -512,7 +512,7 @@ void moveTask(int id, char newuser[], char newactivity[]) {
         return;
     }	
 	/* se a task ja tiver saido de TO DO (sido iniciada) e a tentarem mover para TO DO */
-	if (!(strcmp(newactivity, "TO DO")) && strcmp(tasks_list[index].activity_name, "TO DO")) {
+	if (!(strcmp(newactivity, "TO DO"))) {
 		printf("task already started\n");
 		return;
 	}
