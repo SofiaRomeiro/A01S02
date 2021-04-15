@@ -350,7 +350,7 @@ int readA(char newactivity[]) {
 	/*
 	* Function:  readA
 	* --------------------
-	* Reads the name of the new activity that will be created
+	* Adds a new task to the system
 	*
 	* newactivity: the new activity's name 
 	*
@@ -464,6 +464,15 @@ void tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 }
 
 void timeAdder(int duration) {
+	/*
+	* Function:  timeAdder
+	* --------------------
+	* Adds time to the system
+	*
+	* ids_lfunc_counter: number of id's introduced
+	* ids_lfunc: array of introduced id's
+	*                 
+	*/
 	if (duration < 0) {
 		printf("invalid time\n");
 		return;
@@ -579,7 +588,15 @@ void allTasksList(char newactivity[]) {
 void addActivity(char newactivity[], int activ_exist) {
 	int i, len = strlen(newactivity);
 	int index;
-    for(i=0; i < count_activities; i++) {
+
+	if (!activ_exist) {
+		for (i=0; i < count_activities; i++) {
+			printf("%s\n", activities_list[i].name);
+		}
+		return;
+	}
+
+    for (i=0; i < count_activities; i++) {
         if (!(strcmp(activities_list[i].name, newactivity))) {
             printf("duplicate activity\n");
             return;
@@ -596,16 +613,11 @@ void addActivity(char newactivity[], int activ_exist) {
 		printf("too many activities\n");
 		return;
 	}
-	if (activ_exist) {
-		count_activities++;
-		/* a posicao do array de atividades é sempre a quantidade de atividades menos 1, ou seja, atividades-1 */
-		index = count_activities - 1;	
-		strcpy(activities_list[index].name, newactivity);
-		return;
-	}	
-	for (i=0; i < count_activities; i++) {
-		printf("%s\n", activities_list[i].name);
-	}
+	
+	count_activities++;
+	/* a posicao do array de atividades é sempre a quantidade de atividades menos 1, ou seja, atividades-1 */
+	index = count_activities - 1;	
+	strcpy(activities_list[index].name, newactivity);
 	return;
 }
 
