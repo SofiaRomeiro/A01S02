@@ -26,7 +26,6 @@ typedef struct task {
 	int start_time;
 } task_t;
 
-
 int count_tasks = 0;
 int count_users = 0;	
 int count_activities = 3;
@@ -43,13 +42,13 @@ int readM(char user[], char activity[]);
 void readD(char activity[]);
 int readA(char activity[]);
 
-int newTask(int duration, char description[]);
-int tasksList(int ids_lfunc_counter, int ids_lfunc[]);
-int timeAdder(int duration);
-int newUser(char user[], int user_exist);
-int moveTask(int id, char newuser[], char newactivity[]);
-int allTasksList(char newactivity[]);
-int addActivity(char activity[], int activ_exist);
+void newTask(int duration, char description[]);
+void tasksList(int ids_lfunc_counter, int ids_lfunc[]);
+void timeAdder(int duration);
+void newUser(char user[], int user_exist);
+void moveTask(int id, char newuser[], char newactivity[]);
+void allTasksList(char newactivity[]);
+void addActivity(char activity[], int activ_exist);
 
 void exch(task_t sort[], int i, int j);
 int lessL(char v[], char a_j[]);
@@ -73,8 +72,8 @@ int main() {
 				newTask(duration, newdescription); 
 				break;
 			case 'l':
-				ids_lfunc_counter = readL(ids_lfunc);
 				/* if the user doesn't introduce id's, readL returns 0, else returns the number of id's asked*/
+				ids_lfunc_counter = readL(ids_lfunc);
 				tasksList(ids_lfunc_counter, ids_lfunc);
 				break;
 			case 'n':
@@ -109,10 +108,23 @@ int main() {
 	return 0;
 }
 
-
-/* Command Read Functions */
+/******************************************************************
+*																  *
+*    					READ FUNCTIONS							  *
+*																  *
+**************************************************************** */
 
 int readT(char newdescription[]) {
+	/*
+	* Function:  readT
+	* --------------------
+	* Reads the duration and the description from terminal to create a new task
+	*
+	* newdescription: new tasks' description 
+	*
+	* returns: duration or a negative number in case of an invalid duration         
+	*           
+	*/
 	int i, duration=0, index=0, negative = 1, start_description=0, start_num=0, end_num=0;
 	char c;	
 	for (i=0; (c=getchar()) != EOF && c != '\n'; i++) {		
@@ -147,6 +159,16 @@ int readT(char newdescription[]) {
 }
 
 int readL(int ids_lfunc[]) {
+	/*
+	* Function:  readL
+	* --------------------
+	* Reads a list of id's asked to print the respective task
+	*
+	* ids_lfunc: list of id's introduced 
+	*
+	* returns: the amount of id's introduced or 0 if any id has been introduced         
+	*           
+	*/
 	char c;
 	int id=0, i, index=0, reading=0, exist_id=0, negative=1;	
 	for (i=0; (c=getchar()) != EOF && c != '\n'; i++) {
@@ -177,6 +199,14 @@ int readL(int ids_lfunc[]) {
 }
 
 int readN() {
+	/*
+	* Function:  readN
+	* --------------------
+	* Reads the amount of time to add to the current time
+	*
+	* returns: time if the introduced value is a valid time or -1 if it's invalid        
+	*           
+	*/
 	int time = 0, reading=0, end = 0, failed = 0, num_found=0;
 	char c;
 	while ((c = getchar()) != EOF && c != '\n') {
@@ -205,6 +235,16 @@ int readN() {
 }
 
 int readU(char newuser[]) {
+	/*
+	* Function:  readU
+	* --------------------
+	* Reads the username introduced to create a new user
+	*
+	* newuser: new user's username 
+	*
+	* returns: if a user has been introduced returns 1, else returns 0
+	*           
+	*/
 	int i, u= 0, start_reading=0, end_reading=0, exist_user=0;
 	char c;		
 	for (i=0; ((c=getchar()) != EOF) && c != '\n'; i++) {
@@ -226,6 +266,17 @@ int readU(char newuser[]) {
 }
 
 int readM(char newuser[], char newactivity[]) {
+	/*
+	* Function:  readM
+	* --------------------
+	* Reads the id of the task, which user the task is assigned to and the activity to be atributted 
+	*
+	* newuser: the user to whom the task is assigned
+	* newactivity: the activity that will be assigned to the introduced id
+	*
+	* returns: introduced id or a negative number, in case of an invalid id being introduced        
+	*           
+	*/
 	int id=0, u=0, a=0, reading=0, a_found=0, id_read=0, user_read=0, activity_read=0, negative=1;
 	char c;
 	
@@ -271,6 +322,14 @@ int readM(char newuser[], char newactivity[]) {
 }
 
 void readD(char newactivity[]) {
+	/*
+	* Function:  readD
+	* --------------------
+	* Reads the requested activity  
+	*
+	* newactivity: the activity that will be requested       
+	*           
+	*/
 	int a=0,a_found=0;
 	char c;	
 	while ((c=getchar()) != EOF && c != '\n') {	
@@ -288,6 +347,16 @@ void readD(char newactivity[]) {
 }
 
 int readA(char newactivity[]) {
+	/*
+	* Function:  readA
+	* --------------------
+	* Reads the name of the new activity that will be created
+	*
+	* newactivity: the new activity's name 
+	*
+	* returns: if there's an activity introduced        
+	*           
+	*/
 	int a=0,a_found=0, exist_activity=0;
 	char c;	
 	while ((c=getchar()) != EOF && c != '\n') {	
@@ -306,25 +375,40 @@ int readA(char newactivity[]) {
     return exist_activity ? 1 : 0;
 }
 
-/* execute-type functions */
+/******************************************************************
+*																  *
+*    					EXECUTE FUNCTIONS						  *
+*																  *
+**************************************************************** */
 
-int newTask(int duration, char newdescription[]) {
+void newTask(int duration, char newdescription[]) {
+	/*
+	* Function:  newTask
+	* --------------------
+	* Creates a new task
+	*
+	* duration: new task's duration
+	* newdescription : new task's description
+	*
+	* returns: if there's an activity introduced        
+	*           
+	*/
 	int i, index;
 	/* se a task for criada, adiciona 1 ao conta tasks, se com essa adição ficar maior que MAXTASKS, nao cria */
 	if (count_tasks + 1 > MAXTASKS ) {
 		printf("too many tasks\n");
-		return 0;
+		return;
 	} 
 	/* neste momento existem count_tasks criadas, logo percorre ate i < numero de tasks */
 	for (i=0; i < count_tasks; i++) {
-		if (strcmp(tasks_list[i].description, newdescription) == 0) {
+		if (!strcmp(tasks_list[i].description, newdescription)) {
 			printf("duplicate description\n");
-			return 0;
+			return;
 		}
 	}
 	if (duration <= 0) {
 		printf("invalid duration\n");
-		return 0;
+		return;
 	}
 	count_tasks++;
 	/* qualquer index é sempre count_tasks-1 */
@@ -336,10 +420,19 @@ int newTask(int duration, char newdescription[]) {
 	tasks_list[index].start_time = 0;	
 	/* saida : task <id> */	
 	printf("task %d\n", tasks_list[index].id);
-	return 0;
+	return;
 }
 
-int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
+void tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
+	/*
+	* Function:  tasksList
+	* --------------------
+	* If there are introduced ids, prints the task's id, activity nam, duration and description
+	*
+	* ids_lfunc_counter: number of id's introduced
+	* ids_lfunc: array of introduced id's
+	*                 
+	*/
 	int i, j, index;
 	task_t sort[MAXTASKS];	
 	if (ids_lfunc_counter==0) {	
@@ -351,12 +444,9 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 		for (i=0; i < count_tasks; i++) {
 			printf("%d %s #%d %s\n",sort[i].id, sort[i].activity_name, sort[i].duration, sort[i].description);
 		}
-		return 0;
+		return;
 	}
-
-	/* ------------------------------------------------------ */
-				/* se houver ids inseridos */
-
+	/* se houver ids inseridos */
 	for (i=0; i < ids_lfunc_counter; i++) {
 		if (!(ids_lfunc[i] <= count_tasks && ids_lfunc[i] > 0)) {
 			printf("%d: no such task\n", ids_lfunc[i]);
@@ -370,66 +460,61 @@ int tasksList(int ids_lfunc_counter, int ids_lfunc[]) {
 			}			
 		}
 	}	
-	return 0;
+	return;
 }
 
-int timeAdder(int duration) {
+void timeAdder(int duration) {
 	if (duration < 0) {
 		printf("invalid time\n");
-		return 0;
+		return;
 	}
-	if (duration == 0) {
-		printf("%d\n", time_now);
-	}
-	else {
-		time_now += duration;
-		printf("%d\n", time_now);
-	}
-	return 0;
+	time_now += duration;
+	printf("%d\n", time_now);
+	return;
 }
 
-int newUser(char newuser[], int user_exist) {
+void newUser(char newuser[], int user_exist) {
 	int i=0, index;
 	/* Errors */	
 	for (i=0; (i < count_users) && user_exist; i++) {
 		if (!(strcmp(newuser, users_list[i].username))) {
 			printf("user already exists\n");
-			return 0;
+			return;
 		}
 	}
 	/* se o user for criado,acrescenta 1 e se users+1 > MAXUSERS, nao pode ser criado */
 	if ((count_users + 1 > MAXUSERS) && user_exist) {
 		printf("too many users\n");
-		return 0;
+		return;
 	}
 	if (!user_exist) {
 		for (i=0; i < count_users; i++) {
 			printf("%s\n", users_list[i].username);
 		}
-		return 0;
+		return;
 	}
 	/* itera o contador de users assim que sera possivel criar um user */
 	count_users++;
 	index = count_users-1;	
 	strcpy(users_list[index].username, newuser);
-	return 0;
+	return;
 }
 
-int moveTask(int id, char newuser[], char newactivity[]) {	
-    int i, valid_activitie=0,valid_user=0, index;
+void moveTask(int id, char newuser[], char newactivity[]) {	
+    int i, valid_activity=0,valid_user=0, index;
 	index = id-1; /* a posicao da task no array vai ser o id pedido menos 1, ou seja, id-1 */
     /* se o user tentar mover a tarefa para a atividade onde esta ja esta */
 	if (!(strcmp(tasks_list[index].activity_name, newactivity))) {
-		return 0;
+		return;
 	}
     if (!(id <= count_tasks && id>0)) {
         printf("no such task\n");
-        return 0;
+        return;
     }	
 	/* se a task ja tiver saido de TO DO (sido iniciada) e a tentarem mover para TO DO */
 	if (!(strcmp(newactivity, "TO DO")) && strcmp(tasks_list[index].activity_name, "TO DO")) {
 		printf("task already started\n");
-		return 0;
+		return;
 	}
     for (i=0; i < count_users; i++) {
         if (!strcmp(newuser, users_list[i].username)) {
@@ -439,17 +524,17 @@ int moveTask(int id, char newuser[], char newactivity[]) {
     }
 	if (!valid_user) {
 		printf("no such user\n");
-		return 0;
+		return;
 	}
     for (i=0; i < count_activities; i++) {
         if (!(strcmp(newactivity, activities_list[i].name))) {
-			valid_activitie = 1; 
+			valid_activity = 1; 
             break;       
         }
     }
-	if (!valid_activitie) {
+	if (!valid_activity) {
 		printf("no such activity\n");
-    	return 0;
+    	return;
 	}
 	/* se a atividade estava no TO DO e vai sair, comeca a contar o tempo de inicio*/
 	if (!(strcmp(tasks_list[index].activity_name, "TO DO"))) {
@@ -460,10 +545,10 @@ int moveTask(int id, char newuser[], char newactivity[]) {
     if (!(strcmp(newactivity, "DONE"))) {
         printf("duration=%d slack=%d\n", (time_now - tasks_list[index].start_time), ((time_now - tasks_list[index].start_time) - tasks_list[index].duration));
     }
-	return 0;
+	return;
 }
 
-int allTasksList(char newactivity[]) {
+void allTasksList(char newactivity[]) {
 	int i, valid_acivity=0;
 	task_t sort_activitie_tasks[MAXTASKS];
 	int n=0;
@@ -474,7 +559,7 @@ int allTasksList(char newactivity[]) {
 	}
 	if (!valid_acivity) {
 		printf("no such activity\n");
-		return 0;
+		return;
 	}
 	for (i=0; i < count_tasks; i++) {
 		if (!strcmp(newactivity, tasks_list[i].activity_name)) {
@@ -488,40 +573,40 @@ int allTasksList(char newactivity[]) {
 	for (i=0; i < n; i++) {
 		printf("%d %d %s\n", sort_activitie_tasks[i].id, sort_activitie_tasks[i].start_time, sort_activitie_tasks[i].description);
 	} 	
-	return 0;
+	return;
 }
 
-int addActivity(char newactivity[], int activ_exist) {
+void addActivity(char newactivity[], int activ_exist) {
 	int i, len = strlen(newactivity);
 	int index;
     for(i=0; i < count_activities; i++) {
         if (!(strcmp(activities_list[i].name, newactivity))) {
             printf("duplicate activity\n");
-            return 0;
+            return;
         }
     }	
     for (i=0; i <= len; i++) {		
         if ((newactivity[i] >= 'a' && newactivity[i] <= 'z')) {
             printf("invalid description\n");
-            return 0;
+            return;
         }
     }
 	/* a atividade so e iterada aquando da possivel criacao, logo se a tarefa for criada e passar as 10, nao pode ser criada */
 	if (count_activities + 1 > MAXACTIVS) {
 		printf("too many activities\n");
-		return 0;
+		return;
 	}
 	if (activ_exist) {
 		count_activities++;
 		/* a posicao do array de atividades é sempre a quantidade de atividades menos 1, ou seja, atividades-1 */
 		index = count_activities - 1;	
 		strcpy(activities_list[index].name, newactivity);
-		return 0;
+		return;
 	}	
 	for (i=0; i < count_activities; i++) {
 		printf("%s\n", activities_list[i].name);
 	}
-	return 0;
+	return;
 }
 
 
