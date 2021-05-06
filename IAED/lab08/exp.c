@@ -4,24 +4,20 @@
 
 char *f4(char *x) {
 
-	char *y = x;
-	int i = 0;
+	char *y = x-1;
+	int i = 2;
 
-	while (y[i]) {
-		if ((*y)-- == 'Y') {
-			y[0] = 'y';
-		}
-		else {
-			y += 1;
-		}
-	}
+	while (*++y)
+		if (*y == 'Y')
+			*(y+i) = 'y';
+		else y[0]++;
 	return x;
 }
 
 int main() {
 
-	char *x = malloc(strlen("xYyYzY")+1);
-	strcpy(x, "xYyYzY");
+	char *x = malloc(strlen("xYyYxY")+1);
+	strcpy(x, "xYyYxY");
 	f4(x);
 	printf("%s\n", x);
 
