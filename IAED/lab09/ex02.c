@@ -42,9 +42,32 @@ void print(node *head) {
     }
 }
 
-int main() {
+int is_eq(node *h1, node *h2) {
 
-    return 0;
+    int sz_h1=0, sz_h2=0;
+
+    while (h1 != NULL || h2 != NULL) {
+        if (h1->v != h2->v) {
+            return 0;
+        }
+        h1 = h1->next;
+        sz_h1++;
+        h2 = h2->next;
+        sz_h2++;
+    }
+    return sz_h1 == sz_h2;
 }
 
+node *rev(node *head) {
+    
+    node *new_head = NULL;
+    while (head != NULL) {
+        new_head = push(new_head, head->v);
+        head = head->next;
+    }
+    return new_head;
+}
 
+int main() {
+    return 0;
+}

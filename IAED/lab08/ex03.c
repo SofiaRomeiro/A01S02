@@ -32,11 +32,15 @@ void push(stack *s, int e) {
     s->sz++;
 }
 
-int pop(stack *s) {
+int pop(stack *s) {  
 
     s->sz = (s->sz)-1;
-    return s->v[s->sz];
+    return s->v[s->sz]; 
 
+}
+
+int top(stack *s) {
+    return s->v[s->sz-1]
 }
 
 int is_empty(stack *s) {
