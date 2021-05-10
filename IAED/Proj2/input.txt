@@ -1,3 +1,2 @@
 set /bin/local/assets ola mundo
-help
 quit

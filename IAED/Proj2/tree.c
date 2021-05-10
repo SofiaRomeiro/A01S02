@@ -1,16 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tree.h"
 #include "list.h"
+#include "tree.h"
+#include "directory.h"
+#include "structs.h"
+
+
 
 #define ROOT "/"
 
-struct tree_node {
-    char *path;
-    char *value;
-    list_node_s childs; 
-};
 
 
 /* TODO tree_constructor */
@@ -40,22 +39,24 @@ void treeDestructor(tree_node_s node) {
 
 /* TODO treeAdd */
 
-void treeAdd(tree_node_s root, char *path, char *value ) {
+void treeAdd(tree_node_s root, input_s newinput) {  
 
-    int i;
-    int len  = strlen(path);
+    directory test;
 
-    char c;
-    /* TODO experimentar sem malloc */
-    char *dir = (char *) malloc(sizeof(char)*(len+1));
+    /* guardar o endereço da root sempre, so mexer no node*/
+    tree_node_s node = root; 
 
-    tree_node_s node = root;    
+    /* first new_input node is empty */
+    test = newinput->path->next;
 
-    for (i = 0; (c=path[i]) != '\0'; i++) {
-        if (c == '/') {
+    printf("[treeAdd] value: %s\n", newinput->value);
+    printDir(newinput->path);  
+    
 
-            dir[i] = '\0';
+    /*por cada dir no new input*/
+
             /* ver se existe o dir, se nao existe criar c o nome lido */
+
 
             // for child in node (&& not found)
                 // strcmp(child->path, dir) ==
@@ -67,15 +68,12 @@ void treeAdd(tree_node_s root, char *path, char *value ) {
                 // add child to node (parent)
                 // node = child   
 
-            i = 0;
-        }
-        else {
-            dir[i] = c;
-
+         /*   
         }
     }
+    */
 
-    free(dir);
+    destructorI(newinput);
 }
 
 

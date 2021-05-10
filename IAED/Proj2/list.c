@@ -3,11 +3,8 @@
 #include <string.h>
 #include "list.h"
 #include "tree.h"
+#include "structs.h"
 
-struct list_node {
-    tree_node_s tree_node;
-    list_node_s next;
-};
 
 list_node_s listConstructor(){
     return NULL;

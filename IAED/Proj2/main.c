@@ -3,7 +3,8 @@
 #include <string.h>
 #include "tree.h"
 #include "list.h"
-#include "input.h"
+#include "directory.h"
+#include "structs.h"
 
 #define ROOT '/'
 #define MAX_BUFFER 65535
@@ -12,18 +13,21 @@
 #define eq_int(A,B) (A==B)
 #define eq_char(A,B) !(strcmp(A,B))
 
-
 char *read_line();
 char *read_command(char *buffer);
 int aux();
+void read(char buffer[]);
 
 enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
 
 
-
-
 int main() {
-  /*  tree_node_s root = treeConstructor(); */
+    /* NUNCA PERDER ESTA ROOT */
+    tree_node_s root = treeConstructor();
+    directory head_dir = constructorD();
+    directory second_head = NULL;
+    input_s newinput = constructorI();
+    char buffer[MAX_BUFFER];
     int quit=0;
     int command;
 
@@ -48,8 +52,11 @@ int main() {
                 break;
             
             case SET:
-                /* TODO mandar o path bem feitinho para o add */
-                printf("set\n");
+             /*   printf("set\n"); */
+                read(buffer);
+                /* criei um input novo com o path e o value */
+                newinput = newPath(buffer, head_dir);
+                treeAdd(root, newinput);
                 break;
             
             case PRINT:
@@ -111,5 +118,14 @@ int aux() {
         return DELETE;
     }
     return NONE;
+}
+
+void read(char buffer[]) {
+    char c;
+    int i=0;
+    while ((c=getchar()) != EOF && c!= '\n') {
+        buffer[i++] = c;
+
+    }
 }
 
