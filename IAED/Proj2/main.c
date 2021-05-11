@@ -49,8 +49,7 @@ int main() {
             
             case SET:
              /*   printf("set\n"); */
-                read(buffer); 
-                printf("[main] %s\n", root->path);               
+                read(buffer);               
                 treeAdd(root, buffer);
                 printf("**********\n");
                 break;
