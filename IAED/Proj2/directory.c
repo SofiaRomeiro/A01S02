@@ -28,6 +28,7 @@ void destructorD(directory dir) {
 
     directory current, next;
     for (current = dir; current != NULL; current = next) {
+        
         next = current->next;
         free(current);
     }

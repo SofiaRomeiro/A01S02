@@ -3,7 +3,7 @@
 
 struct list_node {
     struct tree_node *tree_node;
-    struct list_node *next;
+    struct tree_node *next;
 };
 
 struct tree_node {

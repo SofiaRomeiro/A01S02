@@ -3,7 +3,6 @@
 #include <string.h>
 #include "tree.h"
 #include "list.h"
-#include "directory.h"
 #include "structs.h"
 
 #define ROOT '/'
@@ -24,9 +23,6 @@ enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
 int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
-    directory head_dir = constructorD();
-    directory second_head = NULL;
-    input_s newinput = constructorI();
     char buffer[MAX_BUFFER];
     int quit=0;
     int command;
@@ -53,10 +49,10 @@ int main() {
             
             case SET:
              /*   printf("set\n"); */
-                read(buffer);
-                /* criei um input novo com o path e o value */
-                newinput = newPath(buffer, head_dir);
-                treeAdd(root, newinput);
+                read(buffer); 
+                printf("[main] %s\n", root->path);               
+                treeAdd(root, buffer);
+                printf("**********\n");
                 break;
             
             case PRINT:
