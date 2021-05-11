@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tree.h"
-#include "list.h"
-#include "structs.h"
+#include "private.h"
+#include "public.h"
 
 #define ROOT '/'
 #define MAX_BUFFER 65535

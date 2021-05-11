@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "list.h"
-#include "tree.h"
-#include "structs.h"
+#include "private.h"
+#include "public.h"
 
 
 list_node_s listConstructor(){
