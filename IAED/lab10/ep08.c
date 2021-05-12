@@ -25,32 +25,48 @@ pos  |   values
 typedef struct next {
     int value;
     struct next *next;
-} *Next;
+} Next;
 
-Next *hash=NULL;
+Next *hash[MAX];
 
 int hashing(int val) { return val % MAX; }
+Next * aux;
+
+int lower() {
+  int lower = hash[0]->value, iter = 0;
+
+  while (iter < MAX) {
+    aux = hash[iter];
+    for(; aux != NULL; aux = aux->next) {
+        if (aux->value < lower) {
+          lower = aux->value;
+        }
+    }
+    iter++;  
+  }
+  return lower;
+}
 
 int maxcollision() {
 
   int max=0, iter=0, i;
-  Next aux;
+  Next *aux;
 
-  while (iter < MAX) {
-    aux = hash[iter];
-    for (i=0; aux != NULL; aux = aux->next, i++);
-    if (i > max) {
-      max = i;
-    }
+    while (iter < MAX) {
+      aux = hash[iter];
+      for (i=0; aux != NULL; aux = aux->next, i++);
+      if (i > max) {
+        max = i;
+      }
     iter++;
-  }
+    }
   
   return max-1;
 }
 
 
-Next insertBegin(Next head, int a) {
-  Next new = (Next)malloc(sizeof(struct next));
+Next * insertBegin(Next *head, int a) {
+  Next * new = (Next *)malloc(sizeof(struct next));
   new->value = a;
   new->next = head;
   return new;
@@ -58,7 +74,7 @@ Next insertBegin(Next head, int a) {
 
 void Init() {
   int i;
-  hash = (Next *)malloc(MAX * sizeof(struct next));
+  *hash = (Next *)malloc(MAX * sizeof(struct next));
   for (i = 0; i < MAX; i++) hash[i] = NULL;
 }
 
@@ -76,7 +92,7 @@ int main() {
     STinsert(i);
   }
 
-  printf("max = %d\n", maxcollision());
+  printf("lower = %d\n", lower());
   return 0;
 }
 
