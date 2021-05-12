@@ -55,11 +55,11 @@ void treeAdd(tree_node_s root, char buffer[]) {
                 j = 0; 
                 // ver se existe ou adicionar o novo path :              
                 parent = auxAddTree(parent, directory); 
-                directory[0] = '\0';         
+                clear(directory);         
             }
             else {
                 j = 0;
-                directory[0] = '\0'; 
+                clear(directory); 
             }
             if (c== ' ') {                
                 break;
@@ -84,6 +84,8 @@ void treeAdd(tree_node_s root, char buffer[]) {
 
     parent->value = (char *)malloc(sizeof(char)*(strlen(value)+1));
     strcpy(parent->value, value);
+    clear(value);
+    clear(directory);
 }
 
 tree_node_s auxAddTree(tree_node_s parent, char directory[]) {
@@ -161,7 +163,7 @@ void treeFind(tree_node_s root, char buffer[]) {
                 
             }
 
-            directory[0] = '\0';
+            clear(directory);
             
 
             j = 0;
@@ -183,4 +185,3 @@ void treeFind(tree_node_s root, char buffer[]) {
     }
 }
 /* TODO tree_list */
-

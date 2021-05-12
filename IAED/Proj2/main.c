@@ -127,4 +127,3 @@ void clear(char string[]) {
         string[i] = '\0';
     }
 }
-
