@@ -13,7 +13,7 @@ list_node_s listConstructor(){
 }
 
 void listDestructor(list_node_s node) {
-    tree_node_s current, next;
+    tree_node_s current;
     list_node_s aux=node;
     for (current = node->tree_node; aux != NULL; current = aux->next) {
         aux->next = current;
@@ -24,8 +24,6 @@ void listDestructor(list_node_s node) {
 tree_node_s listSearch(list_node_s children, char *target_dir) {
 
     tree_node_s current = children->tree_node;
-
-    
 
     for (; current != NULL; current = children->tree_node) {        
 

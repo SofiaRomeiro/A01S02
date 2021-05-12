@@ -11,13 +11,8 @@
 #define eq_int(A,B) (A==B)
 #define eq_char(A,B) !(strcmp(A,B))
 
-char *read_line();
-char *read_command(char *buffer);
-int aux();
-void read(char buffer[]);
 
 enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
-
 
 int main() {
     /* NUNCA PERDER ESTA ROOT */
@@ -59,6 +54,7 @@ int main() {
 
             case FIND:
                 printf("find\n");
+                treeFind(root, buffer);
                 break;
 
             case LIST:
@@ -121,5 +117,6 @@ void read(char buffer[]) {
         buffer[i++] = c;
 
     }
+    buffer[i] = '\0';
 }
 

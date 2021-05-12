@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "directory.h"
-#include"structs.h"
 
 #define MAX_BUFFER 65535
 
