@@ -35,7 +35,6 @@ void treeDestructor(tree_node_s node) {
     if (node->value != NULL) {
         free(node->value);
     }
-    free(node);
 }
 
 
@@ -175,7 +174,7 @@ void treeFind(tree_node_s root, char buffer[]) {
     } 
  
     if (parent->value == NULL) {
-        printf("no data\n");
+        printf("not found\n");
         return;
     }
     else{

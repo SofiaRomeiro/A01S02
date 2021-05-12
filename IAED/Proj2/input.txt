@@ -2,4 +2,6 @@ set /bin///local/assets ola mundo
 set /bin///local/assets olaa mundo
 set /bin///local/ monstroosss
 find /bin///local/assets
+set /bin///local/assets/rui cu
+find /bin///local/assets/rui
 quit

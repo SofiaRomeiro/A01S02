@@ -38,8 +38,7 @@ int main() {
                 break;
 
             case QUIT:
-                //treeDestructor(root);
-                clear(buffer);
+                treeDestructor(root);
                 quit = 1;
                 break;
             
@@ -119,12 +118,5 @@ void read(char buffer[]) {
 
     }
     buffer[i] = '\0';
-}
-
-void clear(char string[]) {
-    int i = strlen(string);
-    for (i-1; i > -1; i--) {
-        string[i] = '\0';
-    }
 }
 

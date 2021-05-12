@@ -10,7 +10,6 @@ char *read_line();
 char *read_command(char *buffer);
 int aux();
 void read(char buffer[]);
-void clear(char string[]);
 
 /* tree.c */
 tree_node_s treeConstructor();
