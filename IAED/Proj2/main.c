@@ -55,6 +55,7 @@ int main() {
                 break;
 
             case FIND:
+                printTest(root);
                 treeFind(root, buffer);
                 break;
 
@@ -123,7 +124,18 @@ void read(char buffer[]) {
 
 void clear(char string[]) {
     int i = strlen(string);
-    for (i-1; i > -1; i--) {
-        string[i] = '\0';
+    int j;
+    for (j=0; j<i; j++) {
+        string[j] = '\0';
     }
+}
+
+void printTest(tree_node_s root) {
+    tree_node_s child = root->child;
+    printf("\n");
+    while (child != NULL) {
+        printf("child : %s, ", child->path);
+        child = child->brother;
+    }
+    printf("\n");
 }

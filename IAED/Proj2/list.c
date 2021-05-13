@@ -13,11 +13,10 @@ list_node_s listConstructor(){
 }
 
 void listDestructor(list_node_s node) {
-    tree_node_s current;
-    list_node_s aux=node;
-    for (current = node->tree_node; aux != NULL; current = aux->next) {
-        aux->next = current;
-        treeDestructor(current);
+    tree_node_s current=node->tree_node;
+    for (current = node->tree_node; current != NULL; current = node->next) {
+        current=node->next;
+        free(node->tree_node);
     }
 }
 
@@ -34,12 +33,20 @@ tree_node_s listSearch(list_node_s children_list, char *target_dir) {
         children_list->tree_node = children_list->next;
           
     }
+    return children_list->tree_node;
+}
 
-    if (children_list->tree_node == NULL) {
-        return previous;
+
+list_node_s isItBrother(list_node_s children_list) {
+    // return do local onde se deve inserir o proximo filho
+    list_node_s previous_node;
+
+    while (children_list->tree_node != NULL) {
+        previous_node = children_list->tree_node;
+        children_list->tree_node = children_list->next;
     }
     
-    return children_list->tree_node;
+    return previous_node;
 }
 
 

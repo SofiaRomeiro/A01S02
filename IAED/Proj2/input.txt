@@ -1,7 +1,9 @@
-set /bin///local/assets ola mundo
-set /bin///local/assets olaa mundo
-set /bin///local/ monstroosss
-find /bin///local/assets
-set /bin///local/assets/rui cu
-find /bin///local/assets/rui
+set proj2.c resolucao do projeto
+set README.md enunciado do projeto
+set tests/Makefile execução dos testes
+set tests/test01.in primeiro teste
+set tests/test02.in segundo teste
+set Makefile construcao do projeto
+set guidelines.md orientacoes para a escrita do projeto
+find Makefile
 quit
