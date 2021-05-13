@@ -30,10 +30,10 @@ typedef struct next {
 Next *hash[MAX];
 
 int hashing(int val) { return val % MAX; }
-Next * aux;
 
 int lower() {
   int lower = hash[0]->value, iter = 0;
+  Next * aux;
 
   while (iter < MAX) {
     aux = hash[iter];
