@@ -14,6 +14,7 @@ tree_node_s treeConstructor(){
     new_tree->value = NULL;
     new_tree->brother = NULL;
     new_tree->child = NULL;
+    new_tree->parent = NULL;
     return new_tree;
 }
 
@@ -23,6 +24,7 @@ tree_node_s newTreeNode() {
     new_node->path = NULL;
     new_node->child = NULL;
     new_node->brother = NULL;
+    new_node->parent = NULL;
     return new_node;
 }
 
@@ -49,7 +51,9 @@ void treeAdd(tree_node_s root, char buffer[]) {
             if (strcmp(directory,"") && strcmp(directory, "/")) {         
                 //verificar existem filhos
                 newchild = auxAddTree(parent, directory);
-                // agora, o pai(atual) passa a ser o filho que acabei de criar
+                // atribuo o pai atual ao campo "parent" do novo filho                
+                newchild->parent = parent;
+                 // agora, o pai(atual) passa a ser o filho que acabei de criar
                 parent = newchild;
                 clear(directory);
                 j=0;
@@ -90,6 +94,8 @@ void treeAdd(tree_node_s root, char buffer[]) {
 
 tree_node_s auxAddTree(tree_node_s parent, char path[]) {
 
+    //o parent do input sera colocado no campo "parent" do novo filho
+
     // o filho que vou criar
     tree_node_s child;
     // o irmao, caso nao exista ainda o path, que será o antecessor do novo node a criar com o path
@@ -110,6 +116,7 @@ tree_node_s auxAddTree(tree_node_s parent, char path[]) {
         // nao existe ainda o path a criar, logo vou procurar onde o inserir        
             brother = findBrotherNode(parent->child, path);
             child = newChild(path); //novo irmao do brother que retornei
+            child->parent = parent;
             brother->brother = child;
             return child;
         }
@@ -117,6 +124,7 @@ tree_node_s auxAddTree(tree_node_s parent, char path[]) {
     else {
         // se nao existirem, tenho de criar uma nova lista de filhos para o atual pai e adicionar o filho criado a primeira posicao
         child = newChild(path);
+        child->parent = parent;
         parent->child = child;
         return child;
     }
@@ -140,6 +148,7 @@ tree_node_s newChild(char path[]){
     strcpy(newchild->path, path);
     newchild->child = NULL;
     newchild->brother = NULL;
+    newchild->parent = NULL;
     newchild->value = NULL;
 
     return newchild;
@@ -167,6 +176,57 @@ void treePrint(tree_node_s root) {
 }
 /* TODO tree_delete */
 /* TODO tree_search */
+
+void treeSearch(tree_node_s root, char buffer[]) {
+    tree_node_s aux;
+    clear(buffer);
+    read(buffer);
+    //procura binaria 
+    aux = searchBinary(root, buffer);
+    printf(aux == NULL ? "nao encontrou nada\n" : "encontrou algo!\n");
+    if (aux!= NULL) {
+        printf("%s\n", aux->path);
+    }
+    
+}
+
+tree_node_s searchBinary(tree_node_s root, char buffer[]) {
+    tree_node_s aux=root;
+
+    // criar lista com todos os parents que antecedem o ultimo filho (um genero de list node)
+
+    // se i input for nulo, devolvo null    
+
+    // (estar sempre a ver se e o argumento que eu quero)
+
+    // se nao for null, iniciar a procura pelo ultimo filho        
+
+    // se nao encontrar
+    
+    // PROBLEMA !!! QUANDO O VALUE A PROCURAR ESTA NUM RAMO SUPERIOR AQUELE PARA O QUAL O ALGORITMO PASSOU
+
+    if (aux == NULL) {
+        return NULL;
+    }
+
+    printf(aux->value==NULL ? "nulo\n" : "nao nulo\n");
+
+    if (aux->value != NULL) {        
+        if (!(strcmp(buffer, aux->value))) {            
+            return aux;
+        }
+    }
+
+    if (aux->child != NULL) {
+        
+        return searchBinary(aux->child, buffer);
+            
+    }
+    else {
+        
+        return searchBinary(aux->brother, buffer);
+    }
+}
 
 // TODO treeFind
 void treeFind(tree_node_s root, char buffer[]) {    

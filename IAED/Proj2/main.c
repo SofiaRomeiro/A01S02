@@ -64,7 +64,7 @@ int main() {
                 break;
 
             case SEARCH:
-                printf("search\n");
+                treeSearch(root, buffer);
                 break;
             
             case DELETE:
@@ -132,10 +132,12 @@ void clear(char string[]) {
 
 void printTest(tree_node_s root) {
     tree_node_s child = root->child;
+    printf("[printTest] %s\n", child->path);
     printf("\n");
     while (child != NULL) {
         printf("child : %s, ", child->path);
         child = child->brother;
     }
+    
     printf("\n");
 }

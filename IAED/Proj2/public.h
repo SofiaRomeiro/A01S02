@@ -27,6 +27,8 @@ tree_node_s brotherSearch(tree_node_s child, char path[]);
 
 void treePrint(tree_node_s root);
 void treeFind(tree_node_s root, char buffer[]);
+void treeSearch(tree_node_s root, char buffer[]);
+tree_node_s searchBinary(tree_node_s root, char buffer[]);
 
 
 

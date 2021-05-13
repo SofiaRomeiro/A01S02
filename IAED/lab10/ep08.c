@@ -20,7 +20,7 @@ pos  |   values
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 10
+#define MAX 9
 
 typedef struct next {
     int value;
@@ -92,7 +92,8 @@ int main() {
     STinsert(i);
   }
 
-  printf("lower = %d\n", lower());
+
+  printf("density = %f\n", density());
   return 0;
 }
 
