@@ -84,6 +84,9 @@ void treeAdd(tree_node_s root, char buffer[]) {
     }
     value[j] = '\0';
 
+    //if (newchild->value != NULL) {
+    //    free(newchild->value);
+    //}
     
     newchild->value = (char *) malloc(sizeof(char)*(strlen(value)+1));
     strcpy(newchild->value, value);
@@ -176,19 +179,44 @@ void treePrint(tree_node_s root) {
 }
 /* TODO tree_delete */
 /* TODO tree_search */
-
-void treeSearch(tree_node_s root, char buffer[]) {
-    tree_node_s aux;
-    clear(buffer);
-    read(buffer);
-    //procura binaria 
-    aux = searchBinary(root, buffer);
-    printf(aux == NULL ? "nao encontrou nada\n" : "encontrou algo!\n");
-    if (aux!= NULL) {
-        printf("%s\n", aux->path);
-    }
-    
+void Printer(tree_node_s node) {
+    printf("[Printer] value: %s\n", node->value);
 }
+
+tree_node_s treeSearch(tree_node_s root, char buffer[]) {
+    tree_node_s aux = root;
+
+    if (aux == NULL)
+        return NULL;
+    if (aux->value != NULL && !strcmp(aux->value, buffer)) {
+        Printer(aux);  
+        return NULL;
+    } 
+    else if (aux->child != NULL) {
+        return treeSearch(aux->child, buffer);
+    }
+    else if (aux->brother != NULL) {
+        return treeSearch(aux->brother, buffer);
+    }
+    else {
+        if (aux->parent->brother == NULL)
+            return NULL;
+        else 
+            return treeSearch(aux->parent->brother, buffer);
+    }
+
+
+    // fim -> o parent é NULL    
+    // encontrou o valor, PARA tudo!   
+
+    // tem filhos ? 
+        // sim! passa para o proximo filho
+        // não! passa para o irmao
+   
+    // tem irmao e nao tem filhos?    
+        // sim! passa para o irmao 
+        // nao! volta para o parent e passa para o proximo irmao do parent     
+}    
 
 tree_node_s searchBinary(tree_node_s root, char buffer[]) {
     tree_node_s aux=root;
@@ -205,27 +233,7 @@ tree_node_s searchBinary(tree_node_s root, char buffer[]) {
     
     // PROBLEMA !!! QUANDO O VALUE A PROCURAR ESTA NUM RAMO SUPERIOR AQUELE PARA O QUAL O ALGORITMO PASSOU
 
-    if (aux == NULL) {
-        return NULL;
-    }
-
-    printf(aux->value==NULL ? "nulo\n" : "nao nulo\n");
-
-    if (aux->value != NULL) {        
-        if (!(strcmp(buffer, aux->value))) {            
-            return aux;
-        }
-    }
-
-    if (aux->child != NULL) {
-        
-        return searchBinary(aux->child, buffer);
-            
-    }
-    else {
-        
-        return searchBinary(aux->brother, buffer);
-    }
+    
 }
 
 // TODO treeFind

@@ -3,6 +3,7 @@
 
 typedef struct tree_node* tree_node_s;
 typedef struct list_node* list_node_s;
+typedef struct node* node_s;
 
 
 /* main.c */
@@ -27,8 +28,9 @@ tree_node_s brotherSearch(tree_node_s child, char path[]);
 
 void treePrint(tree_node_s root);
 void treeFind(tree_node_s root, char buffer[]);
-void treeSearch(tree_node_s root, char buffer[]);
+tree_node_s treeSearch(tree_node_s root, char buffer[]);
 tree_node_s searchBinary(tree_node_s root, char buffer[]);
+void Printer(tree_node_s node);
 
 
 

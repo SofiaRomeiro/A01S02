@@ -55,7 +55,7 @@ int main() {
                 break;
 
             case FIND:
-                printTest(root);
+                //printTest(root);
                 treeFind(root, buffer);
                 break;
 
@@ -64,7 +64,9 @@ int main() {
                 break;
 
             case SEARCH:
-                treeSearch(root, buffer);
+                clear(buffer);
+                read(buffer);
+                treeSearch(root->child, buffer);
                 break;
             
             case DELETE:

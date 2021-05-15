@@ -14,4 +14,10 @@ struct list_node {
     struct list_node *next;
 };
 
+struct node{
+    struct tree_node *current;
+    struct tree_node *next;
+};
+
+
 #endif

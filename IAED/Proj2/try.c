@@ -5,50 +5,44 @@
 #include "public.h"
 #define MAX_PATH
 
-list_node_s lastsList(tree_node_s root) {
-    list_node_s lstnode = listConstructor();
-    tree_node_s aux = root;
-    // procurar o ultimo filho de cada ramo que ja nao possua filhos
-    if (aux==NULL) {
-        return NULL;
-    }
+typedef struct node * node_s;
 
-    //quando ja nao há filhos, passa a procura recursiva ao irmao
+struct node {
+    struct tree_node *current;
+    struct node *next;
+};
 
-    // encontrei o ultimo filho de um ramo
-    if (aux->child==NULL && aux!=NULL) {
-        lstnode->current = aux;
-        lstnode = lstnode->next;
-    }
-
-    // procuro filhos
-
-    if (aux->child != NULL) {
-        aux = aux->child;
-        return lastsList(aux);
-    }
-
-
-
-
-    // quando encontrado, adicionar ao lstnode
-
-
-
-
-
-
-
-
-    return lstnode;
+struct node* init() /* inicializa a pilha */ {
+    struct node *top = NULL;
+    return top;
 }
 
-list_node_s listConstructor(){
-    list_node_s newnode = (list_node_s) malloc(sizeof(struct list_node));
-    newnode->current = NULL;
-    newnode->next = NULL;
-    return newnode;
+void push(tree_node_s next, node_s top) /* introduz novo elemento no topo */ {
+    struct node *new;
+    new = (struct node *) malloc(sizeof(struct node));
+    new->next->current = top;
+    top = new;
 }
+
+int is_empty(node_s top) /* pergunta se está vazia */ {
+    return top == NULL;
+}
+
+void pop(node_s top) /* apaga o topo e retorna o valor apagado */ {
+    struct node *old;
+
+    if (!is_empty(top)) {
+        old->current = top;
+        top = top->next;
+        free(old);
+        return;
+    }
+    else
+        return;
+}
+
+
+
 
 
 
