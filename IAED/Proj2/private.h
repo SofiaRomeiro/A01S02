@@ -16,7 +16,7 @@ struct list_node {
 
 struct node{
     struct tree_node *current;
-    struct tree_node *next;
+    struct node *next;
 };
 
 

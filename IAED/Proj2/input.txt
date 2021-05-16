@@ -6,5 +6,4 @@ set tests/test02.in segundo teste
 set Makefile construção do projeto
 set guidelines.md orientacoes para a escrita do projeto
 find Makefile
-search enunciado do projeto
-quit
+search 

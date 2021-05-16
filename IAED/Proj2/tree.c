@@ -179,62 +179,60 @@ void treePrint(tree_node_s root) {
 }
 /* TODO tree_delete */
 /* TODO tree_search */
-void Printer(tree_node_s node) {
-    printf("[Printer] value: %s\n", node->value);
+void Printer(node_s top) {   
+    printf("NULL? %d\n", top==NULL);
+    while (top != NULL) {     
+        printf("[Printer] path: %s\n", top->current->path);
+        top = top->next;
+    }
 }
 
-tree_node_s treeSearch(tree_node_s root, char buffer[]) {
+tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
     tree_node_s aux = root;
-
+    node_s stack = top;
+    // fim -> o parent é NULL  
     if (aux == NULL)
         return NULL;
+
+    // encontrou o valor, PARA tudo! 
     if (aux->value != NULL && !strcmp(aux->value, buffer)) {
-        Printer(aux);  
+        stack = push(aux, stack);
+        Printer(stack);  
         return NULL;
     } 
-    else if (aux->child != NULL) {
-        return treeSearch(aux->child, buffer);
-    }
-    else if (aux->brother != NULL) {
-        return treeSearch(aux->brother, buffer);
-    }
-    else {
-        if (aux->parent->brother == NULL)
-            return NULL;
-        else 
-            return treeSearch(aux->parent->brother, buffer);
-    }
-
-
-    // fim -> o parent é NULL    
-    // encontrou o valor, PARA tudo!   
 
     // tem filhos ? 
         // sim! passa para o proximo filho
-        // não! passa para o irmao
-   
-    // tem irmao e nao tem filhos?    
+    else if (aux->child != NULL) {
+        stack = push(aux->child, stack);
+        return treeSearch(aux->child, buffer, stack);
+    }
+
+    // não! passa para o irmao
+    else if (aux->brother != NULL) {
+        //stack = push(aux->brother, stack);
+        stack = pop(stack);
+        stack = push(aux->brother, stack);
+        return treeSearch(aux->brother, buffer, stack);
+    }
+
+     // tem irmao e nao tem filhos?      
+    else {
+        // nao! volta para o parent e passa para o proximo irmao do parent 
+        if (aux->parent->brother == NULL) {
+            stack = pop(stack);
+            return NULL;
+        }
         // sim! passa para o irmao 
-        // nao! volta para o parent e passa para o proximo irmao do parent     
+        else {
+            stack = pop(stack);
+            stack = pop(stack);
+            stack = push(aux->parent->brother, stack);
+            return treeSearch(aux->parent->brother, buffer, stack);
+        }
+    }    
 }    
 
-tree_node_s searchBinary(tree_node_s root, char buffer[]) {
-    tree_node_s aux=root;
-
-    // criar lista com todos os parents que antecedem o ultimo filho (um genero de list node)
-
-    // se i input for nulo, devolvo null    
-
-    // (estar sempre a ver se e o argumento que eu quero)
-
-    // se nao for null, iniciar a procura pelo ultimo filho        
-
-    // se nao encontrar
-    
-    // PROBLEMA !!! QUANDO O VALUE A PROCURAR ESTA NUM RAMO SUPERIOR AQUELE PARA O QUAL O ALGORITMO PASSOU
-
-    
-}
 
 // TODO treeFind
 void treeFind(tree_node_s root, char buffer[]) {    

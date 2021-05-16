@@ -28,18 +28,16 @@ tree_node_s brotherSearch(tree_node_s child, char path[]);
 
 void treePrint(tree_node_s root);
 void treeFind(tree_node_s root, char buffer[]);
-tree_node_s treeSearch(tree_node_s root, char buffer[]);
-tree_node_s searchBinary(tree_node_s root, char buffer[]);
-void Printer(tree_node_s node);
+tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top);
+void Printer(node_s top);
 
 
 
 /* list.c*/
-list_node_s listConstructor();
-void listDestructor(list_node_s node);
-tree_node_s listSearch(list_node_s children_list, char *target_dir);
-tree_node_s listFind(list_node_s children, char *target_dir);
-list_node_s isItBrother(list_node_s children_list);
+node_s init();
+node_s push(tree_node_s next, node_s top);
+int is_empty(node_s top);
+node_s pop(node_s top);
 
 
 #endif

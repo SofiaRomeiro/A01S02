@@ -12,12 +12,12 @@ struct node {
     struct node *next;
 };
 
-struct node* init() /* inicializa a pilha */ {
-    struct node *top = NULL;
+node_s init() /* inicializa a pilha */ {
+    node_s top = NULL;
     return top;
 }
 
-void push(tree_node_s next, node_s top) /* introduz novo elemento no topo */ {
+node_s push(tree_node_s next, node_s top) /* introduz novo elemento no topo */ {
     struct node *new;
     new = (struct node *) malloc(sizeof(struct node));
     new->next->current = top;
@@ -28,17 +28,17 @@ int is_empty(node_s top) /* pergunta se está vazia */ {
     return top == NULL;
 }
 
-void pop(node_s top) /* apaga o topo e retorna o valor apagado */ {
+node_s pop(node_s top) /* apaga o topo e retorna o valor apagado */ {
     struct node *old;
 
     if (!is_empty(top)) {
         old->current = top;
         top = top->next;
         free(old);
-        return;
+        return top;
     }
     else
-        return;
+        return NULL;
 }
 
 
