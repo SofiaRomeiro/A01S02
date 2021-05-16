@@ -9,19 +9,9 @@ struct tree_node {
     struct tree_node *child; 
 };
 
-struct list_node {
+struct stack{
     struct tree_node *current;
-    struct list_node *next;
-};
-
-struct node{
-    struct tree_node *current;
-    struct node *next;
-};
-
-struct list {
-    struct tree_node *current;
-    struct list *previous, *next;
+    struct stack *previous, *next;
 };
 
 #endif

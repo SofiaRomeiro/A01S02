@@ -5,88 +5,19 @@
 #include "public.h"
 
 
-list_s initList() {
-    list_s new;
-    new = (list_s) malloc(sizeof(struct list));
-    new->current = NULL;
-    new->next = NULL;
-    new->previous= NULL;
-    return new;
-}
+// *********  STACK  *****************
 
-list_s insertBegin(list_s head, tree_node_s node)
-{
-    list_s new = (list_s) malloc(sizeof(struct list));
-    new->previous = NULL;
-    new->current = node;
-    new->next = head;
-    //new is the new head
-    return new;
-}
-
-list_s insertEnd(list_s head, tree_node_s node) {
-    list_s t=head;
-    list_s new = (list_s)malloc(sizeof(struct list));
-    new->previous = head;
-    new->current = node;
-    new->next = NULL;
-    
-    if(head == NULL) 
-        return new;
-
-    for(t = head; t->next != NULL; t = t->next);
-   
-    t->next = new;
-    return head;
-}
-
-void printList(list_s head) {
-    list_s t = head;
-    
-    for(t = head; t != NULL; t = t->next) {
-        if (t->current != NULL) {
-            printf("/%s", t->current->path);
-        }
-        else {
-            printf("\n");
-            return;
-        }
-    }
-    
-}
-
-list_s removeBegin(list_s head) {
-    list_s prev=NULL, curr=head;
-    curr = prev->next;
-    prev->next = curr->next;
-    return curr;
-}
-
-void removeEnd(list_s head) {
-
-    list_s t=head, old;
-    tree_node_s aux;
-
-    // procurar o ultimo elemento
-    for(t = head; t->next != NULL; t = t->next);
-    aux = t->current;
-    old = t->next;
-    t->next = NULL;
-    t->current = NULL;
-    free(old);
-    treeDestructor(aux);
-}
-
-
-
-struct node* init(){
-    struct node *top = NULL;
+stack_s initStack(){
+    stack_s top = (stack_s) malloc(sizeof(struct stack));
+    top->current = NULL;
+    top->next = NULL;
+    top->previous = NULL;
     return top;
 }
 
-void destroyStack(node_s stack) {
+void destroyStack(stack_s stack) {
 
-    node_s aux;
+    stack_s aux;
 
     while (stack != NULL) {
         aux = stack;
@@ -96,30 +27,56 @@ void destroyStack(node_s stack) {
 
 }
 
-node_s push(tree_node_s adding, node_s top){
-    struct node *new;
-    new = (struct node *) malloc(sizeof(struct node));
-    new->current = adding;
-    new->next = top;
-    top = new;
-    return top;
+stack_s push(tree_node_s adding, stack_s stack){
+
+    if (is_empty(stack)) {
+        stack = (stack_s) malloc(sizeof(struct stack));
+        stack->current = adding;
+        stack->previous = NULL;
+        stack->next = NULL;
+        return stack;
+    } 
+    else {
+        stack_s new = (stack_s) malloc(sizeof(struct stack));    
+        new->current = adding;
+        new->previous = NULL;
+        new->next = stack;
+        stack->previous = new;
+        return new;
+    }  
 }
 
-int is_empty(node_s top){
-    return top == NULL;
+int is_empty(stack_s stack){
+    return stack == NULL;
 }
 
-node_s pop(node_s top) {
-    struct node *old;
+stack_s pop(stack_s top) {
+    stack_s old=top;
+    stack_s newtop = (stack_s) malloc(sizeof(struct stack));
 
     if (!is_empty(top)) {
-        old = top;
-        top = top->next;
+        newtop = old->next;
         free(old);
-        return top;
+        return newtop;
     }
     else
         return NULL;
+}
+
+void printStack(stack_s stack) {    
+
+    stack_s tail, aux=stack;
+    while (aux->next != NULL) {            
+        aux = aux->next;        
+    }
+    tail = aux;
+
+    while(tail != NULL) {
+       printf("/%s", tail->current->path);
+       aux = tail;
+       tail = tail->previous;
+    }
+    printf("\n");
 }
 
 

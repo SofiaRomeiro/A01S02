@@ -2,8 +2,7 @@
 #define __PUBLIC_H__
 
 typedef struct tree_node* tree_node_s;
-typedef struct node* node_s;
-typedef struct list *list_s;
+typedef struct stack* stack_s;
 
 
 
@@ -18,7 +17,7 @@ void printTest(tree_node_s root);
 /* tree.c */
 tree_node_s treeConstructor();
 tree_node_s newTreeNode();
-void treeDestructor(tree_node_s node);
+tree_node_s treeDestructor(tree_node_s node);
 void treeAdd(tree_node_s root, char buffer[]);
 
 void treeAdd(tree_node_s root, char buffer[]);
@@ -29,27 +28,21 @@ tree_node_s brotherSearch(tree_node_s child, char path[]);
 
 void treePrint(tree_node_s root);
 void treeFind(tree_node_s root, char buffer[]);
-tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top);
-void Printer(node_s top);
-
-tree_node_s treeSearchL(tree_node_s root, char buffer[], list_s list);
+tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top);
 
 
 /* list.c*/
 
+void printList(stack_s head);
+void removeEnd(stack_s head); 
+void destroyList(stack_s list);
+void destroyStack(stack_s stack);
+void printStack(stack_s top);
 
-list_s initList();
-list_s insertBegin(list_s head, tree_node_s node);
-list_s insertEnd(list_s head, tree_node_s node);
-void printList(list_s head);
-void removeEnd(list_s head); 
-void destroyList(list_s list);
-void destroyStack(node_s stack);
-
-node_s init();
-node_s push(tree_node_s next, node_s top);
-int is_empty(node_s top);
-node_s pop(node_s top);
+stack_s initStack();
+stack_s push(tree_node_s next, stack_s top);
+int is_empty(stack_s top);
+stack_s pop(stack_s top);
 
 
 #endif

@@ -17,8 +17,7 @@ enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
 int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
-    node_s top = init();
-    list_s list = initList();
+    stack_s stack = NULL;
     char buffer[MAX_BUFFER];
     int quit=0;
     int command;
@@ -40,7 +39,7 @@ int main() {
                 break;
 
             case QUIT:
-                //treeDestructor(root);
+                treeDestructor(root);
                 clear(buffer);
                 quit = 1;
                 break;
@@ -49,7 +48,7 @@ int main() {
              /*   printf("set\n"); */
                 read(buffer);               
                 treeAdd(root, buffer);
-                printf("----- setting ------\n");
+                //printf("----- setting ------\n");
                 break;
             
             case PRINT:
@@ -68,8 +67,7 @@ int main() {
             case SEARCH:
                 clear(buffer);
                 read(buffer);
-                treeSearch(root, buffer, top);
-                //treeSearchL(root, buffer, list);
+                treeSearch(root, buffer, stack);
                 break;
             
             case DELETE:
