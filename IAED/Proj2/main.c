@@ -18,6 +18,7 @@ int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
     node_s top = init();
+    list_s list = initList();
     char buffer[MAX_BUFFER];
     int quit=0;
     int command;
@@ -68,6 +69,7 @@ int main() {
                 clear(buffer);
                 read(buffer);
                 treeSearch(root, buffer, top);
+                //treeSearchL(root, buffer, list);
                 break;
             
             case DELETE:

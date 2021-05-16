@@ -19,5 +19,9 @@ struct node{
     struct node *next;
 };
 
+struct list {
+    struct tree_node *current;
+    struct list *previous, *next;
+};
 
 #endif

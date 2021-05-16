@@ -179,24 +179,32 @@ void treePrint(tree_node_s root) {
 }
 /* TODO tree_delete */
 /* TODO tree_search */
-void Printer(node_s top) {   
-    printf("NULL? %d\n", top==NULL);
-    while (top != NULL) {      
-        printf("[Printer] path: %s\n", top->current->path);
-        top = top->next;
+void Printer(node_s top) {
+    list_s list = initList();
+    node_s node = top;
+
+    while (node != NULL) { 
+        list = insertBegin(list, node->current);
+        node = node->next;
+        
     }
+    printf("\n");
+    printList(list);
+    free(list);
+    destroyStack(top);
 }
 
 tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
     tree_node_s aux = root;
     node_s stack = top;
     // fim -> o parent é NULL  
-    if (aux == NULL)
+    if (aux == NULL) {        
         return NULL;
+    }
 
     // encontrou o valor, PARA tudo! 
     if (aux->value != NULL && !strcmp(aux->value, buffer)) {
-        Printer(stack);  
+        Printer(stack); 
         return NULL;
     } 
 
@@ -209,10 +217,10 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
 
     // não! passa para o irmao
     else if (aux->brother != NULL) {
-        //stack = push(aux->brother, stack);
-        stack = pop(stack);
+
+        stack = pop(stack);       
         stack = push(aux->brother, stack);
-        return treeSearch(aux->brother, buffer, stack);
+        return treeSearch(aux->brother, buffer, top);
     }
 
      // tem irmao e nao tem filhos?      
@@ -220,6 +228,7 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
         // nao! volta para o parent e passa para o proximo irmao do parent 
         if (aux->parent->brother == NULL) {
             stack = pop(stack);
+            printf("not found\n");
             return NULL;
         }
         // sim! passa para o irmao 
@@ -227,7 +236,59 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
             stack = pop(stack);
             stack = pop(stack);
             stack = push(aux->parent->brother, stack);
+
             return treeSearch(aux->parent->brother, buffer, stack);
+        }
+    }    
+}   
+
+tree_node_s treeSearchL(tree_node_s root, char buffer[], list_s list) {
+    tree_node_s aux = root;
+    list_s lst = list;
+    // fim -> o parent é NULL  
+    if (aux == NULL) {        
+        return NULL;
+    }
+
+    // encontrou o valor, PARA tudo! 
+    if (aux->value != NULL && !strcmp(aux->value, buffer)) {
+        removeEnd(lst);  
+        printList(lst);
+        return NULL;
+    } 
+
+    // tem filhos ? 
+        // sim! passa para o proximo filho
+    else if (aux->child != NULL) {
+         
+        lst = insertBegin(lst, aux->child);
+        return treeSearchL(aux->child, buffer, lst);
+    }
+
+    // não! passa para o irmao
+    else if (aux->brother != NULL) {
+        removeEnd(lst);        
+        removeEnd(lst);  
+        lst = insertBegin(lst, aux->brother);
+        return treeSearchL(aux->brother, buffer, lst);
+    }
+
+     // tem irmao e nao tem filhos?      
+    else {
+        // nao! volta para o parent e passa para o proximo irmao do parent 
+        if (aux->parent->brother == NULL) {
+            removeEnd(lst);
+            
+            printf("not found\n");
+            return NULL;
+        }
+        // sim! passa para o irmao 
+        else {
+            
+            removeEnd(lst);
+            lst = insertBegin(lst, aux->parent->brother);
+
+            return treeSearchL(aux->parent->brother, buffer, lst);
         }
     }    
 }    
