@@ -181,7 +181,7 @@ void treePrint(tree_node_s root) {
 /* TODO tree_search */
 void Printer(node_s top) {   
     printf("NULL? %d\n", top==NULL);
-    while (top != NULL) {     
+    while (top != NULL) {      
         printf("[Printer] path: %s\n", top->current->path);
         top = top->next;
     }
@@ -196,7 +196,6 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
 
     // encontrou o valor, PARA tudo! 
     if (aux->value != NULL && !strcmp(aux->value, buffer)) {
-        stack = push(aux, stack);
         Printer(stack);  
         return NULL;
     } 

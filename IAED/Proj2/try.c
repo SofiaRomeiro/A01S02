@@ -8,38 +8,69 @@
 typedef struct node * node_s;
 
 struct node {
-    struct tree_node *current;
-    struct node *next;
+    tree_node_s current;
+    struct node *previous, *next;
 };
 
-node_s init() /* inicializa a pilha */ {
-    node_s top = NULL;
-    return top;
+node_s init() {
+    node_s new;
+    new = (node_s) malloc(sizeof(struct node));
+    return new;
 }
 
-node_s push(tree_node_s next, node_s top) /* introduz novo elemento no topo */ {
-    struct node *new;
-    new = (struct node *) malloc(sizeof(struct node));
-    new->next->current = top;
-    top = new;
+node_s insertBegin(node_s head, tree_node_s node)
+{
+    node_s new = (node_s)malloc(sizeof(struct node));
+    new->current = node;
+    new->next = head;
+    //new is the new head
+    return new;
 }
 
-int is_empty(node_s top) /* pergunta se está vazia */ {
-    return top == NULL;
+node_s insertEnd(node_s head, tree_node_s node) {
+    node_s t;
+    node_s new = (node_s)malloc(sizeof(struct node));
+    new->current = node;
+    new->next = NULL;
+
+    if(head == NULL) 
+        return new;
+
+    for(t = head; t->next != NULL; t = t->next);
+
+    t->next = new;
+    return head;
 }
 
-node_s pop(node_s top) /* apaga o topo e retorna o valor apagado */ {
-    struct node *old;
+void printList(node_s head) {
+    node_s t;
+    for(t = head; t != NULL; t = t->next)
+    printf("%s\n",t->current->path);
+}
 
-    if (!is_empty(top)) {
-        old->current = top;
-        top = top->next;
-        free(old);
-        return top;
+node_s remove(node_s head) {
+    node_s prev=NULL, curr = head;
+    while (curr != NULL) {
+        prev = curr;
+        curr = curr->next;
     }
-    else
-        return NULL;
+    if (prev != NULL) /* se não for o primeiro elemento */
+        prev->next = curr->next;
+    else 
+        head = curr->next;
+        free(curr);
+
+    return head;
 }
+
+int size(node_s head){
+    int count=0;
+    node_s x;
+    for(x=head ; x!=NULL; x=x->next)
+        count++;
+    return count;
+}
+
 
 
 
