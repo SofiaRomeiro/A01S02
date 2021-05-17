@@ -9,8 +9,7 @@ typedef struct stack* stack_s;
 /* main.c */
 char *read_line();
 char *read_command(char *buffer);
-int aux();
-void read(char buffer[]);
+int aux(char buffer[]);
 void clear(char string[]);
 void printTest(tree_node_s root);
 
@@ -30,6 +29,10 @@ stack_s treePrint(tree_node_s root, stack_s top);
 void treeFind(tree_node_s root, char buffer[]);
 tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top);
 void printFuncStack(stack_s stack);
+void treeList(tree_node_s root, char buffer[]);
+
+
+tree_node_s findParent(tree_node_s current, stack_s stack);
 
 
 /* list.c*/
@@ -39,6 +42,7 @@ void removeEnd(stack_s head);
 void destroyList(stack_s list);
 void destroyStack(stack_s stack);
 void printStack(stack_s top);
+
 
 stack_s initStack();
 stack_s push(tree_node_s next, stack_s top);

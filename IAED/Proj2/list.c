@@ -15,15 +15,8 @@ stack_s initStack(){
     return top;
 }
 
-void destroyStack(stack_s stack) {
-
-    stack_s aux;
-
-    while (stack != NULL) {
-        aux = stack;
-        stack = stack->next;
-        free(aux);
-    }
+void destroyStack(stack_s stack) {  
+    free(stack);
 }
 
 stack_s push(tree_node_s adding, stack_s stack){
@@ -50,20 +43,22 @@ int is_empty(stack_s stack){
 }
 
 stack_s pop(stack_s top) {
-    stack_s newtop = (stack_s) malloc(sizeof(struct stack));
+    stack_s old;
 
     if (!is_empty(top)) {
-        newtop = top->next;
-        free(top);
-        return newtop;
+        old = top;
+        top = top->next;
+        free(old);
+        return top;
     }
     else
         return NULL;
 }
 
-void printStack(stack_s stack) {    
+void printStack(stack_s stack) {  
 
     stack_s tail, aux=stack;
+
     while (aux->next != NULL) {            
         aux = aux->next;        
     }
@@ -77,7 +72,7 @@ void printStack(stack_s stack) {
     printf("\n");
 }
 
-void printFuncStack(stack_s stack) {    
+void printFuncStack(stack_s stack) {     
 
     stack_s tail, aux=stack;
     while (aux->next != NULL) {            

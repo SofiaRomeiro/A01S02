@@ -1,151 +1,73 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "private.h"
-#include "public.h"
-#define MAX_PATH
 
-// ***********  LIST  *******************
-
-
-
-struct list {
-    struct tree_node *current;
-    struct list *previous, *next;
-};
-
-list_s initList() {
-    list_s new;
-    new = (list_s) malloc(sizeof(struct list));
-    new->current = NULL;
-    new->next = NULL;
-    new->previous= NULL;
-    return new;
+void quicksort(char sort[], int l, int r) {
+	/*
+	* Function:  quicksort
+	* --------------------
+	* Quicksort algorithm
+	*
+	* Input  -> sort (task_t[]): list of tasks to sort
+	*		 -> l (int): left limit
+	*		 -> r (int): right limit
+	*    
+	*/
+	int i;
+	if (r <= l)
+		return;
+	i = partitionForStrings(sort, l, r);
+	quicksort(sort, l, i-1);
+	quicksort(sort, i+1, r);
 }
 
-list_s insertBegin(list_s head, tree_node_s node)
-{
-    list_s new = (list_s) malloc(sizeof(struct list));
-    new->previous = NULL;
-    new->current = node;
-    new->next = head;
-    //new is the new head
-    return new;
+int partitionForStrings(char sort[], int l, int r) {
+	/*
+	* Function:  partitionForStrings
+	* --------------------
+	* Adapted algorithm from the partition algorithm
+	*
+	* Input  -> sort (task_t[]): list of tasks to sort
+	*		 -> l (int): left limit
+	*		 -> r (int): right limit
+	*   
+	* Output -> the array's index were it was split
+	*    
+	*/
+	int i = l-1; 
+	int j = r; 
+	char aux[200];
+	strcpy(aux,sort[r].description); 
+	while (i < j) { 				
+		while (lessForStrings(sort[++i].description, aux));				
+		while (lessForStrings(aux, sort[--j].description)) 
+			if (j == l) 
+				break;
+		if (i < j)
+			exchange(sort, i, j); 
+	}
+	exchange(sort, r, i);
+	return i; 
 }
 
-list_s insertEnd(list_s head, tree_node_s node) {
-    list_s t=head;
-    list_s new = (list_s)malloc(sizeof(struct list));
-    new->previous = head;
-    new->current = node;
-    new->next = NULL;
-    
-    if(head == NULL) 
-        return new;
-
-    for(t = head; t->next != NULL; t = t->next);
-   
-    t->next = new;
-    return head;
+int lessForStrings(char first[], char second[]) {
+	/*
+	* Function:  lessForStrings
+	* --------------------
+	* Compares two strings
+	*
+	* Input  -> first, second (char[]): strings to be compared 
+	*   
+	* Output -> if first is less than second
+	*    
+	*/
+	return 1 ? (strcmp(first,second)<0) : 0;
 }
 
-void printList(list_s head) {
-    list_s t = head;
-    
-    for(t = head; t != NULL; t = t->next) {
-        if (t->current != NULL) {
-            printf("/%s", t->current->path);
-        }
-        else {
-            printf("\n");
-            return;
-        }
-    }
-    
+
+int main () {
+    char *a[10] = {"ola", "sou", "lula", "luis", "pedro", "vasco", "vodka", "madrid", "caramelo", "pila"};
+    int n = sizeof a / sizeof a[0];
+    quick_sort(a, n);
+
+    printf("%s", a[9]);
+    return 0;
 }
-
-list_s removeBegin(list_s head) {
-    list_s prev=NULL, curr=head;
-    curr = prev->next;
-    prev->next = curr->next;
-    return curr;
-}
-
-void removeEnd(list_s head) {
-
-    list_s t=head, old;
-    tree_node_s aux;
-
-    // procurar o ultimo elemento
-    for(t = head; t->next != NULL; t = t->next);
-    aux = t->current;
-    old = t->next;
-    t->next = NULL;
-    t->current = NULL;
-    free(old);
-    treeDestructor(aux);
-}
-
-tree_node_s treeSearch(tree_node_s root, char buffer[], node_s top) {
-    tree_node_s aux = root;
-    node_s stack = top;
-    // fim -> o parent é NULL  
-    if (aux == NULL) {        
-        return NULL;
-    }
-
-    // encontrou o valor, PARA tudo! 
-    if (aux->value != NULL && !strcmp(aux->value, buffer)) {
-        Printer(stack); 
-        return NULL;
-    } 
-
-    // tem filhos ? 
-        // sim! passa para o proximo filho
-    else if (aux->child != NULL) {
-        stack = push(aux->child, stack);
-        return treeSearch(aux->child, buffer, stack);
-    }
-
-    // não! passa para o irmao
-    else if (aux->brother != NULL) {
-
-        stack = pop(stack);       
-        stack = push(aux->brother, stack);
-        return treeSearch(aux->brother, buffer, top);
-    }
-
-     // tem irmao e nao tem filhos?      
-    else {
-        // nao! volta para o parent e passa para o proximo irmao do parent 
-        if (aux->parent->brother == NULL) {
-            stack = pop(stack);
-            printf("not found\n");
-            return NULL;
-        }
-        // sim! passa para o irmao 
-        else {
-            stack = pop(stack);
-            stack = pop(stack);
-            stack = push(aux->parent->brother, stack);
-
-            return treeSearch(aux->parent->brother, buffer, stack);
-        }
-    }    
-}   
-
-void Printer(node_s top) {
-    list_s list = initList();
-    node_s node = top;
-
-    while (node != NULL) { 
-        list = insertBegin(list, node->current);
-        node = node->next;
-        
-    }
-    printf("\n");
-    printList(list);
-    free(list);
-    destroyStack(top);
-}
-

@@ -217,21 +217,16 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top) {
             return treeSearch(parent->parent->brother, buffer, stack);
         }
     }    
-}    
-
-
+}   
 
 void treeFind(tree_node_s root, char buffer[]) {    
     tree_node_s current = root->child, previous;
     int i, j=0, found=0, len; 
     char c, directory[MAX_PATH+1],value[MAX_PATH+1];
-
-
-    read(buffer);
     len = strlen(buffer);    
 
     for (i=0; i <= len ; i++) {
-        if ((c=buffer[i]) == '/' || c=='\0') {
+        if ((c=buffer[i]) == '/' || c=='\0' || c=='\n') {
             found = 1;
             directory[j] = '\0';  
 
@@ -282,11 +277,9 @@ stack_s treePrint(tree_node_s root, stack_s top) {
 
     //current é nulo?
     if (current == NULL) {
-        destroyStack(top);
-        // sim !! -> acaba o ciclo
+        // sim !! -> acaba o ciclo;
         return NULL;
-    }    
-
+    } 
         // nao!! -> continua
 
     // current tem valor?
@@ -303,7 +296,6 @@ stack_s treePrint(tree_node_s root, stack_s top) {
     // current tem filhos?
 
     if (current->child != NULL) {
-
         //sim !!
         // o que acontece à stack? coloca o proximo filho na stack
         stack = push(current->child, stack);
@@ -341,32 +333,62 @@ stack_s treePrint(tree_node_s root, stack_s top) {
             
             else {
             //nao !!
-                // o que acontece à stack? destruir !!!!!!!!!!
-                // acaba o ciclo
-                destroyStack(top);
-                return NULL;
+                // procurar o proximo pai que tenha irmaos               
+
+                while (current->brother == NULL) {
+                    current = current->parent;                    
+                    if (!strcmp(current->path, "/")) {
+                        printf("[treePrint] NULL? %d\n", stack==NULL);
+                        destroyStack(stack);
+                        return NULL;
+                    }
+                    stack = pop(stack);
+                    
+                }
+                stack = pop(stack);
+
+
+                if (current->brother == NULL) {
+                    destroyStack(stack);
+                    return NULL;
+                }
+
+                stack = push(current->brother, stack);
+                
+                return treePrint(current->brother, stack);
+                
 
             }
-
-                
-
-                
-                   
-
         }
-
-                
- 
     }
-    
+}
 
-       
-
-
+tree_node_s findParent(tree_node_s current, stack_s stack) {
+    tree_node_s aux = current;
+    while (aux != NULL) {
+        // encontrou um parent com irmao
+        if (aux->brother != NULL) {
+            return aux;
+        }
+        // chegou à root
+        else if (!strcmp(aux->path, "/")) {
+            return aux;
+        }
+        aux = aux->parent;
+        stack = pop(stack);
+    }
     return NULL;
 }
 
 
+
 /* TODO tree_list */
+
+void treeList(tree_node_s root, char buffer[]) {
+
+    return;
+
+
+}
 
 /* TODO tree_delete */
