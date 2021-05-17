@@ -26,9 +26,10 @@ tree_node_s findBrotherNode(tree_node_s current, char path[]);
 tree_node_s newChild(char path[]);
 tree_node_s brotherSearch(tree_node_s child, char path[]);
 
-void treePrint(tree_node_s root);
+stack_s treePrint(tree_node_s root, stack_s top);
 void treeFind(tree_node_s root, char buffer[]);
 tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top);
+void printFuncStack(stack_s stack);
 
 
 /* list.c*/

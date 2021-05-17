@@ -275,8 +275,95 @@ void treeFind(tree_node_s root, char buffer[]) {
 
 /* TODO tree_print */
 
-void treePrint(tree_node_s root) {
+stack_s treePrint(tree_node_s root, stack_s top) {
 
+    tree_node_s current = root;
+    stack_s stack = top;
+
+    //current é nulo?
+    if (current == NULL) {
+        destroyStack(top);
+        // sim !! -> acaba o ciclo
+        return NULL;
+    }    
+
+        // nao!! -> continua
+
+    // current tem valor?
+    if (current->value != NULL) {
+        //sim !!
+            // print da stack
+            // continua
+        printFuncStack(stack);        
+
+        //nao !!
+            // passa a frente
+    }
+    
+    // current tem filhos?
+
+    if (current->child != NULL) {
+
+        //sim !!
+        // o que acontece à stack? coloca o proximo filho na stack
+        stack = push(current->child, stack);
+        //passa ao filho
+        return treePrint(current->child, stack);
+    }
+
+    else {
+        //nao !!
+                  
+        // tem irmaos ?
+        if (current->brother != NULL) {
+            //sim !!
+            // o que acontece à stack? tiro o node atual e coloco o irmao na stack
+            stack = pop(stack);
+            stack = push(current->brother, stack);
+            //passa para o irmao
+            return treePrint(current->brother, stack);
+
+        }
+        else {
+            //nao !!
+            // o pai tem irmaos ?
+
+            if (current->parent->brother != NULL) {
+                //sim!! 
+                // o que acontece à stack? tira o atual e o pai do atual e coloca lá o irmao do pai do atual
+                stack = pop(stack);
+                stack = pop(stack);
+                stack = push(current->parent->brother, stack);
+                // passa para o irmao do pai
+                return treePrint(current->parent->brother, stack);                    
+
+            }
+            
+            else {
+            //nao !!
+                // o que acontece à stack? destruir !!!!!!!!!!
+                // acaba o ciclo
+                destroyStack(top);
+                return NULL;
+
+            }
+
+                
+
+                
+                   
+
+        }
+
+                
+ 
+    }
+    
+
+       
+
+
+    return NULL;
 }
 
 

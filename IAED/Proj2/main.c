@@ -52,7 +52,9 @@ int main() {
                 break;
             
             case PRINT:
-                printf("print\n");
+                //printf("print\n");
+                treePrint(root, stack);
+                destroyStack(stack);
                 break;
 
             case FIND:
