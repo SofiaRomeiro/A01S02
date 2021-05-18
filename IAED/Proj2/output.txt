@@ -1,2 +1,11 @@
-eu
-tu
+Makefile
+README.md
+guidelines.md
+proj2.c
+tests
+delete
+Makefile
+README.md
+guidelines.md
+proj2.c
+tests

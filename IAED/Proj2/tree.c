@@ -29,8 +29,10 @@ tree_node_s newTreeNode() {
 }
 
 // TODO treeDestructor
-tree_node_s treeDestructor(tree_node_s node) {
-
+void treeDestructor(tree_node_s node) {
+    free(node->path);
+    if(node->value!=NULL) free(node->value);
+    free(node);
 }
 
 
@@ -387,22 +389,22 @@ void listRoot(tree_node_s root) {
 
     int num_of_nodes, i;
     tree_node_s aux = root->child;
+    tree_node_s *sortList;
 
     num_of_nodes = countNodes(aux);
 
-    tree_node_s sortList[num_of_nodes];
+    sortList = malloc(sizeof(struct tree_node) * num_of_nodes);
 
     for (i=0; i < num_of_nodes && aux != NULL; i++, aux = aux->brother) {
-
         sortList[i] = aux;
     }
 
     quicksort(sortList, 0, num_of_nodes-1);
 
     for (i=0; i < num_of_nodes; i++) {
-        printf("%s\n", sortList[i]->path);
+        printf("%s\n", sortList[i]->path);        
     }
-
+    free(sortList);
 }
 
 void treeList(tree_node_s root, char buffer[]) {
@@ -423,53 +425,54 @@ void treeList(tree_node_s root, char buffer[]) {
 }
 
 tree_node_s nodeSearch(tree_node_s root, char buffer[]) {
-    tree_node_s parent = root;
-    // fim -> o parent é NULL 
+    
+    // fim -> o parent é NULL    
 
-    if (parent == NULL) {        
-        return NULL;
-    }
+    tree_node_s current = root->child, previous;
+    int i, j=0, found=0, len; 
+    char c, directory[MAX_PATH+1],value[MAX_PATH+1];
+    len = strlen(buffer);  
 
-    // encontrou o valor, PARA tudo! 
-    if (parent->path != NULL && !strcmp(parent->path, buffer)) {
-        return parent;
+    for (i=0; i < len ; i++) {
+        if ((c=buffer[i]) == '/' || c=='\0' || c=='\n') {
+            found = 1;
+            directory[j] = '\0';  
+
+            if (strcmp(directory, "") && strcmp(directory, "/")) {  
+                //tenho de ver se o directorio existe, logo vou a procura dele
+                current = brotherSearch(current, directory);
+
+                // se existir, passo ao filho como atual
+                if (current != NULL) {
+                    previous = current;
+                    current = current->child;
+                }
+                else {
+                    // se nao existir, lanço erro
+                    printf("not found\n");
+                    return NULL;
+                } 
+            }
+
+            clear(directory);
+            j = 0;
+        }
+        else if (buffer[i] == ' ' && !found) {
+            continue;
+        }
+        else {
+            directory[j++] = buffer[i];
+        }
     } 
-
-    // tem filhos ? 
-        // sim! passa para o proximo filho
-    else if (parent->child != NULL) {          
-        return nodeSearch(parent->child, buffer);
+    if (strcmp(directory, "") && strcmp(directory, "/")) {  
+        //tenho de ver se o directorio existe, logo vou a procura dele
+        current = brotherSearch(current, directory);
     }
-
-    // não! passa para o irmao
-    /*else if (parent->brother != NULL) {
-        return nodeSearch(parent->brother, buffer);
-    } */
-
-     // tem irmao e nao tem filhos?      
-    else {
-        return NULL;
-        // nao! volta para o parent e passa para o proximo irmao do parent 
-        /*if (parent->parent->brother == NULL) {          
-            printf("not found\n");
-            return NULL;
-        }*/
-        // sim! passa para o irmao 
-        /*else {
-            return treeSearch(parent->parent->brother, buffer);
-        }*/
-    }    
+    
+    return current;
 }   
 
+/*
+void treeDelete(tree_node_s root, char buffer[]) {
 
-
-
-
-
-
-
-
-
-
-
-/* TODO tree_delete */
+}*/

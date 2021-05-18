@@ -16,7 +16,7 @@ void printTest(tree_node_s root);
 /* tree.c */
 tree_node_s treeConstructor();
 tree_node_s newTreeNode();
-tree_node_s treeDestructor(tree_node_s node);
+void treeDestructor(tree_node_s node);
 void treeAdd(tree_node_s root, char buffer[]);
 
 void treeAdd(tree_node_s root, char buffer[]);

@@ -5,7 +5,7 @@
 #include "public.h"
 
 #define ROOT '/'
-#define MAX_BUFFER 65535
+#define MAX_BUFFER 65529
 #define MAX_COMMAND_LEN 6
 #define SPACE ' ' || '\t'
 #define eq_int(A,B) (A==B)
@@ -23,7 +23,7 @@ int main() {
     int command;
 
     while (!quit) {
-        
+
         command = aux(buffer);
 
         switch (command) {
@@ -136,7 +136,7 @@ int aux(char buffer[]) {
 
 
 
-void clear(char *string) {
+void clear(char string[]) {
     int i;
     i = strlen(string);
     memset(string, '\0', i);
