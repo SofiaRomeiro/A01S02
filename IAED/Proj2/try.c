@@ -1,44 +1,31 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "public.h"
+#include "private.h"
 
-void quicksort(char sort[], int l, int r) {
-	/*
-	* Function:  quicksort
-	* --------------------
-	* Quicksort algorithm
-	*
-	* Input  -> sort (task_t[]): list of tasks to sort
-	*		 -> l (int): left limit
-	*		 -> r (int): right limit
-	*    
-	*/
-	int i;
-	if (r <= l)
-		return;
-	i = partitionForStrings(sort, l, r);
-	quicksort(sort, l, i-1);
-	quicksort(sort, i+1, r);
+void exchange(tree_node_s sort[], int i, int j) {
+
+	tree_node_s aux;
+	aux = sort[i];
+	sort[i] = sort[j];
+	sort[j] = aux; 
 }
 
-int partitionForStrings(char sort[], int l, int r) {
-	/*
-	* Function:  partitionForStrings
-	* --------------------
-	* Adapted algorithm from the partition algorithm
-	*
-	* Input  -> sort (task_t[]): list of tasks to sort
-	*		 -> l (int): left limit
-	*		 -> r (int): right limit
-	*   
-	* Output -> the array's index were it was split
-	*    
-	*/
+int less(tree_node_s first, tree_node_s second) {
+
+	return 1 ? (strcmp(first->path,second->path)<0) : 0;
+}
+
+int partition(tree_node_s sort[], int l, int r) {
+
 	int i = l-1; 
 	int j = r; 
-	char aux[200];
-	strcpy(aux,sort[r].description); 
+	tree_node_s aux;
+	aux = sort[r]; 
 	while (i < j) { 				
-		while (lessForStrings(sort[++i].description, aux));				
-		while (lessForStrings(aux, sort[--j].description)) 
+		while (lessForStrings(sort[++i], aux));				
+		while (lessForStrings(aux, sort[--j])) 
 			if (j == l) 
 				break;
 		if (i < j)
@@ -48,26 +35,32 @@ int partitionForStrings(char sort[], int l, int r) {
 	return i; 
 }
 
-int lessForStrings(char first[], char second[]) {
-	/*
-	* Function:  lessForStrings
-	* --------------------
-	* Compares two strings
-	*
-	* Input  -> first, second (char[]): strings to be compared 
-	*   
-	* Output -> if first is less than second
-	*    
-	*/
-	return 1 ? (strcmp(first,second)<0) : 0;
+void quicksort(tree_node_s sort[], int l, int r) {
+
+	int i;
+	if (r <= l)
+		return;
+	i = partitionForStrings(sort, l, r);
+	quicksort(sort, l, i-1);
+	quicksort(sort, i+1, r);
 }
 
-
 int main () {
-    char *a[10] = {"ola", "sou", "lula", "luis", "pedro", "vasco", "vodka", "madrid", "caramelo", "pila"};
-    int n = sizeof a / sizeof a[0];
-    quick_sort(a, n);
+    tree_node_s a[10];
+	int i=0;
+	
+	while(i<10) {
+		a[i] = (tree_node_s)malloc(sizeof(struct tree_node));
+		a[i]->path = (char *) malloc(sizeof(char)*30);
+		scanf("%s", a[i]->path);
+		i++;
+	}	
 
-    printf("%s", a[9]);
+    quicksort(a, 0, 9);
+
+	for (i=0; i<10; i++) {
+		printf("%s\n", a[i]->path);
+	}
+
     return 0;
 }

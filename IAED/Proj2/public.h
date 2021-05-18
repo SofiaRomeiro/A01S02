@@ -50,4 +50,13 @@ int is_empty(stack_s top);
 stack_s pop(stack_s top);
 
 
+int countNodes(tree_node_s root);
+tree_node_s nodeSearch(tree_node_s root, char buffer[]);
+
+void exchange(tree_node_s sort[], int i, int j);
+int less(tree_node_s first, tree_node_s second);
+int partition(tree_node_s sort[], int l, int r);
+void quicksort(tree_node_s sort[], int l, int r);
+
+
 #endif

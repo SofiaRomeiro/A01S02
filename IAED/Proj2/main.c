@@ -57,7 +57,6 @@ int main() {
                 break;
 
             case LIST:
-                printf("list\n");
                 treeList(root, buffer);
                 break;
 
@@ -138,13 +137,9 @@ int aux(char buffer[]) {
 
 
 void clear(char *string) {
-    /*int i;
-    int j;
+    int i;
     i = strlen(string);
-    for (j=0; j<i; j++) {
-        string[j] = '\0';
-    }*/
-    string[0] = '\0';
+    memset(string, '\0', i);
 }
 
 void printTest(tree_node_s root) {
