@@ -5,7 +5,7 @@
 #include "public.h"
 
 #define ROOT '/'
-#define MAX_BUFFER 65535
+#define MAX_BUFFER 65529
 #define MAX_COMMAND_LEN 6
 #define SPACE ' ' || '\t'
 #define eq_int(A,B) (A==B)
@@ -17,13 +17,14 @@ enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
 int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
+    stack_s stack = NULL;
     char buffer[MAX_BUFFER];
     int quit=0;
     int command;
 
     while (!quit) {
 
-        command = aux();
+        command = aux(buffer);
 
         switch (command) {
             case HELP:
@@ -39,18 +40,16 @@ int main() {
 
             case QUIT:
                 treeDestructor(root);
+                clear(buffer);
                 quit = 1;
                 break;
             
-            case SET:
-             /*   printf("set\n"); */
-                read(buffer);               
+            case SET:              
                 treeAdd(root, buffer);
-                printf("----- setting ------\n");
                 break;
             
             case PRINT:
-                printf("print\n");
+                treePrint(root, stack);
                 break;
 
             case FIND:
@@ -58,15 +57,16 @@ int main() {
                 break;
 
             case LIST:
-                printf("list\n");
+                treeList(root, buffer);
                 break;
 
             case SEARCH:
-                printf("search\n");
+                treeSearch(root, buffer, stack);
                 break;
             
             case DELETE:
                 printf("delete\n");
+                treeDelete(root, buffer);
                 break;            
         }
     }      
@@ -74,49 +74,83 @@ int main() {
     return 0;
 }
 
-int aux() {
+int aux(char buffer[]) {
+
     char command[MAX_COMMAND_LEN+1];
     char c;
-    int i=0;
-    while ((c=getchar()) != EOF && c != ' ' && c!= '\n') {
-        command[i++] = c;
+    int i=0, j=0;
+    int readCommand = 0, reading = 1;;
+
+    clear(buffer);
+
+    while((c=getchar()) != EOF && c != '\n') {
+
+        if (c == ' '  && !readCommand) {
+            readCommand = 1;
+            reading = 0;
+        }
+        else if (c != ' ' && reading) {
+            command[i++] = c;
+        }
+        else{
+            buffer[j++] = c;
+        }
     }
     command[i] = '\0';
+    buffer[j] = '\0';  
 
     if (eq_char(command, "help")) {
+        clear(command);
         return HELP;        
     }
     else if (eq_char(command, "quit")) {
+        clear(command);
+        clear(buffer);
         return QUIT;
     }
     else if (eq_char(command, "set")) {
+        clear(command);
         return SET;
     }
     else if (eq_char(command, "print")) {
+        clear(command);
         return PRINT;
     }
     else if (eq_char(command, "find")) {
+        clear(command);
         return FIND;
     }
     else if (eq_char(command, "list")) {
+        clear(command);
         return LIST;
     }
     else if (eq_char(command, "search")) {
+        clear(command);
         return SEARCH;
     }
     else if (eq_char(command, "delete")) {
+        clear(command);
         return DELETE;
     }
-    return NONE;
+    return QUIT;
 }
 
-void read(char buffer[]) {
-    char c;
-    int i=0;
-    while ((c=getchar()) != EOF && c!= '\n') {
-        buffer[i++] = c;
 
+
+void clear(char string[]) {
+    int i;
+    i = strlen(string);
+    memset(string, '\0', i);
+}
+
+void printTest(tree_node_s root) {
+    tree_node_s child = root->child;
+    printf("[printTest] %s\n", child->path);
+    printf("\n");
+    while (child != NULL) {
+        printf("child : %s, ", child->path);
+        child = child->brother;
     }
-    buffer[i] = '\0';
+    
+    printf("\n");
 }
-

@@ -4,63 +4,60 @@
 #include "public.h"
 #include "private.h"
 
-void exchange(tree_node_s sort[], int i, int j) {
+tree_node_s treeDelete(tree_node_s root) {
 
-	tree_node_s aux;
-	aux = sort[i];
-	sort[i] = sort[j];
-	sort[j] = aux; 
-}
+	tree_node_s current, toFree;
 
-int less(tree_node_s first, tree_node_s second) {
+    //apago quando o irmao e o filho são nulos
 
-	return 1 ? (strcmp(first->path,second->path)<0) : 0;
-}
+	//volto para o pai
 
-int partition(tree_node_s sort[], int l, int r) {
 
-	int i = l-1; 
-	int j = r; 
-	tree_node_s aux;
-	aux = sort[r]; 
-	while (i < j) { 				
-		while (lessForStrings(sort[++i], aux));				
-		while (lessForStrings(aux, sort[--j])) 
-			if (j == l) 
-				break;
-		if (i < j)
-			exchange(sort, i, j); 
-	}
-	exchange(sort, r, i);
-	return i; 
-}
+    //current é nulo?
+    if (current == NULL) {
+        // sim !! -> acaba o ciclo;
+        return NULL;
+    } 
 
-void quicksort(tree_node_s sort[], int l, int r) {
+		//nao é nulo!!
+    
+    // current tem filhos?
 
-	int i;
-	if (r <= l)
-		return;
-	i = partitionForStrings(sort, l, r);
-	quicksort(sort, l, i-1);
-	quicksort(sort, i+1, r);
-}
+    if (current->child != NULL) {
+        //sim
+        //passa ao filho
+        return treeDelete(current->child);
+    }
 
-int main () {
-    tree_node_s a[10];
-	int i=0;
-	
-	while(i<10) {
-		a[i] = (tree_node_s)malloc(sizeof(struct tree_node));
-		a[i]->path = (char *) malloc(sizeof(char)*30);
-		scanf("%s", a[i]->path);
-		i++;
-	}	
+    else {
+        //nao !!
+                  
+        // tem irmaos ?
+        if (current->brother != NULL) {
+            //sim !!
+           
+            //passa para o irmao
+            return treeDelete(current->brother);
 
-    quicksort(a, 0, 9);
+        }
+        else {
+            //nao !! -> apagar este 
 
-	for (i=0; i<10; i++) {
-		printf("%s\n", a[i]->path);
-	}
+            // regressa ao pai para processar os irmaos do pai
 
-    return 0;
+			toFree = current;
+
+
+            if (current->parent != NULL) {
+                //sim!! 
+                // passa para o pai e da free no atual
+				free(toFree->path);
+                free(toFree->value);
+                free(toFree);    
+
+                return treeDelete(current->parent);                    
+
+            }
+        }
+    }
 }

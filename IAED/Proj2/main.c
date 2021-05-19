@@ -66,6 +66,7 @@ int main() {
             
             case DELETE:
                 printf("delete\n");
+                treeDelete(root, buffer);
                 break;            
         }
     }      
