@@ -5,7 +5,7 @@
 #include "public.h"
 
 
-// *********  STACK  *****************
+/* *********  STACK  ***************** */
 
 stack_s initStack(){
     stack_s top = (stack_s) malloc(sizeof(struct stack));

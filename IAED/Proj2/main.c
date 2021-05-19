@@ -78,12 +78,18 @@ int aux(char buffer[]) {
 
     char command[MAX_COMMAND_LEN+1];
     char c;
-    int i=0, j=0;
+    int i=0, j=0, counter=0;
     int readCommand = 0, reading = 1;;
 
     clear(buffer);
 
     while((c=getchar()) != EOF && c != '\n') {
+        if (counter == 65535) {
+            strcpy(command, "quit");
+            printf("no memory\n");
+            break;
+        }
+        counter++;
 
         if (c == ' '  && !readCommand) {
             readCommand = 1;

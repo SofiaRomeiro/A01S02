@@ -19,7 +19,7 @@ void treeAdd(tree_node_s root, char buffer[]);
 
 void treeAdd(tree_node_s root, char buffer[]);
 tree_node_s auxAddTree(tree_node_s parent, char path[]) ;
-tree_node_s findBrotherNode(tree_node_s current, char path[]);
+tree_node_s findBrotherNode(tree_node_s current);
 tree_node_s newChild(char path[]);
 tree_node_s brotherSearch(tree_node_s child, char path[]);
 
