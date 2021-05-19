@@ -39,12 +39,12 @@ int main() {
                 break;
 
             case QUIT:
-                treeDestructor(root);
+                treeDelete(root, buffer);
                 clear(buffer);
                 quit = 1;
                 break;
             
-            case SET:              
+            case SET:      
                 treeAdd(root, buffer);
                 break;
             
@@ -65,7 +65,6 @@ int main() {
                 break;
             
             case DELETE:
-                printf("delete\n");
                 treeDelete(root, buffer);
                 break;            
         }
@@ -79,9 +78,14 @@ int aux(char buffer[]) {
     char command[MAX_COMMAND_LEN+1];
     char c;
     int i=0, j=0, counter=0;
-    int readCommand = 0, reading = 1;;
+    int readCommand = 0, reading = 1;
 
     clear(buffer);
+
+    /*scanf("%s %[^\n]", command, buffer);
+
+    printf("[main]command: |%s|\nbuffer: |%s|\n", command, buffer);*/
+
 
     while((c=getchar()) != EOF && c != '\n') {
         if (counter == 65535) {
@@ -104,6 +108,10 @@ int aux(char buffer[]) {
     }
     command[i] = '\0';
     buffer[j] = '\0';  
+
+    printf("[main]buffer before: |%s|\n",buffer);
+    filter(buffer);
+    printf("[main]buffer after: |%s|\n",buffer);
 
     if (eq_char(command, "help")) {
         clear(command);
@@ -148,6 +156,21 @@ void clear(char string[]) {
     i = strlen(string);
     memset(string, '\0', i);
 }
+
+void filter(char buffer[]) {
+    int i = strlen(buffer)-1;
+    for(; i > 0; i--) {
+        if (buffer[i] == ' ' || buffer[i] == '\t') {
+            buffer[i] = '\0';
+        }
+        else if (buffer[i] != ' ' && buffer[i] != '\t'){
+            return;
+        }
+    }
+}
+
+
+
 
 void printTest(tree_node_s root) {
     tree_node_s child = root->child;

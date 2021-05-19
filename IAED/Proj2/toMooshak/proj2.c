@@ -148,7 +148,6 @@ void clear(char string[]) {
     memset(string, '\0', i);
 }
 
-/*
 void printTest(tree_node_s root) {
     tree_node_s child = root->child;
     printf("[printTest] %s\n", child->path);
@@ -159,4 +158,4 @@ void printTest(tree_node_s root) {
     }
     
     printf("\n");
-} */
+}

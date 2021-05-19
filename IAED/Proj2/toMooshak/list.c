@@ -32,8 +32,8 @@ stack_s push(tree_node_s adding, stack_s stack){
         stack_s new = (stack_s) malloc(sizeof(struct stack));    
         new->current = adding;
         new->previous = NULL;
-        new->next = stack;
         stack->previous = new;
+        new->next = stack;
         return new;
     }  
 }
@@ -48,7 +48,7 @@ stack_s pop(stack_s top) {
     if (!is_empty(top)) {
         old = top;
         top = top->next;
-        free(old);
+        free(old);      
         return top;
     }
     else
@@ -57,14 +57,19 @@ stack_s pop(stack_s top) {
 
 void printStack(stack_s stack) {  
 
-    stack_s tail, aux=stack;
-
-    while (aux->next != NULL) {            
-        aux = aux->next;        
+    stack_s tail, aux=stack; 
+    
+    if (stack==NULL) {
+        return;
     }
-    tail = aux;
 
-    while(tail != NULL) {
+    while (aux->next != NULL) {           
+        aux = aux->next; 
+
+    }
+    tail = aux; 
+
+    while(tail->previous != NULL) {
        printf("/%s", tail->current->path);
        aux = tail;
        tail = tail->previous;

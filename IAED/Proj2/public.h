@@ -10,16 +10,18 @@ char *read_command(char *buffer);
 int aux(char buffer[]);
 void clear(char string[]);
 void printTest(tree_node_s root);
+void filter(char buffer[]);
 
 /* tree.c */
 tree_node_s treeConstructor();
 tree_node_s newTreeNode();
-void treeDestructor(tree_node_s node);
+tree_node_s treePartialDestructor(tree_node_s node);
+tree_node_s treeCompletlyDestructor(tree_node_s node);
 void treeAdd(tree_node_s root, char buffer[]);
 
 void treeAdd(tree_node_s root, char buffer[]);
 tree_node_s auxAddTree(tree_node_s parent, char path[]) ;
-tree_node_s findBrotherNode(tree_node_s current, char path[]);
+tree_node_s findBrotherNode(tree_node_s current);
 tree_node_s newChild(char path[]);
 tree_node_s brotherSearch(tree_node_s child, char path[]);
 
