@@ -1,6 +1,10 @@
-set kedfjwfb/wkfknejknv/fejejfr skjshdbbdnd    
-set kfndfv/fejrnjenc/fjenjcnd jshgsbaba
-set ejrfnevf/ejfcjejdkc/djsbs sdhdb     
-set wifjcjen/hdwhebdh shsgdvsb    
-set kjched/dwiehdjhw dhyd
+set proj2.c resolução do projeto
+set README.md enunciado do projeto
+set tests/Makefile execução dos testes
+set tests/test01.in primeiro teste
+set tests/test02.in segundo teste
+set Makefilee construção do projeto
+set guidelines.md orientações para a escrita do projeto
+list
+list  tests  
 quit

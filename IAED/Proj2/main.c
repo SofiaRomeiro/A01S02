@@ -4,27 +4,20 @@
 #include "private.h"
 #include "public.h"
 
-#define ROOT '/'
-#define MAX_BUFFER 65529
-#define MAX_COMMAND_LEN 6
-#define SPACE ' ' || '\t'
-#define eq_int(A,B) (A==B)
-#define eq_char(A,B) !(strcmp(A,B))
 
-
-enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
 
 int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
-    stack_s stack = NULL;
-    char buffer[MAX_BUFFER];
+    list_ext_s extremes = (list_ext_s) malloc(sizeof(struct listExtremes));
+    list_node_s head = (list_node_s) malloc(sizeof(struct list_node));
+    char buffer[MAX_PATH+1];
     int quit=0;
-    int command;
+    int command, args;
 
     while (!quit) {
 
-        command = aux(buffer);
+        command = switchForCommand();               
 
         switch (command) {
             case HELP:
@@ -39,33 +32,50 @@ int main() {
                 break;
 
             case QUIT:
-                treeDelete(root, buffer);
+                treeDelete(root);
                 clear(buffer);
+                free(extremes);
+                free(head);
+                free(root);
                 quit = 1;
                 break;
             
             case SET:      
-                treeAdd(root, buffer);
+                treeAdd(root);
+                clear(buffer);
                 break;
             
             case PRINT:
-                treePrint(root, stack);
+                treePrint(root, extremes, head);
+                clear(buffer);
                 break;
 
             case FIND:
-                treeFind(root, buffer);
+                treeFind(root);
+                clear(buffer);
                 break;
 
             case LIST:
-                treeList(root, buffer);
+                args = 1;
+                treeList(root, args);
+                clear(buffer);
+                break;
+
+            case LISTNOARG:
+                args=0;
+                treeList(root, args);
+                clear(buffer);
                 break;
 
             case SEARCH:
-                treeSearch(root, buffer, stack);
+                readValue(buffer);
+                treeSearch(root, buffer, extremes, head);                
+                clear(buffer);
                 break;
             
             case DELETE:
-                treeDelete(root, buffer);
+                treeDelete(root);
+                clear(buffer);
                 break;            
         }
     }      
@@ -73,83 +83,62 @@ int main() {
     return 0;
 }
 
-int aux(char buffer[]) {
+int switchForCommand() {   
 
-    char command[MAX_COMMAND_LEN+1];
-    char c;
-    int i=0, j=0, counter=0;
-    int readCommand = 0, reading = 1;
+    char command[MAX_COMMAND_LEN], c;
+    int i=0, no_args=0;   
 
-    clear(buffer);
-
-    /*scanf("%s %[^\n]", command, buffer);
-
-    printf("[main]command: |%s|\nbuffer: |%s|\n", command, buffer);*/
-
-
-    while((c=getchar()) != EOF && c != '\n') {
-        if (counter == 65535) {
-            strcpy(command, "quit");
-            printf("no memory\n");
+    while ((c=getchar())!= ' ' && c != EOF) {
+        command[i++] = c;
+        if (c=='\n') {
+            no_args=1;
+            command[i-1] = '\0'; 
             break;
-        }
-        counter++;
-
-        if (c == ' '  && !readCommand) {
-            readCommand = 1;
-            reading = 0;
-        }
-        else if (c != ' ' && reading) {
-            command[i++] = c;
-        }
-        else{
-            buffer[j++] = c;
         }
     }
     command[i] = '\0';
-    buffer[j] = '\0';  
 
-    printf("[main]buffer before: |%s|\n",buffer);
-    filter(buffer);
-    printf("[main]buffer after: |%s|\n",buffer);
-
-    if (eq_char(command, "help")) {
+    if (equals(command, "help"))) {
         clear(command);
         return HELP;        
     }
-    else if (eq_char(command, "quit")) {
+    else if (equals(command, "quit"))) {
         clear(command);
-        clear(buffer);
         return QUIT;
     }
-    else if (eq_char(command, "set")) {
+    else if (equals(command, "set"))) {
         clear(command);
         return SET;
     }
-    else if (eq_char(command, "print")) {
+    else if (equals(command, "print"))) {
         clear(command);
         return PRINT;
     }
-    else if (eq_char(command, "find")) {
+    else if (equals(command, "find"))) {
         clear(command);
         return FIND;
     }
-    else if (eq_char(command, "list")) {
+    else if (equals(command, "list"))) {
         clear(command);
-        return LIST;
+        if (no_args) {
+            printf("aaa\n");
+            return LISTNOARG;
+        }
+        else {
+            return LIST;
+        }
+        
     }
-    else if (eq_char(command, "search")) {
+    else if (equals(command, "search"))) {
         clear(command);
         return SEARCH;
     }
-    else if (eq_char(command, "delete")) {
+    else if (equals(command, "delete"))) {
         clear(command);
         return DELETE;
     }
     return QUIT;
 }
-
-
 
 void clear(char string[]) {
     int i;
@@ -157,29 +146,30 @@ void clear(char string[]) {
     memset(string, '\0', i);
 }
 
-void filter(char buffer[]) {
-    int i = strlen(buffer)-1;
-    for(; i > 0; i--) {
-        if (buffer[i] == ' ' || buffer[i] == '\t') {
-            buffer[i] = '\0';
-        }
-        else if (buffer[i] != ' ' && buffer[i] != '\t'){
-            return;
-        }
+void readValue(char buffer[]) {
+    char *array,c, read[MAX_PATH];
+    int size, i=0;
+
+    while((c=getchar())!=EOF && c != '\n') {
+        read[i++]=c;
     }
-}
+    read[i] = '\0';
 
-
-
-
-void printTest(tree_node_s root) {
-    tree_node_s child = root->child;
-    printf("[printTest] %s\n", child->path);
-    printf("\n");
-    while (child != NULL) {
-        printf("child : %s, ", child->path);
-        child = child->brother;
+    array = strtok(read, " ");
+   
+    while( array != NULL ) {     
+        strcat(buffer, array);   
+        strcat(buffer, " ");
+        array = strtok(NULL, " ");
     }
+
     
-    printf("\n");
+
+    size = strlen(buffer)-1;
+    buffer[size] = '\0';
+
+    printf("[readValue]buffer? %s\n", buffer);
+
+    return;
+
 }

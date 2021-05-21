@@ -1,12 +1,11 @@
-[main]buffer before: |kedfjwfb/wkfknejknv/fejejfr skjshdbbdnd    |
-[main]buffer after: |kedfjwfb/wkfknejknv/fejejfr skjshdbbdnd|
-[main]buffer before: |kfndfv/fejrnjenc/fjenjcnd jshgsbaba|
-[main]buffer after: |kfndfv/fejrnjenc/fjenjcnd jshgsbaba|
-[main]buffer before: |ejrfnevf/ejfcjejdkc/djsbs sdhdb     |
-[main]buffer after: |ejrfnevf/ejfcjejdkc/djsbs sdhdb|
-[main]buffer before: |wifjcjen/hdwhebdh shsgdvsb    |
-[main]buffer after: |wifjcjen/hdwhebdh shsgdvsb|
-[main]buffer before: |kjched/dwiehdjhw dhyd|
-[main]buffer after: |kjched/dwiehdjhw dhyd|
-[main]buffer before: ||
-[main]buffer after: ||
+set nha/jsdvncksd oosjdhajs
+set ola/adeus/diwefh/ijascuhsd dkaischjsbadc
+set ola/addaus/dcsajd jsisxak
+set ola/adeus/chdsjbcd sjiqhdjs
+set ola/addEus soojdkasnc
+set bum/jwjjdssn wjddcis
+set tatata/asdnjcsbd/fjdvkjdsfnv kjsaijXCA
+set nha/shxhajsc/sajxkansjkc okdcijs
+delete tatata/asdnjcsbd/fjdvkjdsfnv
+list tatata /asdnjcsbd/     
+quit

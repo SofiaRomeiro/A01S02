@@ -1,63 +1,78 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "public.h"
-#include "private.h"
 
-tree_node_s treeDelete(tree_node_s root) {
+int main() {
+    char *array;
+    char pila[200];
+    int found = 0, j=0;
+    char c, directory[200], value[200];
 
-	tree_node_s current, toFree;
+    scanf("%s", directory);
+    printf("path: |%s|\n", directory);
 
-    //apago quando o irmao e o filho são nulos
+    array = strtok(directory, "/");
 
-	//volto para o pai
+    while( array != NULL ) {
+        printf("array: %s\n", array); 
 
+        array = strtok(NULL, "/");
+    }
 
-    //current é nulo?
-    if (current == NULL) {
-        // sim !! -> acaba o ciclo;
-        return NULL;
+    return 0;
+}
+
+void ola() {
+    char c, directory[100], value[100];
+    int found=0, j=0;
+
+     while((c=getchar())!= EOF && c != '\n') {
+
+        printf("char: %c\n", c);
+       
+       /* se for igual a espaço/tab e ainda nao tiver começado a ler, continuo */
+       if ((c==' ') && !found) {
+           continue;
+       }
+
+       /* se for igual a uma barra, vejo se o diretorio nao é vazio e adiciono novo node */
+       else if (c == '/') {
+           if (!strcmp(directory, "")) {
+               memset(directory,'\0',strlen(directory));
+               j=0;
+           }
+           else {
+               /* adicionar node */
+               memset(directory,'\0',strlen(directory));
+               j=0;
+           }
+       }
+       /* se for diferente de espaço/tab e diferente de barra,adiciono ao diretorio */
+       else if (c != ' ' && c != '\t') {
+           found = 1;
+           directory[j++] = c;
+       }
+       else if (c == ' ' && found){
+           if (strcmp(directory, "")) {
+               /* adicionar node */
+               j=0;
+           }  
+           else {
+               continue;
+           }                    
+       }
+       else {
+         
+       }
     } 
 
-		//nao é nulo!!
-    
-    // current tem filhos?
-
-    if (current->child != NULL) {
-        //sim
-        //passa ao filho
-        return treeDelete(current->child);
-    }
-
-    else {
-        //nao !!
-                  
-        // tem irmaos ?
-        if (current->brother != NULL) {
-            //sim !!
-           
-            //passa para o irmao
-            return treeDelete(current->brother);
-
-        }
+    while ((c=getchar()) != EOF  && c != '\n') {
+        if (c == ' ' && !found) { 
+        }  
         else {
-            //nao !! -> apagar este 
-
-            // regressa ao pai para processar os irmaos do pai
-
-			toFree = current;
-
-
-            if (current->parent != NULL) {
-                //sim!! 
-                // passa para o pai e da free no atual
-				free(toFree->path);
-                free(toFree->value);
-                free(toFree);    
-
-                return treeDelete(current->parent);                    
-
-            }
+            found = 1;
+            value[j++] = c;         
         }
     }
+    value[j] = '\0';
 }
