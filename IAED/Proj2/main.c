@@ -11,13 +11,13 @@ int main() {
     tree_node_s root = treeConstructor();
     list_ext_s extremes = (list_ext_s) malloc(sizeof(struct listExtremes));
     list_node_s head = (list_node_s) malloc(sizeof(struct list_node));
-    char buffer[MAX_PATH+1];
+    char buffer[MAX_PATH+1], value[MAX_PATH], *array;
     int quit=0;
-    int command, args;
+    int command, size;
 
     while (!quit) {
 
-        command = switchForCommand();               
+        command = switchForCommand(buffer);  
 
         switch (command) {
             case HELP:
@@ -32,7 +32,7 @@ int main() {
                 break;
 
             case QUIT:
-                treeDelete(root);
+                treeDelete(root, buffer);
                 clear(buffer);
                 free(extremes);
                 free(head);
@@ -40,41 +40,45 @@ int main() {
                 quit = 1;
                 break;
             
-            case SET:      
-                treeAdd(root);
+            case SET:    
+                treeAdd(root, buffer);
                 clear(buffer);
                 break;
             
             case PRINT:
-                treePrint(root, extremes, head);
+                treePrint(root, extremes, head, buffer);
                 clear(buffer);
                 break;
 
             case FIND:
-                treeFind(root);
+                treeFind(root, buffer);
                 clear(buffer);
                 break;
 
             case LIST:
-                args = 1;
-                treeList(root, args);
-                clear(buffer);
-                break;
-
-            case LISTNOARG:
-                args=0;
-                treeList(root, args);
+                treeList(root, buffer);
                 clear(buffer);
                 break;
 
             case SEARCH:
-                readValue(buffer);
-                treeSearch(root, buffer, extremes, head);                
+                    array = strtok(buffer, " ");
+                
+                    while( array != NULL ) {     
+                        strcat(value, array);   
+                        strcat(value, " ");
+                        array = strtok(NULL, " ");
+                    }
+                    
+
+                    size = strlen(value)-1;   
+                    value[size] = '\0'; 
+                
+                treeSearch(root, extremes, head, value);                
                 clear(buffer);
                 break;
             
             case DELETE:
-                treeDelete(root);
+                treeDelete(root, buffer);
                 clear(buffer);
                 break;            
         }
@@ -83,57 +87,51 @@ int main() {
     return 0;
 }
 
-int switchForCommand() {   
+int switchForCommand(char buffer[]) {   
 
-    char command[MAX_COMMAND_LEN], c;
-    int i=0, no_args=0;   
+    char *command, *array;
+    char aux[MAX_PATH+1];      
 
-    while ((c=getchar())!= ' ' && c != EOF) {
-        command[i++] = c;
-        if (c=='\n') {
-            no_args=1;
-            command[i-1] = '\0'; 
-            break;
-        }
-    }
-    command[i] = '\0';
+    readLine(buffer); 
+    strcpy(aux, buffer);  
 
-    if (equals(command, "help"))) {
+    command = strtok(aux, " ");
+
+    array = strtok(NULL, "\0");
+
+    if (array!=NULL) strcpy(buffer, array);
+    else buffer[0] = '\0';
+
+    if (strcompare(command, "help")) {
         clear(command);
         return HELP;        
     }
-    else if (equals(command, "quit"))) {
+    else if (strcompare(command, "quit")) {
         clear(command);
         return QUIT;
     }
-    else if (equals(command, "set"))) {
+    else if (strcompare(command, "set")) {
         clear(command);
         return SET;
     }
-    else if (equals(command, "print"))) {
+    else if (strcompare(command, "print")) {
         clear(command);
         return PRINT;
     }
-    else if (equals(command, "find"))) {
+    else if (strcompare(command, "find")) {
         clear(command);
         return FIND;
     }
-    else if (equals(command, "list"))) {
-        clear(command);
-        if (no_args) {
-            printf("aaa\n");
-            return LISTNOARG;
-        }
-        else {
-            return LIST;
-        }
+    else if (strcompare(command, "list")) {
+        clear(command);        
+        return LIST;
         
     }
-    else if (equals(command, "search"))) {
+    else if (strcompare(command, "search")) {
         clear(command);
         return SEARCH;
     }
-    else if (equals(command, "delete"))) {
+    else if (strcompare(command, "delete")) {
         clear(command);
         return DELETE;
     }
@@ -146,30 +144,39 @@ void clear(char string[]) {
     memset(string, '\0', i);
 }
 
-void readValue(char buffer[]) {
-    char *array,c, read[MAX_PATH];
-    int size, i=0;
+void readLine(char buffer[]) {
+    char c;
+    int i=0;
 
-    while((c=getchar())!=EOF && c != '\n') {
-        read[i++]=c;
+    while ((c=getchar())!= '\n' && c != EOF) {
+            buffer[i++] = c; 
     }
-    read[i] = '\0';
-
-    array = strtok(read, " ");
-   
-    while( array != NULL ) {     
-        strcat(buffer, array);   
-        strcat(buffer, " ");
-        array = strtok(NULL, " ");
-    }
-
-    
-
-    size = strlen(buffer)-1;
-    buffer[size] = '\0';
-
-    printf("[readValue]buffer? %s\n", buffer);
+    buffer[i] = '\0';
 
     return;
 
+}
+
+int strcompare(char str1[], char str2[]) {
+    int i;
+
+    /*printf("str1: |%s|\nstr2: |%s|\n", str1, str2);*/
+
+    if (str1[0] == '\0' || str2[0] == '\0') {
+        /*printf("not equals!\n\n");*/
+        return 0;
+    }
+
+    for(i=0; str1[i] != '\0' && str2[i] != '\0'; i++) {
+        if (str1[i]!= str2[i]) {
+            /*printf("not equals!\n\n");*/
+            return 0;
+        }
+    }
+    if (str1[i] != str2[i]) {
+        /*printf("not equals!\n\n");*/
+        return 0;
+    }
+    /*printf("equals!\n\n");*/
+    return 1;
 }

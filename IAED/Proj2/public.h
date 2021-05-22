@@ -8,34 +8,34 @@ typedef struct listExtremes * list_ext_s;
 #define ROOT "/"
 #define MAX_PATH 65529
 #define MAX_COMMAND_LEN 6
-#define SPACE ' ' || '\t'
-#define equals(A,B) !(strcmp(A,B)
 
 enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, LISTNOARG, SEARCH, DELETE, NONE};
 
 /* MAIN */
-int switchForCommand();
+int switchForCommand(char buffer[]);
 void clear(char string[]);
-void readValue(char buffer[]);
+void readLine(char buffer[]);
+int strcompare(char str1[], char str2[]);
 
 /* COMMANDS */
 
 /* TREE */
 tree_node_s treeConstructor();
-tree_node_s newTreeNode(char path[], char value[], tree_node_s parent);
+tree_node_s newTreeNode(char path[]);
 tree_node_s treeCompletlyDestructor(tree_node_s node);
 tree_node_s treePartialDestructor(tree_node_s node);
-void treeAdd(tree_node_s root);
+void treeAdd(tree_node_s root, char buffer[]);
 tree_node_s auxAddTree(tree_node_s parent, char path[]);
 tree_node_s brotherSearch(tree_node_s current, char path[]);
-tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, list_node_s head);
-void treeFind(tree_node_s root);
-list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head);
+tree_node_s treeSearch(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]);
+void treeFind(tree_node_s root, char buffer[]);
+list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]);
 tree_node_s findParent(tree_node_s current, list_ext_s extremes);
 void listRoot(tree_node_s root);
-void treeList(tree_node_s root, int args);
+void treeList(tree_node_s root, char buffer[]);
 tree_node_s nodeSearch(tree_node_s root, char directory[]);
-tree_node_s treeDelete(tree_node_s root);
+tree_node_s treeDelete(tree_node_s root, char buffer[]);
+tree_node_s nodeToDelete(tree_node_s root, char directory[]);
 
 
 /* STACK */

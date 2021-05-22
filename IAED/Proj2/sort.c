@@ -49,7 +49,6 @@ void quicksort(tree_node_s sort[], int l, int r) {
 int countNodes(tree_node_s root) {
     int counter;
     tree_node_s aux=root;
-	printf("[countNodes]estou onde? %s\n", root->path);
     for (counter=0; aux != NULL; counter++, aux = aux->brother);
     return counter;
 }

@@ -16,18 +16,12 @@ tree_node_s treeConstructor(){
     return new_tree;
 }
 
-tree_node_s newTreeNode(char path[], char value[], tree_node_s parent){
+tree_node_s newTreeNode(char path[]){
     tree_node_s new_node = (tree_node_s) malloc(sizeof(struct tree_node)); 
     new_node->child = NULL;
     new_node->brother = NULL;
-    new_node->parent = parent;
     new_node->path = (char *) malloc(sizeof(char) * (strlen(path)+1));
     strcpy(new_node->path, path);
-    if (value != NULL) {
-        new_node->value = (char *) malloc(sizeof(char) * (strlen(value)+1));
-        strcpy(new_node->value, value);
-         return new_node;
-    } 
     new_node->value = NULL;   
     return new_node;
 }
@@ -148,44 +142,84 @@ tree_node_s treePartialDestructor(tree_node_s node) {
 }
 
 
-void treeAdd(tree_node_s root) {  
+void treeAdd(tree_node_s root, char buffer[]) {  
     /* guardar o endereço da root sempre, so mexer no parent*/
     tree_node_s current = root;
-    char *array;
-    int j=0, found=0, size; 
-    char c, input[MAX_PATH+1], value[MAX_PATH+1];
+    tree_node_s new_child;
+    char *path_p, *directory;
+    int size; 
+    char path[MAX_PATH+1], value[MAX_PATH+1];
 
-   while((c=getchar())!= EOF && c != '\n') {
+
+    path_p = strtok(buffer, " ");
+    strcat(path, path_p);
+
+    path_p = strtok(NULL, " ");
+
+    while (path_p != NULL) {  
+        strcat(value, path_p);
+        strcat(value, " ");      
+        path_p = strtok(NULL, " ");
+    }
+    size = strlen(value);
+    value[size-1] = '\0';
+
+
+    directory = strtok(path, "/");
+    new_child = auxAddTree(current, directory);
+    current = new_child;
+
+
+    while (directory != NULL) {
+        new_child = auxAddTree(current, directory);
+        current = new_child;
+        directory = strtok(NULL, "/");
+    }
+
+    new_child->value = (char *) malloc(sizeof(char)*(size+1));  
+    strcpy(new_child->value, value);
+
+    clear(value);
+    clear(path); 
+
+
+
+ /*   while((c=path[i++]) != '\0') { */
        
-       /* se for igual a espaço/tab e ainda nao tiver começado a ler, continuo */
-        if ((c==' ') && !found) {
+    /* se for igual a espaço/tab e ainda nao tiver começado a ler, continuo */
+   /*     if ((c==' ' || c=='\t') && !found) {
             continue;
-        }
+        }*/
 
        /* se for igual a uma barra, vejo se o diretorio nao é vazio e adiciono novo node */
-        else if (c == '/') {
-            if (!strcmp(input, "")) {
-                memset(input,'\0',MAX_PATH+1);
+ /*       else if (c == '/') {
+            if (strcompare(path, "")) {
+                clear(path);
                 j=0;
-            }
-            else {
+            } 
+            else {*/
                 /* adicionar node */               
-                input[j] = '\0';
-                current = auxAddTree(current, input);
-                memset(input,'\0',MAX_PATH+1);
+           /*     path[j] = '\0';
+                new_child = auxAddTree(current, path);
+                current = new_child;
+                clear(path);
                 j=0;
             }
-        }
+        } */
         /* se for diferente de espaço/tab e diferente de barra,adiciono ao diretorio */
-        else if (c != ' ' && c != '\t') {
+   /*     else if (c != ' ' && c != '\t') {
             found = 1;
-            input[j++] = c;
-        }
-        else if (c == ' ' && found){
-            if (strcmp(input, "")) {
+            path[j++] = c;
+        }*/
+
+   /*     else if (c == ' ' && found){*/
+            /* se nao forem iguais */
+        /*    path[j] = '\0';*/
+         /*   if (!strcompare(path, "")) {*/
                /* adicionar node */ 
-                input[j] = '\0';
-                current = auxAddTree(current, input);
+            /*    path[j] = '\0';
+                new_child = auxAddTree(current, path);
+                current = new_child;
                 j=0;
                 break;
             }  
@@ -195,66 +229,61 @@ void treeAdd(tree_node_s root) {
         }
     }
    
-    j=0;
+    j=0; */
     /* quando o dir for NULL, chegámos ao fim, e o value pode ser adicionado ao ultimo child (acabar de ler o value do buffer, aproveitar o valor do i)  */
 
-    while((c=getchar())!= EOF && c!= '\n') {
-        input[j++] = c;
+   /* while((c=buffer[i++])!= EOF && c!= '\n' && c!= '\0') {
+        path[j++] = c;
     }
-    input[j] = '\0';
+    path[j] = '\0';  
 
-    
-
-    array = strtok(input, " ");
+    array = strtok(path, " ");
    
     while( array != NULL ) {     
         strcat(value, array);   
         strcat(value, " ");
         array = strtok(NULL, " ");
-    }
-    
+    }*/
 
-    size = strlen(value)-1;   
+ /*   size = strlen(value)-1;   
     value[size] = '\0'; 
 
-    current->value = (char *) malloc(sizeof(char)*(strlen(value)+1));  
-    strcpy(current->value, value);
+    new_child->value = (char *) malloc(sizeof(char)*(strlen(value)+1));  
+    strcpy(new_child->value, value);
 
     clear(value);
-    clear(input);   
+    clear(path);   */
 }
 
 tree_node_s auxAddTree(tree_node_s parent, char path[]) {
 
-    /*o parent do input sera colocado no campo "parent" do novo filho*/
-
-    /* o filho que vou criar*/
     tree_node_s child;
-    /* o irmao, caso nao exista ainda o path, que será o antecessor do novo node a criar com o path*/
-    tree_node_s brother;
+    tree_node_s brother, current;
 
     /*verificar existem filhos*/
 
     if (parent->child != NULL) {
         /*existem, logo tenho de saber se o path a criar ja existe nos filhos*/
         
-        brother = brotherSearch(parent->child, path); /*procurar o sitio onde esta o path(filho), se nao existir return NULL*/
+        current = brotherSearch(parent->child, path); /*procurar o sitio onde esta o path(filho), se nao existir return NULL*/
 
-        if (brother != NULL) {
+        if (current != NULL) {
             /* ja existe o filho, logo será o meu novo pai*/
-            return brother;
+            return current;
         }
         else {
         /* nao existe ainda o path a criar, mas ja existem irmaos, logo vou procurar onde posso inserir*/  
             brother = brotherSearch(parent->child, NULL);
-            child = newTreeNode(path, NULL, parent);
-            brother->brother = child;  /*novo irmao do brother que retornei*/
-            return child;
+            current = newTreeNode(path);
+            current->parent = parent;
+            brother->brother = current;  /*novo irmao do brother que retornei*/
+            return current;
         }
     }
     else {
         /* se nao existirem, tenho de criar uma nova lista de filhos para o atual pai e adicionar o filho criado a primeira posicao*/
-        child = newTreeNode(path, NULL, parent);
+        child = newTreeNode(path);
+        child->parent = parent;
         parent->child = child;
         return child;
     }
@@ -266,6 +295,9 @@ tree_node_s brotherSearch(tree_node_s current, char path[]) {
     /*procura a ver se existe algum no com o path igual ao do path(input)*/
     tree_node_s aux = current;
     /* procura a ver se existe algum node(child) com o path que quero criar*/
+    /* se for nulo, apenas quero saber onde vou inserir o meu irmao */
+
+
     if (path == NULL) {
         while (aux->brother != NULL) {
             aux = aux->brother;
@@ -275,7 +307,7 @@ tree_node_s brotherSearch(tree_node_s current, char path[]) {
 
     else {
         while (aux != NULL) {
-            if (equals(aux->path, path))) {
+            if (strcompare(aux->path, path)) {
                 return aux;
             }
             aux = aux->brother;
@@ -286,8 +318,8 @@ tree_node_s brotherSearch(tree_node_s current, char path[]) {
 }
 
 
-tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, list_node_s head) {
-    tree_node_s current = root, aux;   
+tree_node_s treeSearch(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]) {
+    tree_node_s current = root, aux; 
 
     /* fim -> o parent é NULL */
 
@@ -296,9 +328,8 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, lis
         return NULL;
     }
 
-
     /*encontrou o valor, PARA tudo! */
-    if (current->value != NULL && equals(current->value, buffer))) {
+    if (current->value != NULL && strcompare(current->value, buffer)) {
         printSearch(extremes);
         destroyList(extremes);
         return NULL;
@@ -306,9 +337,10 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, lis
 
     /* tem filhos ? */
         /* sim! passa para o proximo filho*/
-    else if (current->child != NULL) {              
+    else if (current->child != NULL) {   
+                  
         head = insertEnd(extremes, head, current->child);       
-        return treeSearch(current->child, buffer, extremes, head);
+        return treeSearch(current->child, extremes, head, buffer);
     }
 
     /* não! passa para o irmao*/
@@ -316,7 +348,7 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, lis
         
         head = deleteEnd(extremes, head);
         head= insertEnd(extremes, head, current->brother);  
-        return treeSearch(current->brother, buffer, extremes, head);
+        return treeSearch(current->brother, extremes, head, buffer);
     }
 
     /*tem irmao e nao tem filhos? */   
@@ -335,12 +367,12 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, lis
                 if (aux->brother != NULL) {
                     head= deleteEnd(extremes, head);
                     head= insertEnd(extremes, head, aux->brother);  
-                    return treeSearch(aux->brother, buffer, extremes, head);
+                    return treeSearch(aux->brother, extremes, head, buffer);
                 }
                 /* chegou à root*/
-                else if (equals(aux->path, ROOT))) {
+                else if (strcompare(aux->path, ROOT)) {
                     head= deleteEnd(extremes,head);
-                    return treeSearch(aux, buffer, extremes, head);
+                    return treeSearch(aux, extremes, head, buffer);
                 } 
                 
                 aux = aux->parent;
@@ -352,39 +384,38 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], list_ext_s extremes, lis
             head= deleteEnd(extremes, head);
             head= deleteEnd(extremes, head);
             head= insertEnd(extremes,head, current->parent->brother);
-            return treeSearch(current->parent->brother, buffer, extremes, head);
+            return treeSearch(current->parent->brother, extremes, head, buffer);
         }
     }   
     printf("not found\n");
     return NULL; 
 }   
 
-void treeFind(tree_node_s root) {    
+void treeFind(tree_node_s root, char buffer[]) {    
     tree_node_s current = root->child, previous;
-    char *array, directory[MAX_PATH+1];  
+    char *array;  
 
-    scanf("%s", directory);
-
-    array = strtok(directory, "/"); 
+    array = strtok(buffer, "/"); 
+    current = brotherSearch(current, array);
+    current = current->child;
 
     while (array != NULL) {
 
-        current = brotherSearch(current, directory);
-        /*se existir, passo ao filho como atual*/
-        if (current != NULL) {
+        current = brotherSearch(current, array);
+        /* se nao existir, lanço erro*/
+        if (current != NULL) {    
             previous = current;
             current = current->child;
-        }
+        }   
         else {
-            /* se nao existir, lanço erro*/
             printf("not found\n");
             return;
-        } 
+        }  
+        array = strtok(NULL, "/");      
         
-        array = strtok(NULL, "/");
     }
     
-    if (current->value == NULL) {
+    if (previous->value == NULL) {
         printf("no data\n");
         return;
     }
@@ -397,12 +428,13 @@ void treeFind(tree_node_s root) {
 
 /* TODO tree_print */
 
-list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
+list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]) {
 
     tree_node_s current = root;
     list_node_s list = head;
 
-    if (!strcmp(root->path, "/") && root->child==NULL && root->brother==NULL && root->parent==NULL) {
+    /* se nao for igual à root*/
+    if (!strcompare(root->path, "/") && root->child==NULL && root->brother==NULL && root->parent==NULL) {
         return NULL;
     }
     
@@ -433,7 +465,7 @@ list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
         list = insertEnd(extremes, list, current->child);
         
         /*passa ao filho*/
-        return treePrint(current->child, extremes, list);
+        return treePrint(current->child, extremes, list, buffer);
     }
    
 
@@ -448,7 +480,7 @@ list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
             list = insertEnd(extremes, list, current->brother);
             
             /*passa para o irmao*/
-            return treePrint(current->brother, extremes, list);
+            return treePrint(current->brother, extremes, list, buffer);
 
         }
         else {
@@ -465,7 +497,7 @@ list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
                 list = insertEnd(extremes, list, current->parent->brother);
                 
                 /*passa para o irmao do pai*/
-                return treePrint(current->parent->brother, extremes, list);                  
+                return treePrint(current->parent->brother, extremes, list, buffer);                  
 
             }
 
@@ -479,7 +511,8 @@ list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
                     
                     current = current->parent; 
 
-                    if (current != NULL && !strcmp(current->path, "/")) {                        
+                    /* se for igual à root*/
+                    if (current != NULL && strcompare(current->path, "/")) {                        
                         
                         destroyList(extremes);
                         return NULL;
@@ -495,34 +528,13 @@ list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head) {
                 }
 
                 list= insertEnd(extremes, list, current->brother);                
-                return treePrint(current->brother, extremes, list);               
+                return treePrint(current->brother, extremes, list, buffer);               
 
             }
         }
     }
     return NULL;
 }
-
-/*tree_node_s findParent(tree_node_s current, list_ext_s extremes) {
-    tree_node_s aux = current;*/
-    /* tenho de procurar um pai que tenha irmaos*/
-   /* while (aux->parent != NULL) {*/
-        /*encontrou um parent com irmao -> devolve esse irmao*/
-      /*  if (aux->brother != NULL) { */
-            /*stack = push(aux->brother, stack);*/
-       /*     return aux->brother;
-        }*/
-        /*chegou à root*/
-      /*  else if (!strcmp(aux->path, "/")) {
-            return aux;
-        } 
-        
-        aux = aux->parent;
-        deleteEnd(extremes, head);
-    }
-    return NULL;
-}*/
-
 
 
 /* TODO tree_list */
@@ -534,8 +546,6 @@ void listRoot(tree_node_s root) {
     tree_node_s *sortList;
 
     num_of_nodes = countNodes(aux); 
-
-    printf("[listRoot]nodes: %d\n", num_of_nodes); 
 
     sortList = malloc(sizeof(struct tree_node) * num_of_nodes);
 
@@ -551,114 +561,141 @@ void listRoot(tree_node_s root) {
     free(sortList);
 }
 
-void treeList(tree_node_s root, int args) {
+void treeList(tree_node_s root, char buffer[]) {
 
     tree_node_s aux;
-    char path[MAX_PATH+1];
-   /*int i=0, found=0, stop_reading=0;
-    char c;*/
 
-    if (!args) {
-        listRoot(root);
+    if (strlen(buffer) == 0) {
+        listRoot(root); 
     }
-
     else {
-       /* while ((c=getchar()) != '\n' && c != EOF) {
-            if ((c==SPACE) && !found) {
-                continue;
-            } 
-            else if ((c==SPACE) && found) {
-                stop_reading=1;
-            }
-            else if (!stop_reading) {
-                path[i++] = c;
-                found=1;
-            }
-           
-        }
-        path[i] = '\0';*/
-        
-
-        fgets(path, 2000, stdin);
-        path[strlen(path)-1] = '\0';
-        printf("[treeList] |%s|\n", path);
-        aux = nodeSearch(root, path);
+        aux = nodeSearch(root, buffer);
         if (aux==NULL) {
             printf("not found\n");
             return;
             
         }
-        listRoot(aux->parent);
+        listRoot(aux);
     }
+     
+
+    
 }
 
 tree_node_s nodeSearch(tree_node_s root, char directory[]) {
     
     /* fim -> o parent é NULL*/
 
-    tree_node_s current = root->child; 
-    char *array;   
+    tree_node_s previous=root, current = root->child; 
+    char *array, *previous_array;   
+ 
+    array = strtok(directory, "/");
+    current = brotherSearch(current, array);
+    current = current->child;
 
-    /* se a len do buffer for 0, return da root */  
-    printf("[nodeSearch]directory: |%s|\n", directory);
-
-    array = strtok(directory, "/"); 
-
-    while( array != NULL && !equals(array, ""))) {
-
-        printf("[nodeSearch]array: |%s|\n", array);
-        current = brotherSearch(current, array);
-
-
-        /* se existir, passo ao filho como atual*/
-        if (current != NULL) {
-            current = current->child;
-        } 
+    while (array != NULL) {
+        
+        current = brotherSearch(current, array);        
+            if (current != NULL) {
+                previous = current;
+                current = current->child;
+            }
+        previous_array = array;
         array = strtok(NULL, "/");
     }
-    return current;
+
+    if (current!= NULL && strcompare(previous_array, current->path)) {
+        return current;
+    }
+    else {
+        return previous;
+    }
+    /* se existir, passo ao filho como atual*/
+    return NULL;
 
 }
 
+tree_node_s nodeToDelete(tree_node_s root, char directory[]) {
+    
+    /* fim -> o parent é NULL*/
 
-tree_node_s treeDelete(tree_node_s root) {
+    tree_node_s previous=root, current = root->child; 
+    char *array, *previous_array;   
+ 
+    array = strtok(directory, "/");
 
-    tree_node_s aux, finder, parent;
-    char directory[200];
+    while (array != NULL) {
+        
+        current = brotherSearch(current, array);        
+            if (current != NULL) {
+                previous = current;
+                current = current->child;
+            }
+        previous_array = array;
+        array = strtok(NULL, "/");
+    }
 
-    aux = nodeSearch(root, directory);  
+    if (current!= NULL && strcompare(previous_array, current->path)) {
+        return current;
+    }
+    else {
+        return previous;
+    }
+    /* se existir, passo ao filho como atual*/
+    return NULL;
 
-    if (aux==NULL) {
+}
+
+tree_node_s treeDelete(tree_node_s root, char buffer[]) {
+
+    tree_node_s to_delete, previous_brother, parent;
+
+    if (strlen(buffer) == 0) {
+        treeCompletlyDestructor(root);
+        return NULL;
+    }
+
+    /*to_delete = nodeToDelete(root, buffer); */
+
+    printf("to delete path: %s\n", to_delete->parent->path);
+
+    if (to_delete==NULL) {
         printf("not found\n");
         return NULL;
     }
 
-    if (equals(aux->path, ROOT))) {
+    if (strcompare(to_delete->path, ROOT)) {
         treeCompletlyDestructor(root);
         return NULL;
     }
+
     else {
         /*se for o primeiro filho dos pais, substituir pelo irmao (se houver) */
 
-        /*se tiver irmaos e nao for o filho direto, procurar o irmao anterior*/
-        if (!strcmp(aux->parent->child->path, aux->path)) {
-            if (aux->brother != NULL) {
-                aux->parent->child = aux->brother;
+        if (strcompare(to_delete->parent->child->path, to_delete->path)) {
+            if (to_delete->brother != NULL) {
+                to_delete->parent->child = to_delete->brother;
             }
             else {
-                aux->parent->child = NULL;
+                to_delete->parent->child = NULL;
             }
         }
         else {
-            parent = aux->parent;
-            finder = parent->child;
-            aux->parent = NULL;
-            while (strcmp(finder->brother->path, aux->path)) {
-                finder = finder->brother;
+            /* se nao for o primeiro filho */
+            /*se tiver irmaos e nao for o filho direto, procurar o irmao anterior*/
+            parent = to_delete->parent;
+            /* a pesquisa começa no primeiro filho direto do pai */
+            previous_brother = parent->child;
+            to_delete->parent = NULL;
+            /* enquanto forem diferentes */
+            while (!strcompare(previous_brother->brother->path, to_delete->path)) {
+                previous_brother = previous_brother->brother;
             }
-            finder->brother = aux->brother;
+            printf("previous brother: %s\nnext brother: %s\n", previous_brother->path, to_delete->brother->path);
+            previous_brother->brother = to_delete->brother;
+            to_delete->brother = NULL;
         }
-        treePartialDestructor(aux);
+        treePartialDestructor(to_delete);
         return NULL;       
 
     }

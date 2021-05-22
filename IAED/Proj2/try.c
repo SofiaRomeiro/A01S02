@@ -2,77 +2,46 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main() {
-    char *array;
-    char pila[200];
-    int found = 0, j=0;
-    char c, directory[200], value[200];
+int strcompare(char str1[], char str2[]) {
+    int i;
 
-    scanf("%s", directory);
-    printf("path: |%s|\n", directory);
-
-    array = strtok(directory, "/");
-
-    while( array != NULL ) {
-        printf("array: %s\n", array); 
-
-        array = strtok(NULL, "/");
+    if (str1[0] == '\0' || str2[0] == '\0') {
+        return 0;
     }
 
-    return 0;
-}
-
-void ola() {
-    char c, directory[100], value[100];
-    int found=0, j=0;
-
-     while((c=getchar())!= EOF && c != '\n') {
-
-        printf("char: %c\n", c);
-       
-       /* se for igual a espaço/tab e ainda nao tiver começado a ler, continuo */
-       if ((c==' ') && !found) {
-           continue;
-       }
-
-       /* se for igual a uma barra, vejo se o diretorio nao é vazio e adiciono novo node */
-       else if (c == '/') {
-           if (!strcmp(directory, "")) {
-               memset(directory,'\0',strlen(directory));
-               j=0;
-           }
-           else {
-               /* adicionar node */
-               memset(directory,'\0',strlen(directory));
-               j=0;
-           }
-       }
-       /* se for diferente de espaço/tab e diferente de barra,adiciono ao diretorio */
-       else if (c != ' ' && c != '\t') {
-           found = 1;
-           directory[j++] = c;
-       }
-       else if (c == ' ' && found){
-           if (strcmp(directory, "")) {
-               /* adicionar node */
-               j=0;
-           }  
-           else {
-               continue;
-           }                    
-       }
-       else {
-         
-       }
-    } 
-
-    while ((c=getchar()) != EOF  && c != '\n') {
-        if (c == ' ' && !found) { 
-        }  
-        else {
-            found = 1;
-            value[j++] = c;         
+    for(i=0; str1[i] != '\0' && str2[i] != '\0'; i++) {
+        if (str1[i]!= str2[i]) {
+            return 0;
         }
     }
-    value[j] = '\0';
+    if (str1[i] != str2[i]) {
+        return 0;
+    }
+    return 1;
+}
+
+int main() {
+
+    char str1[200], str2[200], c;
+    int compare, i=0;
+
+    while ((c=getchar()) != EOF && c != '\n') {
+        str1[i++] = c;
+    }
+    str1[i] = '\0';
+
+    i=0;
+    while ((c=getchar()) != EOF && c != '\n') {
+        str2[i++] = c;
+    }
+    str2[i] = '\0';
+
+
+    printf("|%s|\n|%s|\n", str1, str2);
+
+    compare= strcompare(str1, str2);
+
+    printf(!compare ? "NO!" : "YES!!");
+
+    return 0;
 }
