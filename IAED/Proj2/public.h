@@ -28,6 +28,7 @@ void treeAdd(tree_node_s root, char buffer[]);
 tree_node_s auxAddTree(tree_node_s parent, char path[]);
 tree_node_s brotherSearch(tree_node_s current, char path[]);
 tree_node_s treeSearch(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]);
+tree_node_s treeSearch2(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]);
 void treeFind(tree_node_s root, char buffer[]);
 list_ext_s treePrint(tree_node_s root, list_ext_s extremes, list_node_s head, char buffer[]);
 tree_node_s findParent(tree_node_s current, list_ext_s extremes);

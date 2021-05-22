@@ -17,7 +17,7 @@ int main() {
 
     while (!quit) {
 
-        command = switchForCommand(buffer);  
+        command = switchForCommand(buffer);          
 
         switch (command) {
             case HELP:
@@ -61,19 +61,17 @@ int main() {
                 break;
 
             case SEARCH:
-                    array = strtok(buffer, " ");
-                
+                    clear(value);
+                    array = strtok(buffer, " ");                
                     while( array != NULL ) {     
                         strcat(value, array);   
                         strcat(value, " ");
                         array = strtok(NULL, " ");
-                    }
-                    
-
+                    }                   
                     size = strlen(value)-1;   
                     value[size] = '\0'; 
                 
-                treeSearch(root, extremes, head, value);                
+                treeSearch2(root, extremes, head, value);                
                 clear(buffer);
                 break;
             

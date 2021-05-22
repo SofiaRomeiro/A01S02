@@ -5,85 +5,8 @@
 #include "public.h"
 
 
-list_node_s insertEnd(list_ext_s extremes, list_node_s head, tree_node_s tree_node) {
-    /* criar o novo node */
-    list_node_s new = (list_node_s)malloc(sizeof(struct list_node));
-    new->node = tree_node;
-    new->next = NULL;
-    /* verificar o estado dos extremes */
-    if (extremes->head == NULL) {
-        /* adicionar aos extremos */
-        extremes->head = new;
-        extremes->tail = new; /* o elemento é a sua propria tail*/        
-        /* adicionar à head */
-        new->next = NULL;
-        head->next = new;
-        new->previous = head;
-        return new;
-    }
+/* *********  STACK  ***************** */
 
-    else {
-        /* nova tail é o meu node */
-        extremes->tail = new;
-        /* adicionar à head */
-        new->previous = head;
-        head->next = new;
-        new->next = NULL;    
-        return new;
-    }
-    return NULL;
-}
-
-list_node_s deleteEnd(list_ext_s extremes, list_node_s head) {
-
-    list_node_s to_free, newtail;
-
-    if (head == NULL) {
-        return NULL;
-    }  
-    
-    to_free = head;
-    newtail = head->previous;
-    newtail->next = NULL;
-    extremes->tail = newtail;
-    free(to_free);
-    return newtail;
-}
-
-void printList(list_ext_s extremes) {
-    list_node_s aux=extremes->head;
-    while (aux != NULL) {
-        printf("/%s",aux->node->path); 
-        aux = aux->next; 
-    }
-    printf(" %s\n", extremes->tail->node->value);    
-}
-
-void printSearch(list_ext_s extremes) {
-   
-    list_node_s aux=extremes->head;
-    
-    while (aux != NULL) {        
-        printf("/%s",aux->node->path);
-        aux = aux->next; 
-    }
-    
-    printf("\n");
-    return;
-}
-
-
-
-void destroyList(list_ext_s extremes) {
-    list_node_s head = extremes->head, to_free;
-    while (head != NULL) {
-        to_free = head;
-        head = head->next;
-        free(to_free);
-    } 
-}
-
-/*
 stack_s initStack(){
     stack_s top = (stack_s) malloc(sizeof(struct stack));
     top->current = NULL;
@@ -180,4 +103,49 @@ int countNodes(tree_node_s root) {
     tree_node_s aux=root;
     for (counter=0; aux != NULL; counter++, aux = aux->brother);
     return counter;
-}*/
+}
+
+/* *************************  QUICK SORT  ************************* */
+
+void exchange(tree_node_s sort[], int i, int j) {
+
+	tree_node_s aux;
+	aux = sort[i];
+	sort[i] = sort[j];
+	sort[j] = aux; 
+}
+
+int less(tree_node_s first, tree_node_s second) {
+
+	return 1 ? (strcmp(first->path,second->path)<0) : 0;
+}
+
+int partition(tree_node_s sort[], int l, int r) {
+
+	int i = l-1; 
+	int j = r; 
+	tree_node_s aux;
+	aux = sort[r]; 
+	while (i < j) { 				
+		while (less(sort[++i], aux));				
+		while (less(aux, sort[--j])) 
+			if (j == l) 
+				break;
+		if (i < j)
+			exchange(sort, i, j); 
+	}
+	exchange(sort, r, i);
+	return i; 
+}
+
+void quicksort(tree_node_s sort[], int l, int r) {
+
+	int i;
+	if (r <= l)
+		return;
+	i = partition(sort, l, r);
+	quicksort(sort, l, i-1);
+	quicksort(sort, i+1, r);
+}
+
+
