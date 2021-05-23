@@ -5,11 +5,11 @@
 #include "public.h"
 
 #define ROOT '/'
-#define MAX_BUFFER 65529
+#define MAX_BUFFER 65534
 #define MAX_COMMAND_LEN 6
 #define SPACE ' ' || '\t'
 #define eq_int(A,B) (A==B)
-#define eq_char(A,B) !(strcmp(A,B))
+#define equals(A,B) !(strcmp(A,B))
 
 
 enum commands {HELP, QUIT, SET, PRINT, FIND, LIST, SEARCH, DELETE, NONE};
@@ -46,8 +46,7 @@ int main() {
                 quit = 1;
                 break;
             
-            case SET:  
-                filter(buffer);    
+            case SET:     
                 treeAdd(root, buffer);
                 break;
             
@@ -78,77 +77,86 @@ int main() {
 
 int aux(char buffer[]) {
 
-    char command[MAX_COMMAND_LEN+1];
-    char c;
-    int i=0, j=0, counter=0;
-    int readCommand = 0, reading = 1;
+    char *command, *array;
+    char aux[MAX_BUFFER+1];      
 
-    clear(buffer);
+    readLine(buffer); 
 
-    while((c=getchar()) != EOF && c != '\n') {
-        if (counter == 65535) {
-            strcpy(command, "quit");
-            printf("no memory\n");
-            break;
-        }
-        counter++;
-
-        if (c == ' '  && !readCommand) {
-            readCommand = 1;
-            reading = 0;
-        }
-        else if (c != ' ' && reading) {
-            command[i++] = c;
-        }
-        else{
-            buffer[j++] = c;
-        }
+    /* se tiver escrito no memory, é porque a memoria foi excedida e deve terminar */
+    if (equals(buffer, "No memory.")) {
+        return QUIT;
     }
-    command[i] = '\0';
-    buffer[j] = '\0';  
 
-    if (eq_char(command, "help")) {
+    strcpy(aux, buffer);  
+
+    command = strtok(aux, " ");
+    array = strtok(NULL, "\0");
+
+    if (array!=NULL) strcpy(buffer, array);
+    else buffer[0] = '\0';
+
+    if (equals(command, "help")) {
         clear(command);
         return HELP;        
     }
-    else if (eq_char(command, "quit")) {
+    else if (equals(command, "quit")) {
         clear(command);
         clear(buffer);
         return QUIT;
     }
-    else if (eq_char(command, "set")) {
+    else if (equals(command, "set")) {
         clear(command);
         return SET;
     }
-    else if (eq_char(command, "print")) {
+    else if (equals(command, "print")) {
         clear(command);
         return PRINT;
     }
-    else if (eq_char(command, "find")) {
+    else if (equals(command, "find")) {
         clear(command);
         return FIND;
     }
-    else if (eq_char(command, "list")) {
+    else if (equals(command, "list")) {
         clear(command);
         return LIST;
     }
-    else if (eq_char(command, "search")) {
+    else if (equals(command, "search")) {
         clear(command);
         return SEARCH;
     }
-    else if (eq_char(command, "delete")) {
+    else if (equals(command, "delete")) {
         clear(command);
         return DELETE;
     }
     return QUIT;
 }
 
+void readLine(char buffer[]) {
+    char c;
+    int i=0, counter=0;
+
+    while ((c=getchar())!= '\n' && c != EOF) {
+        if (counter == MAX_BUFFER+2) {
+            printf("no memory\n");
+            strcpy(buffer, "no memory");
+            return;            
+        }
+        buffer[i++] = c; 
+        counter++;        
+    }
+    buffer[i] = '\0';
+
+    return;
+
+}
+
+int hashing(char *a, char *b) {
+    return a[0]==b[0];
+}
 
 
 void clear(char string[]) {
-    int i;
-    i = strlen(string);
-    memset(string, '\0', i);
+    string[0] = '\0';
 }
 
 void filter(char buffer[]) {
@@ -164,16 +172,4 @@ void filter(char buffer[]) {
 }
 
 
-
-
-void printTest(tree_node_s root) {
-    tree_node_s child = root->child;
-    printf("[printTest] %s\n", child->path);
-    printf("\n");
-    while (child != NULL) {
-        printf("child : %s, ", child->path);
-        child = child->brother;
-    }
-    
-    printf("\n");
-}
+   

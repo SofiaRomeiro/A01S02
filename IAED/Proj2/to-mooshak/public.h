@@ -4,13 +4,15 @@
 typedef struct tree_node* tree_node_s;
 typedef struct stack* stack_s;
 
+
 /* main.c */
 char *read_line();
 char *read_command(char *buffer);
 int aux(char buffer[]);
 void clear(char string[]);
-void printTest(tree_node_s root);
+int strcompare(char str1[], char str2[]);
 void filter(char buffer[]);
+void readLine(char buffer[]);
 
 /* tree.c */
 tree_node_s treeConstructor();

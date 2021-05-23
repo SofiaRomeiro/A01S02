@@ -98,12 +98,12 @@ void printFuncStack(stack_s stack) {
 }
 
 
-int countNodes(tree_node_s root) {
+/*int countNodes(tree_node_s root) {
     int counter;
     tree_node_s aux=root;
     for (counter=0; aux != NULL; counter++, aux = aux->brother);
     return counter;
-}
+} */
 
 /* *************************  QUICK SORT  ************************* */
 
@@ -116,6 +116,10 @@ void exchange(tree_node_s sort[], int i, int j) {
 }
 
 int less(tree_node_s first, tree_node_s second) {
+
+    if (first->path[0] < second->path[0]) {
+        return 1;
+    }
 
 	return 1 ? (strcmp(first->path,second->path)<0) : 0;
 }

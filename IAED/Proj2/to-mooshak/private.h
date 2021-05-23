@@ -4,6 +4,7 @@
 struct tree_node {
     char *path;
     char *value;
+    int num_of_children;
     struct tree_node *parent;
     struct tree_node *brother;
     struct tree_node *child; 
