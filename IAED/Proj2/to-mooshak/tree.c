@@ -10,6 +10,7 @@
 tree_node_s treeConstructor(){
     tree_node_s new_tree = (tree_node_s)malloc(sizeof(struct tree_node));    
     new_tree->path = (char *)malloc(sizeof(char)*strlen(ROOT)+1);
+    new_tree->path[0] = '\0';
     strcpy(new_tree->path, ROOT);
     new_tree->value = NULL;
     new_tree->brother = NULL;
@@ -133,20 +134,23 @@ void treeAdd(tree_node_s root, char buffer[]) {
     /* guardar o endereço da root sempre, so mexer no parent*/
     tree_node_s parent = root;
     tree_node_s current=NULL;
-    char *path_p=NULL, *directory=NULL;
+    char *path_p, *directory;
     int size; 
     char path[MAX_PATH+1], value[MAX_PATH+1];
 
+    path[0] = '\0';
+    value[0] = '\0';
 
+  
     /* formação do path e do value */
-    path_p = strtok(buffer, " ");
+    path_p = strtok(buffer, " \t");
     strcat(path, path_p);
-    path_p = strtok(NULL, " ");
+    path_p = strtok(NULL, " \t");
 
     while (path_p != NULL) {  
         strcat(value, path_p);
         strcat(value, " ");      
-        path_p = strtok(NULL, " ");
+        path_p = strtok(NULL, " \t");
     }
     size = strlen(value);
     value[size-1] = '\0';
@@ -168,7 +172,8 @@ void treeAdd(tree_node_s root, char buffer[]) {
         parent = current;
     }
 
-    current->value = (char *) malloc(sizeof(char)*(size+1));  
+    current->value = (char *) malloc(sizeof(char)*(size+1)); 
+    current->value[0] = '\0'; 
     strcpy(current->value, value);
 
     clear(value);
@@ -230,6 +235,7 @@ tree_node_s newChild(char path[]){
     tree_node_s newchild;
     newchild = newTreeNode();
     newchild->path = (char *) malloc(sizeof(char) * (strlen(path)+1));
+    newchild->path[0] = '\0';
     strcpy(newchild->path, path);
     newchild->child = NULL;
     newchild->brother = NULL;
@@ -517,7 +523,9 @@ void listRoot(tree_node_s root) {
     sortList = malloc(sizeof(struct tree_node) * num_of_nodes);
 
 
+
     for (i=0; i < num_of_nodes && aux != NULL; i++, aux = aux->brother) {
+        sortList[i] = NULL;
         sortList[i] = aux;
     }
 
@@ -606,7 +614,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
             
         }
 
-        if (!strcmp(aux->path, ROOT)) {
+        if (aux != NULL && !strcmp(aux->path, ROOT)) {
             treeCompletlyDestructor(root);
             return NULL;
         }
@@ -620,7 +628,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
         /*se for o primeiro filho dos pais, substituir pelo irmao (se houver) */
 
         /*se tiver irmaos e nao for o filho direto, procurar o irmao anterior*/
-        if (!strcmp(aux->parent->child->path, aux->path)) {
+        if (aux != NULL && aux->parent != NULL && aux->parent->child != NULL && !strcmp(aux->parent->child->path, aux->path)) {
             if (aux->brother != NULL) {
                 aux->parent->child = aux->brother;
                 aux->parent->num_of_children -= 1;
@@ -634,7 +642,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
         else {
             parent = aux->parent;
             finder = parent->child;
-            while (strcmp(finder->brother->path, aux->path)) {
+            while (finder->brother != NULL && aux != NULL && strcmp(finder->brother->path, aux->path)) {
                 finder = finder->brother;
             }
             finder->brother = aux->brother;

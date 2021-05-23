@@ -18,12 +18,13 @@ int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
     stack_s stack = NULL;
-    char buffer[MAX_BUFFER];
+    char buffer[MAX_BUFFER+1];
     int quit=0;
     int command;
 
     while (!quit) {
 
+        memset(buffer, 0, MAX_BUFFER+1);
         command = aux(buffer);
 
         switch (command) {
@@ -89,7 +90,7 @@ int aux(char buffer[]) {
 
     strcpy(aux, buffer);  
 
-    command = strtok(aux, " ");
+    command = strtok(aux, " \t");
     array = strtok(NULL, "\0");
 
     if (array!=NULL) strcpy(buffer, array);
@@ -133,16 +134,15 @@ int aux(char buffer[]) {
 
 void readLine(char buffer[]) {
     char c;
-    int i=0, counter=0;
+    int i=0;
 
     while ((c=getchar())!= '\n' && c != EOF) {
-        if (counter == MAX_BUFFER+2) {
-            printf("no memory\n");
-            strcpy(buffer, "no memory");
+        if (i == MAX_BUFFER+2) {
+            printf("No memory.\n");
+            strcpy(buffer, "No memory.");
             return;            
         }
-        buffer[i++] = c; 
-        counter++;        
+        buffer[i++] = c;             
     }
     buffer[i] = '\0';
 
@@ -151,7 +151,10 @@ void readLine(char buffer[]) {
 }
 
 int hashing(char *a, char *b) {
-    return a[0]==b[0];
+    if (a[0] != b[0])
+        return 1;
+    else
+        return strcmp(a, b);
 }
 
 
