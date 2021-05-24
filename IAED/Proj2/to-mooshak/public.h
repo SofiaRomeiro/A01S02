@@ -2,7 +2,8 @@
 #define __PUBLIC_H__
 
 typedef struct tree_node* tree_node_s;
-typedef struct stack* stack_s;
+typedef struct stack_node* stack_s;
+typedef struct stack* stack;
 
 
 /* main.c */
@@ -10,7 +11,7 @@ char *read_line();
 char *read_command(char *buffer);
 int aux(char buffer[]);
 void clear(char string[]);
-int strcompare(char str1[], char str2[]);
+int hashing(char a[], char b[]);
 void filter(char buffer[]);
 void readLine(char buffer[]);
 

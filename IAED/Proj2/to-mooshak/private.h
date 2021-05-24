@@ -10,9 +10,15 @@ struct tree_node {
     struct tree_node *child; 
 };
 
-struct stack{
+struct stack_node{
     struct tree_node *current;
-    struct stack *previous, *next;
+    struct stack_node *previous, *next;
 };
+
+struct stack {
+    struct stack_node *head;
+    struct stack_node *tail;
+};
+
 
 #endif

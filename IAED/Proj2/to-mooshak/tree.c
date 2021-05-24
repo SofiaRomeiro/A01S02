@@ -134,7 +134,7 @@ void treeAdd(tree_node_s root, char buffer[]) {
     /* guardar o endereço da root sempre, so mexer no parent*/
     tree_node_s parent = root;
     tree_node_s current=NULL;
-    char *path_p, *directory;
+    char *path_p=NULL, *directory=NULL;
     int size; 
     char path[MAX_PATH+1], value[MAX_PATH+1];
 
@@ -250,7 +250,7 @@ tree_node_s brotherSearch(tree_node_s child, char path[]){
     tree_node_s aux = child;
     /* procura a ver se existe algum node(child) com o path que quero criar*/
     while (aux != NULL) {
-        if (!strcmp(aux->path, path)) {
+        if (!hashing(aux->path, path)) {
             return aux;
         }
         aux = aux->brother;
@@ -272,7 +272,7 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top) {
 
 
     /*encontrou o valor, PARA tudo! */
-    if (current->value != NULL && !strcmp(current->value, buffer)) {
+    if (current->value != NULL && !hashing(current->value, buffer)) {
         stack = push(current, stack);        
         printStack(stack);
         destroyStack(stack);
@@ -312,7 +312,7 @@ tree_node_s treeSearch(tree_node_s root, char buffer[], stack_s top) {
                     return treeSearch(aux->brother, buffer, stack);
                 }
                 /* chegou à root*/
-                else if (!strcmp(aux->path, "/")) {
+                else if (!hashing(aux->path, "/")) {
                     stack = pop(stack);
                     return treeSearch(aux, buffer, stack);
                 } 
@@ -378,7 +378,7 @@ stack_s treePrint(tree_node_s root, stack_s top) {
     tree_node_s current = root;
     stack_s stack = top;
 
-    if (!strcmp(root->path, "/") && root->child==NULL && root->brother==NULL && root->parent==NULL) {
+    if (!hashing(root->path, "/") && root->child==NULL && root->brother==NULL && root->parent==NULL) {
         return NULL;
     }
     
@@ -455,7 +455,7 @@ stack_s treePrint(tree_node_s root, stack_s top) {
                     
                     current = current->parent; 
 
-                    if (current != NULL && !strcmp(current->path, "/")) {                        
+                    if (current != NULL && !hashing(current->path, "/")) {                        
                         
                         destroyStack(stack);
                         return NULL;
@@ -496,7 +496,7 @@ tree_node_s findParent(tree_node_s current, stack_s stack) {
             return aux->brother;
         }
         /*chegou à root*/
-        else if (!strcmp(aux->path, "/")) {
+        else if (!hashing(aux->path, "/")) {
             return aux;
         } 
         
@@ -614,7 +614,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
             
         }
 
-        if (aux != NULL && !strcmp(aux->path, ROOT)) {
+        if (aux != NULL && !hashing(aux->path, ROOT)) {
             treeCompletlyDestructor(root);
             return NULL;
         }
@@ -628,7 +628,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
         /*se for o primeiro filho dos pais, substituir pelo irmao (se houver) */
 
         /*se tiver irmaos e nao for o filho direto, procurar o irmao anterior*/
-        if (aux != NULL && aux->parent != NULL && aux->parent->child != NULL && !strcmp(aux->parent->child->path, aux->path)) {
+        if (aux != NULL && aux->parent != NULL && aux->parent->child != NULL && !hashing(aux->parent->child->path, aux->path)) {
             if (aux->brother != NULL) {
                 aux->parent->child = aux->brother;
                 aux->parent->num_of_children -= 1;
@@ -642,7 +642,7 @@ tree_node_s treeDelete(tree_node_s root, char buffer[]) {
         else {
             parent = aux->parent;
             finder = parent->child;
-            while (finder->brother != NULL && aux != NULL && strcmp(finder->brother->path, aux->path)) {
+            while (finder->brother != NULL && aux != NULL && hashing(finder->brother->path, aux->path)) {
                 finder = finder->brother;
             }
             finder->brother = aux->brother;

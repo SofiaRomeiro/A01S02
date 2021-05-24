@@ -15,21 +15,33 @@ stack_s initStack(){
     return top;
 }
 
-void destroyStack(stack_s stack) {  
-    free(stack);
+void destroyStack(stack_s stack) { 
+    /*stack_s aux = stack->next;
+    while (aux->next != NULL) {
+        aux = stack;
+        stack = stack->next;
+        free(aux);
+    } */
+    stack_s aux = stack;
+    while (aux != NULL) {
+        aux = pop(aux);
+    }
 }
 
 stack_s push(tree_node_s adding, stack_s stack){
 
     if (is_empty(stack)) {
+        /* crio aqui uma nova head */
         stack = (stack_s) malloc(sizeof(struct stack));
+        stack->current = NULL;  
         stack->current = adding;
         stack->previous = NULL;
         stack->next = NULL;
         return stack;
     } 
     else {
-        stack_s new = (stack_s) malloc(sizeof(struct stack));    
+        stack_s new = (stack_s) malloc(sizeof(struct stack)); 
+        new->current = NULL;   
         new->current = adding;
         new->previous = NULL;
         stack->previous = new;
@@ -98,12 +110,12 @@ void printFuncStack(stack_s stack) {
 }
 
 
-int countNodes(tree_node_s root) {
+/*int countNodes(tree_node_s root) {
     int counter;
     tree_node_s aux=root;
     for (counter=0; aux != NULL; counter++, aux = aux->brother);
     return counter;
-}
+} */
 
 /* *************************  QUICK SORT  ************************* */
 
@@ -117,7 +129,7 @@ void exchange(tree_node_s sort[], int i, int j) {
 
 int less(tree_node_s first, tree_node_s second) {
 
-	return 1 ? (strcmp(first->path,second->path)<0) : 0;
+ 	return 1 ? (strcmp(first->path,second->path)<0) : 0;
 }
 
 int partition(tree_node_s sort[], int l, int r) {
@@ -147,5 +159,3 @@ void quicksort(tree_node_s sort[], int l, int r) {
 	quicksort(sort, l, i-1);
 	quicksort(sort, i+1, r);
 }
-
-

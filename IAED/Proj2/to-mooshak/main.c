@@ -18,13 +18,14 @@ int main() {
     /* NUNCA PERDER ESTA ROOT */
     tree_node_s root = treeConstructor();
     stack_s stack = NULL;
-    char buffer[MAX_BUFFER+1];
+    char buffer[MAX_BUFFER+1];    
     int quit=0;
     int command;
+    buffer[0] = '\0';
 
     while (!quit) {
 
-        memset(buffer, 0, MAX_BUFFER+1);
+        memset(buffer, '\0', MAX_BUFFER+1);
         command = aux(buffer);
 
         switch (command) {
@@ -96,36 +97,37 @@ int aux(char buffer[]) {
     if (array!=NULL) strcpy(buffer, array);
     else buffer[0] = '\0';
 
-    if (equals(command, "help")) {
+
+    if (!hashing(command, "help")) {
         clear(command);
         return HELP;        
     }
-    else if (equals(command, "quit")) {
+    else if (!hashing(command, "quit")) {
         clear(command);
         clear(buffer);
         return QUIT;
     }
-    else if (equals(command, "set")) {
+    else if (!hashing(command, "set")) {
         clear(command);
         return SET;
     }
-    else if (equals(command, "print")) {
+    else if (!hashing(command, "print")) {
         clear(command);
         return PRINT;
     }
-    else if (equals(command, "find")) {
+    else if (!hashing(command, "find")) {
         clear(command);
         return FIND;
     }
-    else if (equals(command, "list")) {
+    else if (!hashing(command, "list")) {
         clear(command);
         return LIST;
     }
-    else if (equals(command, "search")) {
+    else if (!hashing(command, "search")) {
         clear(command);
         return SEARCH;
     }
-    else if (equals(command, "delete")) {
+    else if (!hashing(command, "delete")) {
         clear(command);
         return DELETE;
     }
@@ -150,7 +152,7 @@ void readLine(char buffer[]) {
 
 }
 
-int hashing(char *a, char *b) {
+int hashing(char a[], char b[]) {
     if (a[0] != b[0])
         return 1;
     else
@@ -173,6 +175,3 @@ void filter(char buffer[]) {
         }
     }
 }
-
-
-   
